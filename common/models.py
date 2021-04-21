@@ -63,3 +63,19 @@ class Positions(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Client(models.Model):
+    name = models.CharField(max_length=50, verbose_name='Наименование', unique=True)
+    first_name = models.CharField(max_length=50, verbose_name='Имя')
+    last_name = models.CharField(max_length=50, verbose_name='Фамилия')
+    phone_number = models.CharField(max_length=15, verbose_name='Телефон', unique=True)
+    address = models.CharField(max_length=100, verbose_name='Адрес')
+    code1C = models.CharField(max_length=11, verbose_name='Код 1С')
+
+    class Meta:
+        verbose_name = 'Клиент'
+        verbose_name_plural = 'Клиенты'
+
+    def __str__(self):
+        return self.name
