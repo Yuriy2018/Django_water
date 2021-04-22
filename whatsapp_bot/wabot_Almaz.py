@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 # from db_queries import get_client_address, get_client_name, add_line, transform_number, makes_initial_tables, makes_initial_tables_Pay, add_line_Orders, get_client_orders, get_address_coordinates, add_line_coordinates,makes_initial_tables_coordinates
+import time
 from builtins import range
 
 import requests
@@ -8,7 +9,8 @@ from urllib import request
 # import xlrd
 # import pickle
 import sqlite3
-conn = sqlite3.connect("C:\\Users\\Администратор\\PycharmProjects\\water\\db.sqlite3") # или :memory: чтобы сохранить в RAM
+# conn = sqlite3.connect("C:\\Users\\Администратор\\PycharmProjects\\water\\db.sqlite3") # или :memory: чтобы сохранить в RAM
+conn = sqlite3.connect("/home/yuriy/projects/water/db.sqlite3") # или :memory: чтобы сохранить в RAM
 cursor = conn.cursor()
 
 import datetime as DT
@@ -25,20 +27,24 @@ def add_client(data):
 
     address = data.street + 'д. ' + data.number_home
     # Вставляем данные в таблицу
-    cursor.execute("""INSERT INTO ('name','phone_number','address')
-                      VALUES (data.name,  data.id, address)"""
-                   )
-    # Сохраняем изменения
+    sql = '''INSERT INTO common_client ('name','phone_number','address') VALUES (?, ?, ?)'''
+    cursor.execute(sql, (data.name, data.id, address))
     conn.commit()
     return 'успех'
+
+
+
+def get_amount(client):
+    sum = 0
+    for row in client.cart:
+        sum += row.get('summa')
+    return sum
 
 def get_client(number):
     sql = "SELECT * FROM common_client WHERE phone_number=?"
     cursor.execute(sql, [(number)])
-    l = []
     for row in cursor.fetchall():
-        l.append(row)
-    return l
+        return row
 
 def read_sql(sql):
     path = 'DataAddress\settings.xls'
@@ -56,12 +62,34 @@ gardens = read_sql("select * from common_gardens")
 
 # districtsSP = read_sql(3)
 
-districts = read_sql("select * from common_delevirydistricts")
+districts = read_sql("select del.name as district, dri.name as driver from common_delevirydistricts del left join common_driver dri ON del.driver_id = dri.id")
 
 
 streets = read_sql("select * from common_streets")
 
+def add_zakaz(client):
 
+    number = read_sql('select  id from documents_order order by  number DESC limit 1')
+    if number[0]:
+        cur_number = number[0][0] + 1
+    else:
+        cur_number = 1
+    date = DT.datetime.now()
+    client_id = client.id
+    amount = get_amount(client)
+    # Вставляем данные в заказ
+    sql = '''INSERT INTO documents_order ('number','date','client_id', 'amount') VALUES (?, ?, ?, ?)'''
+    result1 = cursor.execute(sql, (cur_number, date, client.pk, amount))
+    conn.commit()
+
+    for row in client.cart:
+        sql = '''INSERT INTO documents_tabluarorders ('order_id','position_id','quantity', 'price', 'amount') VALUES (?, ?, ?, ?, ?)'''
+        price = row.get('summa') / row.get('count')
+        cursor.execute(sql, (cur_number, row.get('position_id'), row.get('count'), price, row.get('summa')))
+        conn.commit()
+        time.sleep(1)
+
+    return 'успех'
 
 def get_coordinats_yandex(line_address):
 
@@ -197,7 +225,7 @@ def make_an_order(*args):
 def registration_client(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
 
-    client.steps.append(['create_order', '', registrM])
+    client.steps.append(['registration_client', '', registrM])
     client.size_Menu = len(registrM)
     return self.send_message(id, 'Выбирите тип клиента:\n' + self.convert_to_string(
         registrM))
@@ -250,13 +278,12 @@ def select_district(*args):
     t += str(1) + '. ' + "Садоводческий коллектив" + '\n'
     command["1"] = {'commandName': "Садоводческий коллектив"}
     for cx, l in enumerate(districts):
-        t += str(cx + 2) + '. ' + l  + '\n'
-        command[str(cx + 2)] = {'district': districts.get(l)['district'],
-                                'cost_of_delivery': districts.get(l)['cost_of_delivery'],
-                                'free': districts.get(l)['free'],
-                                'driver': districts.get(l)['driver'],
+        t += str(cx + 2) + '. ' + l[0]  + '\n'
+        command[str(cx + 2)] = {'district': l[0] ,
+                                # 'cost_of_delivery': districts.get(l[2])['cost_of_delivery'],
+                                # 'free': districts.get(l[2])['free'],
+                                'driver': l[1],
                                 }
-
     t += '0. Назад.' + '\n'
     client.size_Menu = cx + 2
     client.steps.append(['select_district', command, get_user_address])
@@ -265,11 +292,11 @@ def select_district(*args):
 def get_user_address(*args):
     self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
     client.address_in_base = True
-    if text == '0':
-        return identification_by_address(*args)
-    elif text == '1': # Садоводческий коллектив
-        # client.steps.append(['specify_address', '', specify_street])
-        return specify_garden(*args)
+    # if text == '0':
+    #     return identification_by_address(*args)
+    # elif text == '1': # Садоводческий коллектив
+    #     # client.steps.append(['specify_address', '', specify_street])
+    #     return specify_garden(*args)
 
     client.district = client.steps[-1][1].get(text)
     client.size_Menu = 0
@@ -315,8 +342,10 @@ def get_address(*args):
 def create_order(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
     string = 'Выберите позицию из списка:\n'
+    cx = 0
     for  pos in positions:
-        string += str(pos['numP']).replace('.0','') + '. ' + pos['Name'] + ' ' + str(pos['Price']) + ' тенге.\n'
+        cx += 1
+        string += str(cx) + '. ' + pos[3] + ' ' + str(pos[2]) + ' тенге.\n'
 
     client.steps.append(['create_order', '', get_count])
     client.size_Menu = len(positions)
@@ -334,7 +363,7 @@ def get_count(*args):
 
     client.steps.append(['get_count', pos, add_pos])
     client.size_Menu = 0
-    string = 'Укажите количество для позиции: "' + pos['Name'] +'"\n'
+    string = 'Укажите количество для позиции: "' + pos[3] +'"\n'
     return self.send_message(id, string)
 
 def select_pos(*args):
@@ -344,16 +373,16 @@ def select_pos(*args):
         pos['Price'] = 1500
     client.steps.append(['select_pos', pos, add_pos])
     client.size_Menu = 0
-    string = 'Укажите количество для позиции: "' + pos['Name'] + '"\n'
+    string = 'Укажите количество для позиции: "' + pos[3] + '"\n'
     return self.send_message(id, string)
 
 def add_pos(*args):
     self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
     count = int(text)
     pos = client.steps[-1][1]
-    code1C, nomenklatura, price = pos['code1C'], pos['Name'], pos['Price']
+    position_id, code1C, nomenklatura, price = pos[0], pos[1], pos[3], pos[2]
     summa = int(price) * int(count)
-    client.add_pos(code1C, nomenklatura, count, summa)
+    client.add_pos(position_id, code1C, nomenklatura, count, summa)
     client.steps.append(['add_pos', client.steps[-1][1], successMenu])
     client.size_Menu = len(successMenu) - 1
     return self.send_message(id,
@@ -395,7 +424,7 @@ def paymont_cash(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
     client.steps.append(['finish', '', finish])
     client.size_Menu = 0
-    # number1C = get_zakaz_1c(client)
+    add_zakaz(client)
     return self.send_message(id, 'Ваш заказ принят. Ожидайте доставку.')
 
 def paymont_online(*args):
@@ -485,19 +514,12 @@ def show_cart(*args):
 
 def get_position_by_code1C(code1C):
     for pos in positions:
-        if pos['code1C'] == code1C:
+        if pos[1] == code1C:
             return pos
             break
 
 def replay_cart(*args):
-    # TODO По номеру клиента сделать запрос в базу 1С, по последним заказам и
-    #  И вытянуть заказ, желательно в формате чат бота
-    # В 1С ищем контрагента по whatsApp номеру.
-    # Находим крайний заказ,  конвертируем его(если получится) и возвращаем в бота
-    # Клиенту выводим корзину с добавленными товарами
     self, client, id = args[0]['self'], args[0]['client'], args[0]['id']
-    # infoCart = client.infoCart()
-    # return self.send_message(id, infoCart)
     last_cart = client.lastcart #get_last_zakaz_1c(id)
 
     if last_cart:
@@ -505,12 +527,12 @@ def replay_cart(*args):
         message = 'В корзину добавлен:\n'
         for pos in last_cart:
             cx +=1
-            Code1С = pos['Code1С']
-            nomenklatura = pos['position']
+            Code1С = pos[2]
+            nomenklatura = pos[1]
             psn = get_position_by_code1C(Code1С)
-            summa = psn['Price'] * pos['quantity']
-            client.add_pos(code1C=Code1С, position=nomenklatura, count=pos['quantity'], summa=summa)
-            message += f'{cx}. {nomenklatura} цена: {psn["Price"]} в количестве: {pos["quantity"]} штук на сумму: {summa} \n'
+            summa = psn[2] * pos[3]
+            client.add_pos(position_id=pos[0],code1C=Code1С, position=nomenklatura, count=pos[3], summa=summa)
+            message += f'{cx}. {nomenklatura} цена: {psn[2]} в количестве: {pos[3]} штук на сумму: {summa} \n'
     else:
         message = 'Последний заказ в базе не найден.'
 
@@ -576,10 +598,10 @@ class ClienOchag():
         self.id = id
         dataclient = get_client(id)
         if dataclient:
-            self.lastcart = dataclient.get('lastcart')
-            self.name = dataclient.get('Name')
-            self.UID =  dataclient.get('UID')
-            self.Code1C =  dataclient.get('Code')
+            self.pk = dataclient[0]
+            self.lastcart = self.last_cart()
+            self.name = dataclient[1]
+            self.Code1C =  dataclient[5]
         else:
             self.lastcart, self.name, self.UID, self.Code1C = None,'','',''
         # self.number = transform_number(id)
@@ -631,7 +653,7 @@ class ClienOchag():
                 ss += s[0] + '. ' + s[1] + '\n'
         return ss
 
-    def add_pos(self, code1C, position, count, summa):
+    def add_pos(self,position_id, code1C, position, count, summa):
 
         new = True
         for i in self.cart:
@@ -642,6 +664,7 @@ class ClienOchag():
 
         if new:
             data = {'position': position,
+                    'position_id': position_id,
                     'code1C': code1C,
                     'count': count,
                     'summa': summa,
@@ -680,6 +703,17 @@ class ClienOchag():
             # self.orders.append(res.text)
         self.reset()
         return 'Заказ принят..'
+
+    def last_cart(self):
+        # sql = "select position_id, quantity, price, amount from documents_tabluarorders where order_id = (SELECT id FROM documents_order where client_id=?)"
+        # sql = "select position_id, quantity, price, amount from documents_tabluarorders where order_id = (SELECT id FROM documents_order where client_id=? order by date desc limit 1)"
+        sql = "select position_id, (select name from common_positions where common_positions.id=position_id) position,(select code1C from common_positions where common_positions.id=position_id) code1C,quantity, price, amount from documents_tabluarorders where order_id = (SELECT id FROM documents_order where client_id=? order by date desc limit 1)"
+        cursor.execute(sql, [(self.pk)])
+        l = []
+        for row in cursor.fetchall():
+            l.append(row)
+        return l
+
 
 
 class WABot():

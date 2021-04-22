@@ -67,11 +67,11 @@ class Positions(models.Model):
 
 class Client(models.Model):
     name = models.CharField(max_length=50, verbose_name='Наименование', unique=True)
-    first_name = models.CharField(max_length=50, verbose_name='Имя')
-    last_name = models.CharField(max_length=50, verbose_name='Фамилия')
+    first_name = models.CharField(max_length=50, verbose_name='Имя', blank=True, null=True)
+    last_name = models.CharField(max_length=50, verbose_name='Фамилия', blank=True, null=True)
     phone_number = models.CharField(max_length=15, verbose_name='Телефон', unique=True)
-    address = models.CharField(max_length=100, verbose_name='Адрес')
-    code1C = models.CharField(max_length=11, verbose_name='Код 1С')
+    address = models.CharField(max_length=100, verbose_name='Адрес', blank=True, null=True)
+    code1C = models.CharField(max_length=11, verbose_name='Код 1С', blank=True, null=True)
 
     class Meta:
         verbose_name = 'Клиент'
