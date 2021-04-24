@@ -29,4 +29,5 @@ class OrderAdmin(admin.ModelAdmin):
         return self.readonly_fields
 
 admin.site.register(Order, OrderAdmin)
+admin.site.register(TabluarOrders)
 admin.site.site_header = 'Онлайн заказ воды'
