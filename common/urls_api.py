@@ -8,6 +8,7 @@ urlpatterns = [
     path('districts/', views.DistrictsView.as_view()),
     path('streets/', views.StreetsView.as_view()),
     path('get_last_order/<str:number>', views.OrderView.as_view()),
+    path('get_orders1c/', views.Orders1cListView.as_view()),
     path('get_client/<str:number>/', views.ClientView.as_view()),
     path('add_client/', views.ClientCreateView.as_view()),
     path('add_order/', views.OrderCreateView.as_view()),

@@ -79,11 +79,13 @@ class OrderView(APIView):
 
 class OrderCreateView(APIView):
 
-    def post(self, request):
-        order = OrderCreateSerializer(data=request.data)
-        if order.is_valid():
-            order.save()
-        return Response(status=201, data=order.data)
+    def get(self, request, number):
+        orders = Order.objects.filter(client__phone_number=number).order_by('-date').first()
+        if not orders:
+            return Response([])
+
+        serializer = OrdersListSerializer(orders)
+        return Response(serializer.data)
 
 
 class TabuluarCreateView(APIView):
@@ -98,6 +100,24 @@ class TabuluarCreateView(APIView):
                 if order:
                     order.save()
         return Response(status=201, data=tabluars.data)
+
+class OrdersListView(APIView):
+
+    def post(self, request):
+        order = OrdersListSerializer(data=request.data)
+        if order.is_valid():
+            order.save()
+        return Response(status=201)
+
+class Orders1cListView(APIView):
+
+    def get(self, request):
+        orders = Order.objects.filter(number1С=None)
+        if not orders:
+            return Response([])
+
+        serializer = OrdersListSerializer(orders, many=True)
+        return Response(serializer.data)
 
 class ClientCreateView(APIView):
 

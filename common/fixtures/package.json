@@ -1,0 +1,23 @@
+[
+  {
+        "model": "common.positions",
+        "id": 1,
+        "name": "Вода питьевая  19л одноразовая",
+        "code1C": "00000000121",
+        "price": 500
+    },
+    {
+        "model": "common.positions",
+        "id": 2,
+        "name": "Ручной насос Дольфин Юниор",
+        "code1C": "00000000052",
+        "price": 1200
+    },
+    {
+        "model": "common.positions",
+        "id": 3,
+        "name": "Пэт бутыль 19 л голубая без ручки",
+        "code1C": "00000000134",
+        "price": 750
+    }
+  ]
