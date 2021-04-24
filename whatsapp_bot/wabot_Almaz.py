@@ -54,18 +54,27 @@ def read_sql(sql):
         l.append(row)
     return l
 
-positions = read_sql("select * from common_positions")
+positions_alt = read_sql("select * from common_positions")
+positions = requests.get('https://almaz-water.herokuapp.com/api/positions/')
+if positions.text:
+    positions = json.loads(positions.text)
 
-gardens = read_sql("select * from common_gardens")
+# gardens = read_sql("select * from common_gardens")
+gardens = requests.get('https://almaz-water.herokuapp.com/api/gardens/')
 
 # dist_coef = read_sql("select * from common_gardens")
 
 # districtsSP = read_sql(3)
 
-districts = read_sql("select del.name as district, dri.name as driver from common_delevirydistricts del left join common_driver dri ON del.driver_id = dri.id")
+districts_alt = read_sql("select del.name as district, dri.name as driver from common_delevirydistricts del left join common_driver dri ON del.driver_id = dri.id")
+districts = requests.get('https://almaz-water.herokuapp.com/api/districts/')
+if districts.text:
+    districts = json.loads(districts.text)
 
-
-streets = read_sql("select * from common_streets")
+streets_alt = read_sql("select * from common_streets")
+streets = requests.get('https://almaz-water.herokuapp.com/api/streets/')
+if streets.text:
+    streets = json.loads(streets.text)
 
 def add_zakaz(client):
 
@@ -345,7 +354,7 @@ def create_order(*args):
     cx = 0
     for  pos in positions:
         cx += 1
-        string += str(cx) + '. ' + pos[3] + ' ' + str(pos[2]) + ' тенге.\n'
+        string += str(cx) + '. ' + pos['name'] + ' ' + str(pos['price']) + ' тенге.\n'
 
     client.steps.append(['create_order', '', get_count])
     client.size_Menu = len(positions)
@@ -514,7 +523,7 @@ def show_cart(*args):
 
 def get_position_by_code1C(code1C):
     for pos in positions:
-        if pos[1] == code1C:
+        if pos['code1C'] == code1C:
             return pos
             break
 
@@ -527,8 +536,8 @@ def replay_cart(*args):
         message = 'В корзину добавлен:\n'
         for pos in last_cart:
             cx +=1
-            Code1С = pos[2]
-            nomenklatura = pos[1]
+            Code1С = pos['code1C']
+            nomenklatura = pos['name']
             psn = get_position_by_code1C(Code1С)
             summa = psn[2] * pos[3]
             client.add_pos(position_id=pos[0],code1C=Code1С, position=nomenklatura, count=pos[3], summa=summa)

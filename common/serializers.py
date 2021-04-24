@@ -66,3 +66,4 @@ class TabluarOrdersCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = TabluarOrders
         fields = '__all__'
+
