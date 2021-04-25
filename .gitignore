@@ -2,7 +2,7 @@
 __pycache__
 venv
 .idea
-#db.sqlite3
+db.sqlite3
 settings_local.py
 bot.ini
 media/

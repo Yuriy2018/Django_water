@@ -28,6 +28,11 @@ class OrderAdmin(admin.ModelAdmin):
             return ['amount', 'number1С', 'number']
         return self.readonly_fields
 
+class TabluarOrderAdmin(admin.ModelAdmin):
+    # list_display = ('id', 'time_seconds',)
+    list_display = ('order', 'position', 'price', 'quantity', 'amount')
+    list_display_links = ('order', 'position', 'price', 'quantity', 'amount')
+
 admin.site.register(Order, OrderAdmin)
-admin.site.register(TabluarOrders)
+admin.site.register(TabluarOrders, TabluarOrderAdmin)
 admin.site.site_header = 'Онлайн заказ воды'
