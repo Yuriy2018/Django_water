@@ -61,7 +61,7 @@ def get_amount(client):
 
 def get_client(number):
     client = requests.get(api_url + '/api/get_client/'+number+'/')
-    if client.text:
+    if client.status_code == 200:
         return json.loads(client.text)
     # sql = "SELECT * FROM common_client WHERE phone_number=?"
     # cursor.execute(sql, [(number)])
@@ -428,7 +428,7 @@ def select_pos(*args):
         pos['Price'] = 1500
     client.steps.append(['select_pos', pos, add_pos])
     client.size_Menu = 0
-    string = 'Укажите количество для позиции: "' + pos[3] + '"\n'
+    string = 'Укажите количество для позиции: "' + pos['name'] + '"\n'
     return self.send_message(id, string)
 
 def add_pos(*args):
