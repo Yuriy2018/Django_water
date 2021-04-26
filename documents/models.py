@@ -36,7 +36,7 @@ class Order(models.Model):
 
 class TabluarOrders(models.Model):
     order = models.ForeignKey(Order,verbose_name='Ссылка', on_delete=models.PROTECT, related_name='tabulars')
-    position = models.ForeignKey('common.Positions',verbose_name='Номенклатура', on_delete=models.PROTECT)
+    position = models.ForeignKey('common.Positions',verbose_name='Номенклатура', on_delete=models.PROTECT, related_name='position_name')
     price =  models.IntegerField(verbose_name='Цена', default=0)
     quantity =  models.IntegerField(verbose_name='Количество', default=0)
     amount =  models.IntegerField(verbose_name='Сумма', default=0)

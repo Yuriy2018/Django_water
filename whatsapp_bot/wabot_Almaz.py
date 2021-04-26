@@ -66,15 +66,15 @@ gardens = requests.get('https://almaz-water.herokuapp.com/api/gardens/')
 
 # districtsSP = read_sql(3)
 
-districts_alt = read_sql("select del.name as district, dri.name as driver from common_delevirydistricts del left join common_driver dri ON del.driver_id = dri.id")
+# districts_alt = read_sql("select del.name as district, dri.name as driver from common_delevirydistricts del left join common_driver dri ON del.driver_id = dri.id")
 districts = requests.get('https://almaz-water.herokuapp.com/api/districts/')
 if districts.text:
     districts = json.loads(districts.text)
 
-streets_alt = read_sql("select * from common_streets")
-streets = requests.get('https://almaz-water.herokuapp.com/api/streets/')
-if streets.text:
-    streets = json.loads(streets.text)
+# streets_alt = read_sql("select * from common_streets")
+# streets = requests.get('https://almaz-water.herokuapp.com/api/streets/')
+# if streets.text:
+#     streets = json.loads(streets.text)
 
 def add_zakaz(client):
 
@@ -288,10 +288,10 @@ def select_district(*args):
     command["1"] = {'commandName': "Садоводческий коллектив"}
     for cx, l in enumerate(districts):
         t += str(cx + 2) + '. ' + l[0]  + '\n'
-        command[str(cx + 2)] = {'district': l[0] ,
+        command[str(cx + 2)] = {'district': l['name'] ,
                                 # 'cost_of_delivery': districts.get(l[2])['cost_of_delivery'],
                                 # 'free': districts.get(l[2])['free'],
-                                'driver': l[1],
+                                'driver': l['driver'],
                                 }
     t += '0. Назад.' + '\n'
     client.size_Menu = cx + 2
@@ -539,8 +539,8 @@ def replay_cart(*args):
             Code1С = pos['code1C']
             nomenklatura = pos['name']
             psn = get_position_by_code1C(Code1С)
-            summa = psn[2] * pos[3]
-            client.add_pos(position_id=pos[0],code1C=Code1С, position=nomenklatura, count=pos[3], summa=summa)
+            summa = psn[2] * pos['price']
+            client.add_pos(position_id=pos['id'],code1C=Code1С, position=nomenklatura, count=pos[3], summa=summa)
             message += f'{cx}. {nomenklatura} цена: {psn[2]} в количестве: {pos[3]} штук на сумму: {summa} \n'
     else:
         message = 'Последний заказ в базе не найден.'
@@ -714,16 +714,16 @@ class ClienOchag():
         return 'Заказ принят..'
 
     def last_cart(self):
-        # sql = "select position_id, quantity, price, amount from documents_tabluarorders where order_id = (SELECT id FROM documents_order where client_id=?)"
-        # sql = "select position_id, quantity, price, amount from documents_tabluarorders where order_id = (SELECT id FROM documents_order where client_id=? order by date desc limit 1)"
         sql = "select position_id, (select name from common_positions where common_positions.id=position_id) position,(select code1C from common_positions where common_positions.id=position_id) code1C,quantity, price, amount from documents_tabluarorders where order_id = (SELECT id FROM documents_order where client_id=? order by date desc limit 1)"
         cursor.execute(sql, [(self.pk)])
         l = []
         for row in cursor.fetchall():
             l.append(row)
-        return l
-
-
+        # return l
+        lastcart = requests.get('https://almaz-water.herokuapp.com/api/get_last_order/'+ self.id)
+        if lastcart.text:
+            lastcart = json.loads(lastcart.text)
+        return lastcart
 
 class WABot():
     def __init__(self, jsonM, clients, conn):

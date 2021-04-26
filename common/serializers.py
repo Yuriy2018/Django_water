@@ -43,6 +43,7 @@ class StreetsListSerializer(serializers.ModelSerializer):
 
 
 class TabularOrdersListSerializer(serializers.ModelSerializer):
+    position_name = serializers.SlugRelatedField(slug_field='name', read_only=True)
     class Meta:
         model = TabluarOrders
         fields = '__all__'
