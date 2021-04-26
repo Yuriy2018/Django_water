@@ -534,7 +534,7 @@ def replay_cart(*args):
     if last_cart:
         cx = 0
         message = 'В корзину добавлен:\n'
-        for pos in last_cart:
+        for pos in last_cart.get('tabulars'):
             cx +=1
             Code1С = pos['code1C']
             nomenklatura = pos['name']
@@ -714,11 +714,11 @@ class ClienOchag():
         return 'Заказ принят..'
 
     def last_cart(self):
-        sql = "select position_id, (select name from common_positions where common_positions.id=position_id) position,(select code1C from common_positions where common_positions.id=position_id) code1C,quantity, price, amount from documents_tabluarorders where order_id = (SELECT id FROM documents_order where client_id=? order by date desc limit 1)"
-        cursor.execute(sql, [(self.pk)])
-        l = []
-        for row in cursor.fetchall():
-            l.append(row)
+        # sql = "select position_id, (select name from common_positions where common_positions.id=position_id) position,(select code1C from common_positions where common_positions.id=position_id) code1C,quantity, price, amount from documents_tabluarorders where order_id = (SELECT id FROM documents_order where client_id=? order by date desc limit 1)"
+        # cursor.execute(sql, [(self.pk)])
+        # l = []
+        # for row in cursor.fetchall():
+        #     l.append(row)
         # return l
         lastcart = requests.get('https://almaz-water.herokuapp.com/api/get_last_order/'+ self.id)
         if lastcart.text:

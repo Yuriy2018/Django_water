@@ -18,10 +18,16 @@ class ClientsListSerializer(serializers.ModelSerializer):
 
 class DeleviryDistrictsListSerializer(serializers.ModelSerializer):
     driver = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    driver_data = serializers.SerializerMethodField('get_driver_data')
 
     class Meta:
         model = DeleviryDistricts
         fields = '__all__'
+
+    def get_driver_data(self, DeleviryDistricts):
+        return {'name': DeleviryDistricts.driver.name,
+                # 'code1C': DeleviryDistricts.driver.code1C,
+                'id': DeleviryDistricts.driver.id, }
 
 
 class DriversListSerializer(serializers.ModelSerializer):
@@ -43,10 +49,17 @@ class StreetsListSerializer(serializers.ModelSerializer):
 
 
 class TabularOrdersListSerializer(serializers.ModelSerializer):
-    position_name = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    position_data = serializers.SerializerMethodField('get_position_data')
     class Meta:
         model = TabluarOrders
         fields = '__all__'
+        # fields = ('order', 'position', 'price', 'quantity', 'amount', 'position_data')
+
+    def get_position_data(self,tabuluarorders):
+        return {'name' : tabuluarorders.position.name,
+                'code1C': tabuluarorders.position.code1C,
+                'id': tabuluarorders.position.id,}
+
 
 
 class OrdersListSerializer(serializers.ModelSerializer):
