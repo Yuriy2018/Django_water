@@ -23,8 +23,11 @@ class ClientView(APIView):
 
     def get(self, request, number):
         clients = Client.objects.filter(phone_number=number).first()
-        serializer = ClientsListSerializer(clients)
-        return Response(serializer.data)
+        if clients:
+            serializer = ClientsListSerializer(clients)
+            return Response(serializer.data)
+        # else:
+        #     return Response([])
 
 
 class GardensView(APIView):
