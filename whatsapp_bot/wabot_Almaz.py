@@ -18,19 +18,37 @@ import calendar
 
 # from interaction1C import  add_client_1c, get_last_zakaz_1c
 
+api_url = 'http://127.0.0.1:8000'
+
 APIUrl = 'https://api.green-api.com/waInstance7402/'
 token = '0bbcb29ff60098202ffbb07df051131f21d2234d12c22c4ad4'
 
 stringForImput = ['НАЧАТЬ', 'ЗАКАЗ', 'ЗАКАЗАТЬ', 'ORDER', 'ZAKAZ']
 
 def add_client(data):
+    headers = {
+        'Content-Type': 'application/json'
+    }
 
     address = data.street + 'д. ' + data.number_home
-    # Вставляем данные в таблицу
-    sql = '''INSERT INTO common_client ('name','phone_number','address') VALUES (?, ?, ?)'''
-    cursor.execute(sql, (data.name, data.id, address))
-    conn.commit()
-    return 'успех'
+
+    payload = {
+        "name": data.name,
+        "phone_number": data.id,
+        "address": address,
+    }
+    response = requests.request("POST", api_url + '/api/add_client/', headers=headers, data=json.dumps(payload))
+
+    client_data = json.loads(response.text)
+
+    return client_data.get('id')
+
+    # print(response.text)
+    # # Вставляем данные в таблицу
+    # sql = '''INSERT INTO common_client ('name','phone_number','address') VALUES (?, ?, ?)'''
+    # cursor.execute(sql, (data.name, data.id, address))
+    # conn.commit()
+    # return 'успех'
 
 
 
@@ -41,10 +59,13 @@ def get_amount(client):
     return sum
 
 def get_client(number):
-    sql = "SELECT * FROM common_client WHERE phone_number=?"
-    cursor.execute(sql, [(number)])
-    for row in cursor.fetchall():
-        return row
+    client = requests.get(api_url + '/api/get_client/'+number+'/')
+    if client.text:
+        return json.loads(client.text)
+    # sql = "SELECT * FROM common_client WHERE phone_number=?"
+    # cursor.execute(sql, [(number)])
+    # for row in cursor.fetchall():
+    #     return row
 
 def read_sql(sql):
     path = 'DataAddress\settings.xls'
@@ -54,20 +75,20 @@ def read_sql(sql):
         l.append(row)
     return l
 
-positions_alt = read_sql("select * from common_positions")
-positions = requests.get('https://almaz-water.herokuapp.com/api/positions/')
+# positions_alt = read_sql("select * from common_positions")
+positions = requests.get(api_url + '/api/positions/')
 if positions.text:
     positions = json.loads(positions.text)
 
 # gardens = read_sql("select * from common_gardens")
-gardens = requests.get('https://almaz-water.herokuapp.com/api/gardens/')
+gardens = requests.get(api_url + '/api/gardens/')
 
 # dist_coef = read_sql("select * from common_gardens")
 
 # districtsSP = read_sql(3)
 
 # districts_alt = read_sql("select del.name as district, dri.name as driver from common_delevirydistricts del left join common_driver dri ON del.driver_id = dri.id")
-districts = requests.get('https://almaz-water.herokuapp.com/api/districts/')
+districts = requests.get(api_url + '/api/districts/')
 if districts.text:
     districts = json.loads(districts.text)
 
@@ -78,25 +99,49 @@ if districts.text:
 
 def add_zakaz(client):
 
-    number = read_sql('select  id from documents_order order by  number DESC limit 1')
-    if number[0]:
-        cur_number = number[0][0] + 1
-    else:
-        cur_number = 1
-    date = DT.datetime.now()
-    client_id = client.id
-    amount = get_amount(client)
-    # Вставляем данные в заказ
-    sql = '''INSERT INTO documents_order ('number','date','client_id', 'amount') VALUES (?, ?, ?, ?)'''
-    result1 = cursor.execute(sql, (cur_number, date, client.pk, amount))
-    conn.commit()
-
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    tabulars = []
+    summadoc = 0
     for row in client.cart:
-        sql = '''INSERT INTO documents_tabluarorders ('order_id','position_id','quantity', 'price', 'amount') VALUES (?, ?, ?, ?, ?)'''
-        price = row.get('summa') / row.get('count')
-        cursor.execute(sql, (cur_number, row.get('position_id'), row.get('count'), price, row.get('summa')))
-        conn.commit()
-        time.sleep(1)
+        summadoc += row['summa']
+        d = {
+            "price": row['summa']/row['count'],
+            "quantity": row['count'],
+            "amount": row['summa'],
+            "order": 1,
+            "position": row['position_id']
+        }
+        tabulars.append(d)
+
+    payload = {
+        "client": client.pk,
+        "amount": summadoc,
+        "tabulars": tabulars,
+    }
+
+    response = requests.request("POST", api_url +'/api/add_order/', headers=headers, data=json.dumps(payload))
+
+    # number = read_sql('select  id from documents_order order by  number DESC limit 1')
+    # if number[0]:
+    #     cur_number = number[0][0] + 1
+    # else:
+    #     cur_number = 1
+    # date = DT.datetime.now()
+    # client_id = client.id
+    # amount = get_amount(client)
+    # # Вставляем данные в заказ
+    # sql = '''INSERT INTO documents_order ('number','date','client_id', 'amount') VALUES (?, ?, ?, ?)'''
+    # result1 = cursor.execute(sql, (cur_number, date, client.pk, amount))
+    # conn.commit()
+    #
+    # for row in client.cart:
+    #     sql = '''INSERT INTO documents_tabluarorders ('order_id','position_id','quantity', 'price', 'amount') VALUES (?, ?, ?, ?, ?)'''
+    #     price = row.get('summa') / row.get('count')
+    #     cursor.execute(sql, (cur_number, row.get('position_id'), row.get('count'), price, row.get('summa')))
+    #     conn.commit()
+    #     time.sleep(1)
 
     return 'успех'
 
@@ -287,7 +332,7 @@ def select_district(*args):
     t += str(1) + '. ' + "Садоводческий коллектив" + '\n'
     command["1"] = {'commandName': "Садоводческий коллектив"}
     for cx, l in enumerate(districts):
-        t += str(cx + 2) + '. ' + l[0]  + '\n'
+        t += str(cx + 2) + '. ' + l['name']  + '\n'
         command[str(cx + 2)] = {'district': l['name'] ,
                                 # 'cost_of_delivery': districts.get(l[2])['cost_of_delivery'],
                                 # 'free': districts.get(l[2])['free'],
@@ -340,7 +385,7 @@ def specify_number_apart(*args):
     self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
     if text != '0':
         client.number_apart = text
-    add_client(client)
+    client.pk = add_client(client)
     return create_order(*args)
 
 def get_address(*args):
@@ -372,7 +417,7 @@ def get_count(*args):
 
     client.steps.append(['get_count', pos, add_pos])
     client.size_Menu = 0
-    string = 'Укажите количество для позиции: "' + pos[3] +'"\n'
+    string = 'Укажите количество для позиции: "' + pos['name'] +'"\n'
     return self.send_message(id, string)
 
 def select_pos(*args):
@@ -389,7 +434,7 @@ def add_pos(*args):
     self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
     count = int(text)
     pos = client.steps[-1][1]
-    position_id, code1C, nomenklatura, price = pos[0], pos[1], pos[3], pos[2]
+    position_id, code1C, nomenklatura, price = pos['id'], pos['code1C'], pos['name'], pos['price']
     summa = int(price) * int(count)
     client.add_pos(position_id, code1C, nomenklatura, count, summa)
     client.steps.append(['add_pos', client.steps[-1][1], successMenu])
@@ -536,12 +581,12 @@ def replay_cart(*args):
         message = 'В корзину добавлен:\n'
         for pos in last_cart.get('tabulars'):
             cx +=1
-            Code1С = pos['code1C']
-            nomenklatura = pos['name']
+            Code1С = pos['position_data']['code1C']
+            nomenklatura = pos['position_data']['name']
             psn = get_position_by_code1C(Code1С)
-            summa = psn[2] * pos['price']
-            client.add_pos(position_id=pos['id'],code1C=Code1С, position=nomenklatura, count=pos[3], summa=summa)
-            message += f'{cx}. {nomenklatura} цена: {psn[2]} в количестве: {pos[3]} штук на сумму: {summa} \n'
+            summa = pos['quantity'] * psn['price']
+            client.add_pos(position_id=pos['position_data']['id'],code1C=Code1С, position=nomenklatura, count=pos['quantity'], summa=summa)
+            message += f'{cx}. {nomenklatura} цена: {psn["price"]} в количестве: {pos["quantity"]} штук на сумму: {summa} \n'
     else:
         message = 'Последний заказ в базе не найден.'
 
@@ -607,12 +652,12 @@ class ClienOchag():
         self.id = id
         dataclient = get_client(id)
         if dataclient:
-            self.pk = dataclient[0]
+            self.pk = dataclient['id']
             self.lastcart = self.last_cart()
-            self.name = dataclient[1]
-            self.Code1C =  dataclient[5]
+            self.name = dataclient['name']
+            self.Code1C =  dataclient['code1C']
         else:
-            self.lastcart, self.name, self.UID, self.Code1C = None,'','',''
+            self.lastcart, self.name, self.pk, self.Code1C = None,'','',''
         # self.number = transform_number(id)
         self.type = ''
         self.company = ''
@@ -720,7 +765,7 @@ class ClienOchag():
         # for row in cursor.fetchall():
         #     l.append(row)
         # return l
-        lastcart = requests.get('https://almaz-water.herokuapp.com/api/get_last_order/'+ self.id)
+        lastcart = requests.get(api_url+'/api/get_last_order/'+ self.id)
         if lastcart.text:
             lastcart = json.loads(lastcart.text)
         return lastcart

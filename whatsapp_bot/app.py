@@ -84,20 +84,22 @@ def primera():
     # send_text(token,'77071392125','Start')
     reset_calls(token)
     clients = {}
-    # commands = ['ZAKAZ']#, '1', '2', 'Sonne', 'Ivan', '987456', '73', 'Вавилова', '7', '61']#, '1', '3']#, '3','Вавилова','1','25','0']
+    commands = ['ZAKAZ']#, '1', '2', 'Sonne', 'Ivan', '987456', '73', 'Вавилова', '7', '61']#, '1', '3']#, '3','Вавилова','1','25','0']
+    number_client = '77071392132'
     # cx_test = len(commands)
-    # for c in commands:
-    #       print('Command:',c)
-    #       ll = [{'from':'77071392111',
-    #              'id':'1165',
-    #              'text':{'body':c}}]
-    #       ntfc =  {'messages':ll}
-    #       bot = WABot(ntfc, clients, conn)
-    #       bot.processing(True)
-    #       time.sleep(1)
+    for c in commands:
+          print('Command:',c)
+          Body = {'typeWebhook': 'incomingMessageReceived',
+                  'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'},
+                  'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89',
+                  'senderData': {'chatId': number_client+'@c.us', 'sender': '77071392125@c.us', 'senderName': 'Юрич'},
+                  'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
+          bot = WABot(Body, clients, conn)
+          bot.processing(True)
+          time.sleep(1)
     while True:
         c = input()
-        Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': '77071392125@c.us', 'sender': '77071392125@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
+        Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
         bot = WABot(Body, clients, conn)
         bot.processing(True)
 

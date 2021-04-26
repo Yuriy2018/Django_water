@@ -79,16 +79,41 @@ class OrderView(APIView):
 
 class OrderCreateView(APIView):
 
-    def get(self, request, number):
-        orders = Order.objects.filter(client__phone_number=number).order_by('-date').first()
+    def get(self, request):
+        orders = Order.objects.all().first()
         if not orders:
             return Response([])
 
         serializer = OrdersListSerializer(orders)
         return Response(serializer.data)
 
+    def post(self, request):
+        order = OrderCreateSerializer(data=request.data)
+        if order.is_valid():
+            order.save()
+            table = request.data.get('tabulars')
+            id_order = order.data.get('id')
+            for row in table:
+                row['order'] = id_order
+            tabluars = TabluarOrdersCreateSerializer(data=table, many=True)
+            if tabluars.is_valid():
+                tabluars.save()
+                # order.save()
+                # if bool(tabluars.data):
+                # order = Order.objects.get(id=id_order)
+                # if order:
+                #     order.save()
+        return Response(status=201)
 
 class TabuluarCreateView(APIView):
+
+    def get(self, request):
+        orders = TabluarOrders.objects.first()
+        if not orders:
+            return Response([])
+
+        serializer = TabluarOrdersCreateSerializer(orders)
+        return Response(serializer.data)
 
     def post(self, request):
         tabluars = TabluarOrdersCreateSerializer(data=request.data, many=True)
@@ -99,15 +124,17 @@ class TabuluarCreateView(APIView):
                 order = Order.objects.get(id=id_order)
                 if order:
                     order.save()
-        return Response(status=201, data=tabluars.data)
+        return Response(status=201, data=order.id)
 
-class OrdersListView(APIView):
-
-    def post(self, request):
-        order = OrdersListSerializer(data=request.data)
-        if order.is_valid():
-            order.save()
-        return Response(status=201)
+# class OrdersListView(APIView):
+#
+#     def get(self, request, number):
+#         orders = Order.objects.filter(client__phone_number=number).order_by('-date').first()
+#         if not orders:
+#             return Response([])
+#
+#         serializer = OrdersListSerializer(orders)
+#         return Response(serializer.data)
 
 class Orders1cListView(APIView):
 
@@ -125,7 +152,7 @@ class ClientCreateView(APIView):
         client = ClientsListSerializer(data=request.data)
         if client.is_valid():
             client.save()
-        return Response(status=201)
+        return Response(status=201, data=client.data)
 
 
 def index(request):
