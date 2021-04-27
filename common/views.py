@@ -150,6 +150,13 @@ class Orders1cListView(APIView):
         serializer = OrdersList1сSerializer(orders, many=True)
         return Response(serializer.data)
 
+    def post(self, request):
+        for value in request.data:
+            Order.objects.filter(id=value['order_id']).update(number1С=value['number1C'])
+        return Response(status=201,data='success')
+            # ord = Order.objects.filter(id=value['order_id']).get()
+
+
 class ClientCreateView(APIView):
 
     def post(self, request):
