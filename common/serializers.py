@@ -70,6 +70,22 @@ class OrdersListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class OrdersList1сSerializer(serializers.ModelSerializer):
+    client_data = serializers.SerializerMethodField('get_client_data')
+    tabulars = TabularOrdersListSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = '__all__'
+
+    def get_client_data(self,order):
+        return {'name' : order.client.name,
+                'code1C': order.client.code1C,
+                'phone_number': order.client.phone_number,
+                'address': order.client.address,
+                'id': order.client.id,}
+
+
 class OrderCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order

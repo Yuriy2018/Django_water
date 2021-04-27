@@ -5,7 +5,8 @@ from rest_framework.views import APIView
 
 from .serializers import PositionsListSerializer, DriversListSerializer, \
     ClientsListSerializer, GardensListSerializer, DeleviryDistrictsListSerializer, StreetsListSerializer, \
-    OrdersListSerializer, TabularOrdersListSerializer, OrderCreateSerializer , TabluarOrdersCreateSerializer
+    OrdersListSerializer, TabularOrdersListSerializer, OrderCreateSerializer, TabluarOrdersCreateSerializer, \
+    OrdersList1сSerializer
 
 from common.models import Client, Positions, Gardens, DeleviryDistricts, Streets
 from documents.models import Order, TabluarOrders
@@ -146,7 +147,7 @@ class Orders1cListView(APIView):
         if not orders:
             return Response([])
 
-        serializer = OrdersListSerializer(orders, many=True)
+        serializer = OrdersList1сSerializer(orders, many=True)
         return Response(serializer.data)
 
 class ClientCreateView(APIView):
