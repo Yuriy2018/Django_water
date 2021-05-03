@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+
+<html lang="ru-ru" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <title>Добавить Заказ | Административный сайт Django</title>
+  <link rel="stylesheet" type="text/css" href="/static/admin/css/base.css">
+
+  <link rel="stylesheet" type="text/css" href="/static/admin/css/nav_sidebar.css">
+  <script src="/static/admin/js/nav_sidebar.js" defer></script>
+
+  <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css">
+
+
+  <script src="/jsi18n/"></script>
+  <script src="/static/admin/js/vendor/jquery/jquery.js"></script>
+  <script src="/static/admin/js/calendar.js"></script>
+  <script src="/static/admin/js/jquery.init.js"></script>
+  <script src="/static/admin/js/admin/DateTimeShortcuts.js"></script>
+  <script src="/static/admin/js/core.js"></script>
+  <script src="/static/admin/js/inlines.js"></script>
+  <script src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+  <script src="/static/admin/js/actions.js"></script>
+  <script src="/static/admin/js/urlify.js"></script>
+  <script src="/static/admin/js/prepopulate.js"></script>
+  <script src="/static/admin/js/vendor/xregexp/xregexp.js"></script>
+
+
+  <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/static/admin/css/responsive.css">
+
+
+  <meta name="robots" content="NONE,NOARCHIVE">
+</head>
+
+
+<body class=" app-documents model-order change-form"
+      data-admin-utc-offset="18000">
+<!-- Container -->
+<div id="container">
+
+
+  <!-- Header -->
+  <div id="header">
+    <div id="branding">
+
+      <h1 id="site-name"><a href="/">Онлайн заказ воды</a></h1>
+
+    </div>
+
+
+    <div id="user-tools">
+
+      Добро пожаловать,
+      <strong>yuriy</strong>.
+
+
+      <a href="/">Открыть сайт</a> /
+
+
+      <a href="/password_change/">Изменить пароль</a> /
+
+      <a href="/logout/">Выйти</a>
+
+    </div>
+
+
+  </div>
+  <!-- END Header -->
+
+  <div class="breadcrumbs">
+    <a href="/">Начало</a>
+    &rsaquo; <a href="/documents/">Документы</a>
+    &rsaquo; <a href="/documents/order/">Заказы</a>
+    &rsaquo; Добавить Заказ
+  </div>
+
+
+  <div class="main shifted" id="main">
+
+
+    <button class="sticky toggle-nav-sidebar" id="toggle-nav-sidebar" aria-label="Переключить навигацию"></button>
+    <nav class="sticky" id="nav-sidebar">
+
+
+      <div class="app-documents module current-app">
+        <table>
+          <caption>
+            <a href="/documents/" class="section" title="Модели в приложении Документы">Документы</a>
+          </caption>
+
+          <tr class="model-order current-model">
+
+            <th scope="row"><a href="/documents/order/" aria-current="page">Заказы</a></th>
+
+
+            <td><a href="/documents/order/add/" class="addlink">Добавить</a></td>
+
+
+          </tr>
+
+          <tr class="model-tabluarorders">
+
+            <th scope="row"><a href="/documents/tabluarorders/">Строки табличной части заказа</a></th>
+
+
+            <td><a href="/documents/tabluarorders/add/" class="addlink">Добавить</a></td>
+
+
+          </tr>
+
+        </table>
+      </div>
+
+      <div class="app-auth module">
+        <table>
+          <caption>
+            <a href="/auth/" class="section" title="Модели в приложении Пользователи и группы">Пользователи и группы</a>
+          </caption>
+
+          <tr class="model-group">
+
+            <th scope="row"><a href="/auth/group/">Группы</a></th>
+
+
+            <td><a href="/auth/group/add/" class="addlink">Добавить</a></td>
+
+
+          </tr>
+
+          <tr class="model-user">
+
+            <th scope="row"><a href="/auth/user/">Пользователи</a></th>
+
+
+            <td><a href="/auth/user/add/" class="addlink">Добавить</a></td>
+
+
+          </tr>
+
+        </table>
+      </div>
+
+      <div class="app-common module">
+        <table>
+          <caption>
+            <a href="/common/" class="section" title="Модели в приложении Справочники">Справочники</a>
+          </caption>
+
+          <tr class="model-driver">
+
+            <th scope="row"><a href="/common/driver/">Водители</a></th>
+
+
+            <td><a href="/common/driver/add/" class="addlink">Добавить</a></td>
+
+
+          </tr>
+
+          <tr class="model-client">
+
+            <th scope="row"><a href="/common/client/">Клиенты</a></th>
+
+
+            <td><a href="/common/client/add/" class="addlink">Добавить</a></td>
+
+
+          </tr>
+
+          <tr class="model-positions">
+
+            <th scope="row"><a href="/common/positions/">Номенклатура</a></th>
+
+
+            <td><a href="/common/positions/add/" class="addlink">Добавить</a></td>
+
+
+          </tr>
+
+          <tr class="model-district">
+
+            <th scope="row"><a href="/common/district/">Районы</a></th>
+
+
+            <td><a href="/common/district/add/" class="addlink">Добавить</a></td>
+
+
+          </tr>
+
+        </table>
+      </div>
+
+
+    </nav>
+
+
+    <div class="content">
+
+
+      <!-- Content -->
+      <div id="content" class="colM">
+
+        <h1>Добавить Заказ</h1>
+
+        <div id="content-main">
+
+
+          <form method="post" id="order_form" novalidate><input type="hidden" name="csrfmiddlewaretoken"
+                                                                value="B6UcKiS6OyEcNr1JtoHFG2qQPeYno5BRgW9rLWQm7xKmaqIx4KOCynnst1H9eNxV">
+            <div>
+
+
+              <fieldset class="module aligned ">
+
+
+                <div class="form-row field-number field-number1С">
+
+
+                  <div class="fieldBox field-number">
+
+
+                    <label for="id_number">Номер:</label>
+
+                    <input type="number" name="number" class="vIntegerField" id="id_number">
+
+
+                  </div>
+
+                  <div class="fieldBox field-number1С">
+
+
+                    <label class="inline" for="id_number1С">Номер 1С:</label>
+
+                    <input type="text" name="number1С" class="vTextField" maxlength="11" id="id_number1С">
+
+
+                  </div>
+
+                </div>
+
+                <div class="form-row field-date">
+
+
+                  <div>
+
+
+                    <label class="required" for="id_date_0">Дата от:</label>
+
+                    <p class="datetime">
+                      Дата: <input type="text" name="date_0" value="03.05.2021" class="vDateField" size="10" required
+                                   id="id_date_0">
+
+                      <br>
+                      Время: <input type="text" name="date_1" value="14:09:25" class="vTimeField" size="8" required
+                                    id="id_date_1">
+
+
+                    </p><input type="hidden" name="initial-date_0" value="03.05.2021" id="initial-id_date_0"><input
+                      type="hidden" name="initial-date_1" value="14:09:25" id="initial-id_date_1">
+
+
+                  </div>
+
+                </div>
+
+                <div class="form-row field-client">
+
+
+                  <div>
+
+
+                    <label class="required" for="id_client">Контрагент:</label>
+
+                    <div class="related-widget-wrapper">
+                      <select name="client" required id="id_client">
+                        <option value="" selected>---------</option>
+
+                        <option value="10">11 мкр 14 Салон красоты Голливуд 14</option>
+
+                        <option value="11">11мкр 100 дом Ансар 100</option>
+
+                        <option value="12">11мкр ЖК Фаворит Маг Даби</option>
+
+                        <option value="13">Шайкенова 11 Глобал Трейд</option>
+
+                        <option value="14">11 мкр 23/21</option>
+
+                        <option value="15">11 мкр 77/2</option>
+
+                        <option value="16">Аз наурыз 16/22</option>
+
+                        <option value="17">Шайкенова 13/34</option>
+
+
+                      </select>
+
+                      <a class="related-widget-wrapper-link change-related" id="change_id_client"
+                         data-href-template="/common/client/__fk__/change/?_to_field=id&amp;_popup=1"
+                         title="Изменить выбранный объект типа " Клиент""><img
+                        src="/static/admin/img/icon-changelink.svg" alt="Изменить"></a><a
+                        class="related-widget-wrapper-link add-related" id="add_id_client"
+                        href="/common/client/add/?_to_field=id&amp;_popup=1"
+                        title="Добавить ещё один объект типа " Клиент""><img src="/static/admin/img/icon-addlink.svg"
+                                                                             alt="Добавить"></a><a
+                        class="related-widget-wrapper-link delete-related" id="delete_id_client"
+                        data-href-template="/common/client/__fk__/delete/?_to_field=id&amp;_popup=1"
+                        title="Удалить выбранный объект типа " Клиент""><img src="/static/admin/img/icon-deletelink.svg"
+                                                                             alt="Удалить"></a>
+
+                    </div>
+
+
+                  </div>
+
+                </div>
+
+                <div class="form-row field-amount">
+
+
+                  <div>
+
+
+                    <label class="required" for="id_amount">Сумма:</label>
+
+                    <input type="number" name="amount" value="0" class="vIntegerField" required id="id_amount">
+
+
+                  </div>
+
+                </div>
+
+              </fieldset>
+
+
+              <div class="js-inline-admin-formset inline-group" id="tabulars-group"
+                   data-inline-type="tabular"
+                   data-inline-formset="{&quot;name&quot;: &quot;#tabulars&quot;, &quot;options&quot;: {&quot;prefix&quot;: &quot;tabulars&quot;, &quot;addText&quot;: &quot;\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u0435\u0449\u0435 \u043e\u0434\u0438\u043d \u0421\u0442\u0440\u043e\u043a\u0430 \u0442\u0430\u0431\u043b\u0438\u0447\u043d\u0430\u044f \u0447\u0430\u0441\u0442\u044c&quot;, &quot;deleteText&quot;: &quot;\u0423\u0434\u0430\u043b\u0438\u0442\u044c&quot;}}">
+                <div class="tabular inline-related last-related">
+                  <input type="hidden" name="tabulars-TOTAL_FORMS" value="0" id="id_tabulars-TOTAL_FORMS"><input
+                    type="hidden" name="tabulars-INITIAL_FORMS" value="0" id="id_tabulars-INITIAL_FORMS"><input
+                    type="hidden" name="tabulars-MIN_NUM_FORMS" value="0" id="id_tabulars-MIN_NUM_FORMS"><input
+                    type="hidden" name="tabulars-MAX_NUM_FORMS" value="1000" id="id_tabulars-MAX_NUM_FORMS">
+                  <fieldset class="module ">
+
+                    <h2>Табличная часть</h2>
+
+
+                    <table>
+                      <thead>
+                      <tr>
+                        <th class="original"></th>
+
+
+                        <th class="column-position required">Номенклатура
+
+                        </th>
+
+
+                        <th class="column-price required">Цена
+
+                        </th>
+
+
+                        <th class="column-quantity required">Количество
+
+                        </th>
+
+
+                        <th class="column-amount required">Сумма
+
+                        </th>
+
+
+                        <th>Удалить?</th>
+                      </tr>
+                      </thead>
+
+                      <tbody>
+
+
+                      <tr class="form-row  empty-form"
+                          id="tabulars-empty">
+                        <td class="original">
+
+                          <input type="hidden" name="tabulars-__prefix__-id" id="id_tabulars-__prefix__-id">
+                          <input type="hidden" name="tabulars-__prefix__-order" id="id_tabulars-__prefix__-order">
+
+                        </td>
+
+
+                        <td class="field-position">
+
+
+                          <div class="related-widget-wrapper">
+                            <select name="tabulars-__prefix__-position" id="id_tabulars-__prefix__-position">
+                              <option value="" selected>---------</option>
+
+                              <option value="1">Вода питьевая 19л одноразовая</option>
+
+                              <option value="2">Ручной насос Дольфин Юниор</option>
+
+                              <option value="3">Пэт бутыль 19 л голубая без ручки</option>
+
+                            </select>
+
+                            <a class="related-widget-wrapper-link change-related"
+                               id="change_id_tabulars-__prefix__-position"
+                               data-href-template="/common/positions/__fk__/change/?_to_field=id&amp;_popup=1"
+                               title="Изменить выбранный объект типа " Номенклатура""><img
+                              src="/static/admin/img/icon-changelink.svg" alt="Изменить"></a><a
+                              class="related-widget-wrapper-link add-related" id="add_id_tabulars-__prefix__-position"
+                              href="/common/positions/add/?_to_field=id&amp;_popup=1"
+                              title="Добавить ещё один объект типа " Номенклатура""><img
+                              src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a><a
+                              class="related-widget-wrapper-link delete-related"
+                              id="delete_id_tabulars-__prefix__-position"
+                              data-href-template="/common/positions/__fk__/delete/?_to_field=id&amp;_popup=1"
+                              title="Удалить выбранный объект типа " Номенклатура""><img
+                              src="/static/admin/img/icon-deletelink.svg" alt="Удалить"></a>
+
+                          </div>
+
+                        </td>
+
+
+                        <td class="field-price">
+
+
+                          <input type="number" name="tabulars-__prefix__-price" value="0" class="vIntegerField"
+                                 id="id_tabulars-__prefix__-price">
+
+                        </td>
+
+
+                        <td class="field-quantity">
+
+
+                          <input type="number" name="tabulars-__prefix__-quantity" value="0" class="vIntegerField"
+                                 id="id_tabulars-__prefix__-quantity">
+
+                        </td>
+
+
+                        <td class="field-amount">
+
+
+                          <input type="number" name="tabulars-__prefix__-amount" value="0" class="vIntegerField"
+                                 id="id_tabulars-__prefix__-amount">
+
+                        </td>
+
+
+                        <td class="delete"></td>
+
+                      </tr>
+
+                      </tbody>
+                    </table>
+                  </fieldset>
+                </div>
+              </div>
+
+
+              <div class="submit-row">
+
+                <input type="submit" value="Сохранить" class="default" name="_save">
+
+
+                <input type="submit" value="Сохранить и добавить другой объект" name="_addanother">
+                <input type="submit" value="Сохранить и продолжить редактирование" name="_continue">
+
+
+              </div>
+
+
+              <script id="django-admin-form-add-constants"
+                      src="/static/admin/js/change_form.js"
+
+                      data-model-name="order"
+
+                      async>
+              </script>
+
+
+              <script id="django-admin-prepopulated-fields-constants"
+                      src="/static/admin/js/prepopulate_init.js"
+                      data-prepopulated-fields="[]">
+              </script>
+
+
+            </div>
+          </form>
+        </div>
+
+
+        <br class="clear">
+      </div>
+      <!-- END Content -->
+      <div id="footer"></div>
+    </div>
+  </div>
+</div>
+<!-- END Container -->
+</body>
+</html>

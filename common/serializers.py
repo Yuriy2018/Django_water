@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Client, Driver, Positions
+from .models import Client, Driver, Positions, District
 from documents.models import Order, TabluarOrders
 
 
@@ -16,18 +16,18 @@ class ClientsListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# class DeleviryDistrictsListSerializer(serializers.ModelSerializer):
-#     driver = serializers.SlugRelatedField(slug_field='name', read_only=True)
-#     driver_data = serializers.SerializerMethodField('get_driver_data')
-#
-#     class Meta:
-#         model = DeleviryDistricts
-#         fields = '__all__'
-#
-#     def get_driver_data(self, DeleviryDistricts):
-#         return {'name': DeleviryDistricts.driver.name,
-#                 # 'code1C': DeleviryDistricts.driver.code1C,
-#                 'id': DeleviryDistricts.driver.id, }
+class DistrictListSerializer(serializers.ModelSerializer):
+    # driver = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    # driver_data = serializers.SerializerMethodField('get_driver_data')
+
+    class Meta:
+        model = District
+        fields = '__all__'
+
+    # def get_driver_data(self, DeleviryDistricts):
+    #     return {'name': DeleviryDistricts.driver.name,
+    #             # 'code1C': DeleviryDistricts.driver.code1C,
+    #             'id': DeleviryDistricts.driver.id, }
 
 
 class DriversListSerializer(serializers.ModelSerializer):
@@ -97,3 +97,7 @@ class TabluarOrdersCreateSerializer(serializers.ModelSerializer):
         model = TabluarOrders
         fields = '__all__'
 
+class ClientCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = '__all__'

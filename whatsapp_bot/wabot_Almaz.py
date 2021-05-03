@@ -18,8 +18,8 @@ import calendar
 
 # from interaction1C import  add_client_1c, get_last_zakaz_1c
 
-# api_url = 'http://127.0.0.1:8000'
-api_url = 'https://almaz-water.herokuapp.com'
+api_url = 'http://127.0.0.1:8000'
+# api_url = 'https://almaz-water.herokuapp.com'
 
 APIUrl = 'https://api.green-api.com/waInstance7402/'
 token = '0bbcb29ff60098202ffbb07df051131f21d2234d12c22c4ad4'
@@ -31,11 +31,16 @@ def add_client(data):
         'Content-Type': 'application/json'
     }
 
-    address = data.street + 'д. ' + data.number_home
+    address = data.street + ' д. ' + data.number_home
 
     payload = {
         "name": data.name,
         "phone_number": data.id,
+        # "district": data.district['name'],
+        "district_id": data.district['id'],
+        "street": data.street,
+        "number_home": data.number_home,
+        "number_apart": data.number_apart,
         "address": address,
     }
     response = requests.request("POST", api_url + '/api/add_client/', headers=headers, data=json.dumps(payload))
@@ -287,7 +292,7 @@ def registration_client(*args):
 
 def privatePerson(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
-    client.type = 'private'
+    client.type = 'private_person'
     client.size_Menu = 0
     client.steps.append(['privatePerson', '', get_name_client])
     return self.send_message(id, 'Укажите Ваше Имя:\n')
@@ -334,10 +339,10 @@ def select_district(*args):
     command["1"] = {'commandName': "Садоводческий коллектив"}
     for cx, l in enumerate(districts):
         t += str(cx + 2) + '. ' + l['name']  + '\n'
-        command[str(cx + 2)] = {'district': l['name'] ,
+        command[str(cx + 2)] = {'name': l['name'] ,
                                 # 'cost_of_delivery': districts.get(l[2])['cost_of_delivery'],
                                 # 'free': districts.get(l[2])['free'],
-                                'driver': l['driver'],
+                                'id': l['id'],
                                 }
     t += '0. Назад.' + '\n'
     client.size_Menu = cx + 2

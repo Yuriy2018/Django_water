@@ -105,7 +105,7 @@ class Client(models.Model):
     address = models.CharField(max_length=100, verbose_name='Адрес', blank=True, null=True)
     object_name = models.CharField(max_length=100, verbose_name='Название объекта', blank=True, null=True)
     phone_number = models.CharField(max_length=30, verbose_name='Телефон', null=True)
-    driver = models.ForeignKey(Driver, verbose_name='Водитель', on_delete=models.PROTECT, null=True)
+    driver = models.ForeignKey(Driver, verbose_name='Водитель', on_delete=models.PROTECT, null=True, blank=True)
     # first_name = models.CharField(max_length=50, verbose_name='Имя', blank=True, null=True)
     # last_name = models.CharField(max_length=50, verbose_name='Фамилия', blank=True, null=True)
     type_client = models.CharField(max_length=15, verbose_name='Тип клиента', default=CLIENT_TYPE_PERSON, null=True,

@@ -85,7 +85,7 @@ def primera():
     reset_calls(token)
     clients = {}
     commands = ['ZAKAZ']#, '1', '2', 'Sonne', 'Ivan', '987456', '73', 'Вавилова', '7', '61']#, '1', '3']#, '3','Вавилова','1','25','0']
-    number_client = '77071392132'
+    number_client = '77071392170'
     # cx_test = len(commands)
     for c in commands:
           print('Command:',c)
