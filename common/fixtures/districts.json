@@ -1,1 +1,0 @@
-[{"model": "common.delevirydistricts", "pk": 1, "fields": {"name": "11-й микрорайон", "driver": 1}}, {"model": "common.delevirydistricts", "pk": 2, "fields": {"name": "12-й микрорайон", "driver": 1}}, {"model": "common.delevirydistricts", "pk": 3, "fields": {"name": "41-й разъезд", "driver": 2}}]

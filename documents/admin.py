@@ -30,7 +30,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 class TabluarOrderAdmin(admin.ModelAdmin):
     # list_display = ('id', 'time_seconds',)
-    list_display = ('order', 'position', 'price', 'quantity', 'amount')
+    list_display = ('id','order', 'position', 'price', 'quantity', 'amount')
     list_display_links = ('order', 'position', 'price', 'quantity', 'amount')
 
 admin.site.register(Order, OrderAdmin)

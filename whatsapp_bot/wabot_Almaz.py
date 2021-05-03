@@ -498,9 +498,10 @@ def info(*args):
 def start(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
     if client.lastcart:
-        menu = grandMenu
+        menu = grandMenu2 if client.cart else grandMenu
     else:
-        menu = grandMenunoReplay
+        menu = grandMenunoReplay2 if client.cart else grandMenunoReplay
+
 
     client.steps.append(['make_an_order', 'backup',menu])
     client.size_Menu = len(menu)
@@ -606,7 +607,18 @@ grandMenu   = {'1': {'name': 'Сделать заказ', 'method': make_an_orde
                '4': {'name': 'Корзина', 'method': show_cart},
                }
 
+grandMenu2   = {'1': {'name': 'Дополнить заказ', 'method': make_an_order},  # меню выбора самого элемента
+               '2': {'name': 'Информация для клиентов', 'method': info},
+               '3': {'name': 'Повторить последний заказ', 'method': replay_cart},
+               '4': {'name': 'Корзина', 'method': show_cart},
+               }
+
 grandMenunoReplay   = {'1': {'name': 'Сделать заказ', 'method': make_an_order},  # меню выбора самого элемента
+               '2': {'name': 'Информация для клиентов', 'method': info},
+               '3': {'name': 'Корзина', 'method': show_cart},
+               }
+
+grandMenunoReplay2   = {'1': {'name': 'Дополнить заказ', 'method': make_an_order},  # меню выбора самого элемента
                '2': {'name': 'Информация для клиентов', 'method': info},
                '3': {'name': 'Корзина', 'method': show_cart},
                }
@@ -636,9 +648,10 @@ info_clientM = {'1': {'name': 'Контактные данные', 'method': con
                     }
 
 successMenu = {'1': {'name': 'Завершить заказ', 'method': delevery_time},
+               '2': {'name': 'Дополнить заказ', 'method': make_an_order},
                # После успешного добавление позиции в корзину
-               '2': {'name': 'Главное меню', 'method': start},
-               '3': {'name': 'Корзина', 'method': show_cart},
+               '3': {'name': 'Главное меню', 'method': start},
+               '4': {'name': 'Корзина', 'method': show_cart},
                '0': {'name': 'Назад', 'method': back_menu},
                }
 

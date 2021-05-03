@@ -4,11 +4,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .serializers import PositionsListSerializer, DriversListSerializer, \
-    ClientsListSerializer, GardensListSerializer, DeleviryDistrictsListSerializer, StreetsListSerializer, \
+    ClientsListSerializer,\
     OrdersListSerializer, TabularOrdersListSerializer, OrderCreateSerializer, TabluarOrdersCreateSerializer, \
     OrdersList1сSerializer
 
-from common.models import Client, Positions, Gardens, DeleviryDistricts, Streets
+from common.models import Client, Positions
 from documents.models import Order, TabluarOrders
 
 

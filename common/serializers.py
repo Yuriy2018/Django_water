@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Client, DeleviryDistricts, Driver, Gardens, Streets, Positions
+from .models import Client, Driver, Positions
 from documents.models import Order, TabluarOrders
 
 
@@ -16,18 +16,18 @@ class ClientsListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class DeleviryDistrictsListSerializer(serializers.ModelSerializer):
-    driver = serializers.SlugRelatedField(slug_field='name', read_only=True)
-    driver_data = serializers.SerializerMethodField('get_driver_data')
-
-    class Meta:
-        model = DeleviryDistricts
-        fields = '__all__'
-
-    def get_driver_data(self, DeleviryDistricts):
-        return {'name': DeleviryDistricts.driver.name,
-                # 'code1C': DeleviryDistricts.driver.code1C,
-                'id': DeleviryDistricts.driver.id, }
+# class DeleviryDistrictsListSerializer(serializers.ModelSerializer):
+#     driver = serializers.SlugRelatedField(slug_field='name', read_only=True)
+#     driver_data = serializers.SerializerMethodField('get_driver_data')
+#
+#     class Meta:
+#         model = DeleviryDistricts
+#         fields = '__all__'
+#
+#     def get_driver_data(self, DeleviryDistricts):
+#         return {'name': DeleviryDistricts.driver.name,
+#                 # 'code1C': DeleviryDistricts.driver.code1C,
+#                 'id': DeleviryDistricts.driver.id, }
 
 
 class DriversListSerializer(serializers.ModelSerializer):
@@ -36,16 +36,16 @@ class DriversListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class GardensListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Gardens
-        fields = '__all__'
+# class GardensListSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Gardens
+#         fields = '__all__'
 
 
-class StreetsListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Streets
-        fields = '__all__'
+# class StreetsListSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Streets
+#         fields = '__all__'
 
 
 class TabularOrdersListSerializer(serializers.ModelSerializer):
