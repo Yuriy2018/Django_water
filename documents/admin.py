@@ -8,7 +8,10 @@ class TabluarOrdersInline(admin.TabularInline):
     verbose_name_plural = 'Табличная часть'
     extra = 0
 
+
 class OrderAdmin(admin.ModelAdmin):
+
+    change_form_template = 'admin.html'
 
     def date_wiev(self, obj):
         return obj.date.strftime("%d.%m.%Y %H:%M:%S")
@@ -21,6 +24,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display_links = ('number', 'date_wiev', 'client', 'amount', 'number1С')
     inlines = [TabluarOrdersInline, ]
     fields = [('number', 'number1С'),'date', 'client', 'amount']
+    autocomplete_fields = ['client',]
 
 
     def get_readonly_fields(self, request, obj=None):

@@ -1,0 +1,18 @@
+{% extends 'admin/change_form.html' %}
+{% load static %}
+
+{% block admin_change_form_document_ready %}
+{{ block.super }}
+<script src="{% static 'documents/js/formset_handlers.js' %}"></script>
+{#<script>#}
+{#console.log('Hello!')#}
+{#(function($) {#}
+{#    $('#id_tabulars-0-position').on('change', function (){#}
+{#        console.log('change!')#}
+{#        $('#id_tabulars-0-price').val('555')#}
+{#        $('#id_tabulars-0-quantity').val('1')#}
+{#        $('#id_tabulars-0-amount').val('5000')#}
+{#    })#}
+{# })(django.jQuery);#}
+{#</script>#}
+{% endblock %}
