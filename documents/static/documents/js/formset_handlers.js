@@ -39,6 +39,18 @@ request.addEventListener("readystatechange", () => {
 return posits;
 }
 
+function get_amount(){
+
+    var sum_dok = 0;
+    //document.querySelectorAll('.field-amount input')[1].value
+    document.querySelectorAll('.field-amount input').forEach(function (el, i) {
+        if (el.name != 'amount'){
+            sum_dok += Number(el.value)
+        }
+        })
+    console.log(sum_dok)
+    document.querySelector('div #id_amount').value = sum_dok
+}
 
 console.log('sd')
 
@@ -55,7 +67,7 @@ function add_event(index_row){
         document.querySelector("#id_tabulars-"+index_row+"-price").value = price
         document.querySelector("#id_tabulars-"+index_row+"-quantity").value = quantity
         document.querySelector("#id_tabulars-"+index_row+"-amount").value = price * quantity;
-
+        get_amount();
 
     });
 
@@ -71,7 +83,7 @@ function add_event(index_row){
         //document.querySelector("#id_tabulars-"+index_row+"-price").value = price
         //document.querySelector("#id_tabulars-"+index_row+"-quantity").value = quantity
         document.querySelector("#id_tabulars-"+index_row+"-amount").value = price * quantity;
-
+        get_amount();
 
     });
 
@@ -81,9 +93,11 @@ function add_event(index_row){
         price = document.querySelector("#id_tabulars-"+index_row+"-price").value
         quantity = document.querySelector("#id_tabulars-"+index_row+"-quantity").value
         document.querySelector("#id_tabulars-"+index_row+"-amount").value = price * quantity;
-
+        get_amount();
 
     });
+
+    get_amount();
 }
 
 (function($) {
@@ -98,6 +112,7 @@ function add_event(index_row){
 
     $(document).on('formset:removed', function(event, $row, formsetName) {
         // Row removed
+        get_amount();
         console.log('Row removed!')
     });
 })(django.jQuery);
