@@ -4,11 +4,35 @@ from django.utils import timezone
 from django.db.models import Sum
 
 class Order(models.Model):
+
+    PAY_TYPE_CASH = 'cash'
+    PAY_TYPE_CASHLESS = 'cashless'
+
+    PAY_TYPE_CHOICES = (
+        (PAY_TYPE_CASH, 'Наличный'),
+        (PAY_TYPE_CASHLESS, 'Перечисление')
+    )
+
+    STATUS_TYPE_NEW = 'new'
+    STATUS_TYPE_COMPLETED = 'completed'
+    STATUS_TYPE_postponed = 'postponed'
+
+    STATUS_TYPE_CHOICES = (
+        (STATUS_TYPE_NEW, 'Новый'),
+        (STATUS_TYPE_COMPLETED, 'Завершен'),
+        (STATUS_TYPE_postponed, 'Отложен')
+    )
+
     number = models.IntegerField(verbose_name='Номер', null=True, blank=True)
     number1С = models.CharField(max_length=11, verbose_name='Номер 1С', null=True, blank=True)
     date = models.DateTimeField(verbose_name='Дата от', default=timezone.now)
     client = models.ForeignKey('common.Client',verbose_name='Контрагент', on_delete=models.PROTECT)
     amount = models.IntegerField(verbose_name='Сумма', default=0)
+    type_play = models.CharField(max_length=15, verbose_name='Тип оплаты', default=PAY_TYPE_CASH, null=True,
+                                 choices=PAY_TYPE_CHOICES)
+    status_order = models.CharField(max_length=15, verbose_name='Статус заказа', default=STATUS_TYPE_NEW, null=True,
+                                 choices=STATUS_TYPE_CHOICES)
+
 
 
     class Meta:

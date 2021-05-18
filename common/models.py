@@ -94,7 +94,7 @@ class Client(models.Model):
 
     PAY_TYPE_CHOICES = (
         (PAY_TYPE_CASH, 'Наличный'),
-        (PAY_TYPE_CASHLESS, 'Безналичный')
+        (PAY_TYPE_CASHLESS, 'Перечисление')
     )
 
     name = models.CharField(max_length=100, verbose_name='Наименование')
