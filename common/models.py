@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 # class Type_address(models.Model):
 #     name = models.CharField(max_length=50, verbose_name='Тип', unique=True)
@@ -25,6 +25,10 @@ from django.db import models
 
 class Driver(models.Model):
     name = models.CharField(max_length=50, verbose_name='Водитель', unique=True)
+    user = models.OneToOneField(User, verbose_name="Пользователь", on_delete=models.PROTECT, null=True, blank=True)
+    email = models.CharField(max_length=50, verbose_name='Почта', null=True, blank=True)
+    login = models.CharField(max_length=50, verbose_name='Логин', null=True, blank=True)
+    password = models.CharField(max_length=50, verbose_name='Пароль', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Водитель'
@@ -32,6 +36,30 @@ class Driver(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+
+        if self.email and self.login and self.password:
+            old = Driver.objects.filter(pk=self.pk).first()
+            if old:
+                if old.email != self.email or old.login != self.login or old.password != self.password:
+                    if self.user:
+                        self.user.email = self.email
+                        self.user.username = self.login
+                        self.user.last_name = self.login
+                        self.user.set_password(self.password)
+                        self.user.save()
+                        # message = f'У Вас сменился логин или пароль:\nЛогин: {self.login}\nПароль: {self.password}'
+                        # send_mail('Доступ к системе отчётов', message=message, from_email='ari@auto-door.kz',
+                        #           recipient_list=[self.email])
+            if not self.user:
+                self.user = User.objects.create_user(username=self.login, password=self.password, email=self.email)
+                # message = f'Доброго времени суток! Вам предоставлен доступ к системе отчётов, учёта и регистрации заявок компании "Imperial Group".\
+                #         \n\nСсылка для входа: http://ari.auto-door.kz/' \
+                #           f'\n\nЛогин: {self.login}\n\nПароль: {self.password}\n\n\nС уважением, ARI.'
+                # send_mail('Доступ к системе отчётов', message=message, from_email='ari@auto-door.kz',
+                #           recipient_list=[self.email])
+        super().save(*args, **kwargs)
 
 class District(models.Model):
     name = models.CharField(max_length=50, verbose_name='Район', unique=True)
@@ -42,30 +70,6 @@ class District(models.Model):
 
     def __str__(self):
         return self.name
-
-# class DeleviryDistricts(models.Model):
-#     name = models.CharField(max_length=50, verbose_name='Район', unique=True)
-#     driver = models.ForeignKey(Driver, verbose_name='Водитель', on_delete=models.PROTECT)
-#
-#     class Meta:
-#         verbose_name = 'Район доставки'
-#         verbose_name_plural = 'Районы доставки'
-#
-#     def __str__(self):
-#         return self.name
-
-
-# class Streets(models.Model):
-#     name = models.CharField(max_length=50, verbose_name='Улица', unique=True)
-#     type = models.ForeignKey(Type_address, verbose_name='Тип', on_delete=models.PROTECT)
-#
-#     class Meta:
-#         verbose_name = 'Улица'
-#         verbose_name_plural = 'Улицы'
-#
-#     def __str__(self):
-#         return self.name
-
 
 class Positions(models.Model):
     name = models.CharField(max_length=50, verbose_name='Наименование', unique=True)

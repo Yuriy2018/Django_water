@@ -32,10 +32,13 @@ class PositionsAdmin(admin.ModelAdmin):
 #     list_display = ('name', 'driver')
 #     list_filter = ('driver',)
 
+class DriverAdmin(admin.ModelAdmin):
+    list_display = ('name', 'user', 'login', 'email')
+    list_display_links = ('name', 'user', 'login', 'email')
 
 
 admin.site.register(Positions, PositionsAdmin)
-admin.site.register(Driver)
+admin.site.register(Driver, DriverAdmin)
 admin.site.register(District, DistrictAdmin)
 # admin.site.register(Gardens)
 # admin.site.register(Streets)

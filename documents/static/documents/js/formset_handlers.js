@@ -41,16 +41,16 @@ return posits;
 
 function get_amount(){
 
+    if (document.querySelector("#order_form > div > fieldset > div.form-row.field-amount > div > div") != null) {
     var sum_dok = 0;
-    //document.querySelectorAll('.field-amount input')[1].value
     document.querySelectorAll('.field-amount input').forEach(function (el, i) {
         if (el.name != 'amount'){
             sum_dok += Number(el.value)
         }
         })
     console.log(sum_dok)
-    document.querySelector('div #id_amount').value = sum_dok
-}
+    document.querySelector("#order_form > div > fieldset > div.form-row.field-amount > div > div").innerText = sum_dok
+}};
 
 console.log('sd')
 
@@ -80,8 +80,6 @@ function add_event(index_row){
         if (quantity == '0') {
             quantity = 1;
         }
-        //document.querySelector("#id_tabulars-"+index_row+"-price").value = price
-        //document.querySelector("#id_tabulars-"+index_row+"-quantity").value = quantity
         document.querySelector("#id_tabulars-"+index_row+"-amount").value = price * quantity;
         get_amount();
 
@@ -118,8 +116,62 @@ function add_event(index_row){
 })(django.jQuery);
 
 
+function add_event_for_start(){
+
+    document.querySelectorAll('.field-position .related-widget-wrapper select').forEach(function (el, i) {
+        if (el.name == 'tabulars-__prefix__-position') {
+            console.log('Continue')
+
+        } else  {
+
+
+    let elem = document.querySelector('#id_' + el.name);
+
+    elem.addEventListener('change', function() {
+        number_pos = elem.value
+        price = posits[number_pos-1].price
+        quantity = document.querySelector("#id_" + el.name.replace('position','quantity')).value
+        if (quantity == '0') {
+            quantity = 1;
+        }
+        document.querySelector("#id_" + el.name.replace('position','price')).value = price
+        document.querySelector("#id_" + el.name.replace('position','quantity')).value = quantity
+        document.querySelector("#id_" + el.name.replace('position','amount')).value = price * quantity;
+        get_amount();
+
+    });
+
+    let elem_price = document.querySelector("#id_" + el.name.replace('position','price'));
+
+    elem_price.addEventListener('change', function() {
+        number_pos = elem.value
+        price = document.querySelector("#id_" + el.name.replace('position','price')).value
+        quantity = document.querySelector("#id_" + el.name.replace('position','quantity')).value
+        if (quantity == '0') {
+            quantity = 1;
+        }
+        document.querySelector("#id_" + el.name.replace('position','amount')).value = price * quantity;
+        get_amount();
+
+    });
+
+    let elem_quantuty = document.querySelector("#id_" + el.name.replace('position','quantity'));
+
+    elem_quantuty.addEventListener('change', function() {
+        price = document.querySelector("#id_" + el.name.replace('position','price')).value
+        quantity = document.querySelector("#id_" + el.name.replace('position','quantity')).value
+        document.querySelector("#id_" + el.name.replace('position','amount')).value = price * quantity;
+        get_amount();
+
+    });
+
+    get_amount();
+}    } )};
+
+
 document.addEventListener("DOMContentLoaded", function() {
 
 	positions_M = get_ajax()
+    add_event_for_start()
     console.log("Загружена страница!")
 });
