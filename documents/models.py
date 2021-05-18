@@ -47,6 +47,7 @@ class Order(models.Model):
     def save(self, *args, **kwargs):
         if not self.number:
             self.number = self.get_next_number()
+        super().save(*args, **kwargs)
         self.amount = self.get_amount()
         super().save(*args, **kwargs)
 

@@ -54,6 +54,14 @@ class DistrictsView(APIView):
 #         serializer = StreetsListSerializer(streets, many=True)
 #         return Response(serializer.data)
 
+class ProccesOrder(APIView):
+
+    def post(self, request):
+        # order = OrdersListSerializer(data=request.data)
+        # if order.is_valid():
+        #     order.save()
+        print('api/procces_order')
+        return Response(status=201)
 
 class OrderView(APIView):
 

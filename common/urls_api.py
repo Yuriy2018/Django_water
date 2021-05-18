@@ -11,6 +11,6 @@ urlpatterns = [
     path('get_orders1c/', views.Orders1cListView.as_view()),
     path('get_client/<str:number>/', views.ClientView.as_view()),
     path('add_client/', views.ClientCreateView.as_view()),
-    path('add_order/', views.OrderCreateView.as_view()),
+    path('procces_order/', views.ProccesOrder.as_view()),
     # path('add_tabluars/', views.TabuluarCreateView.as_view()),
     ]

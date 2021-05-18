@@ -1,0 +1,29 @@
+.table-wrap{
+	overflow-x:auto;
+}
+table.table-1 {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+}
+table.table-1 tr {
+	background-color: #f8f8f8;
+}
+table.table-1 th, table.table-1 td {
+	text-align: left;
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+table.table-1 th{
+	font-weight: bold;
+}
+
+.hidden{
+    display: none;
+}
+
+.right{
+    margin-right: 5px;
+
+}

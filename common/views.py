@@ -8,7 +8,7 @@ from common.forms import LoginForm
 from common.models import Client, Positions, Driver
 from documents.models import Order, TabluarOrders
 
-
+from django.db.models import Q
 
 def index(request):
     return HttpResponse("Hello, World!")
@@ -40,18 +40,24 @@ def user_login(request):
             return redirect('/admin/')
 
         if request.user.is_authenticated:
-            return report_view(request)
-        else:
+        #     return report_view(request)
+        # else:
             return render(request, 'login.html', {'form': LoginForm()})
 
     return render(request, 'login.html', {'form': LoginForm()})
 
+
+
 @login_required()
 def report_view(request):
     if request.user:
-        driver = Driver.objects.filter(user=request.user)
+        driver = Driver.objects.filter(user=request.user).first()
         if driver:
-            return HttpResponse("Тут должна быть информация для водителей!")
+            orders = get_data_for_report(driver)
+            data = {'driver': driver,
+                    'orders' : orders}
+            return render (request,'report_for_driver.html', data)
+            # return HttpResponse("Тут должна быть информация для водителей!")
         else:
             return redirect('/admin/')
     # send_email_task()
@@ -75,3 +81,21 @@ def report_view(request):
     # branches = customer.get_branches()
     # return render(request, 'report.html',
     #               context={'random': random, 'branchs': branches, 'dates': dates, 'cities': cities})
+
+def get_data_for_report(driver):
+    orders = Order.objects.filter(Q(client__driver=driver) | ~Q(status_order= Order.STATUS_TYPE_COMPLETED))
+    data = []
+
+    for inx, order in enumerate(orders):
+        f = {'date':order.date,
+         'client': order.client,
+         'phone_number': order.client.phone_number,
+         'type_pay': order.get_type_play_display(),
+         'order': order,
+         'order_id': order.id,
+         'index': inx,
+         'id_checkbox': 'id_checkbox_' + str(inx),
+         'id_button': 'id_button_' + str(inx)
+         }
+        data.append(f)
+    return data

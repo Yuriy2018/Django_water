@@ -7,7 +7,7 @@ from common.views import user_login, report_view
 urlpatterns = [
     # url(r'^$', views.index, name='index'),
     path('', user_login, name='user_login'),
-    path('report/', report_view),
+    path('report/', report_view, name = 'report'),
     path('admin/', admin.site.urls),
 
     # path('documents/order/add/', admin.site.urls),
