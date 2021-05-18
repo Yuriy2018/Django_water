@@ -117,6 +117,7 @@ class Client(models.Model):
     type_play = models.CharField(max_length=15, verbose_name='Тип оплаты', default=PAY_TYPE_CASH, null=True,
                                  choices=PAY_TYPE_CHOICES)
     code1C = models.CharField(max_length=11, verbose_name='Код 1С', blank=True, null=True)
+    comment = models.CharField(max_length=250, verbose_name='Комментарий', null=True, blank=True)
 
 
 

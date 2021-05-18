@@ -23,7 +23,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('number', 'date_wiev', 'client', 'status_order', 'amount', 'number1С')
     list_display_links = ('number', 'date_wiev', 'client', 'status_order', 'amount', 'number1С')
     inlines = [TabluarOrdersInline, ]
-    fields = [('number', 'number1С'),'date', 'status_order','client', 'type_play', 'amount']
+    fields = [('number', 'number1С'),'date', 'status_order','client', 'type_play', 'amount', 'comment']
     autocomplete_fields = ['client',]
 
 

@@ -33,6 +33,8 @@ class Order(models.Model):
     status_order = models.CharField(max_length=15, verbose_name='Статус заказа', default=STATUS_TYPE_NEW, null=True,
                                  choices=STATUS_TYPE_CHOICES)
 
+    comment = models.CharField(max_length=250, verbose_name='Комментарий', null=True, blank=True)
+
 
 
     class Meta:
