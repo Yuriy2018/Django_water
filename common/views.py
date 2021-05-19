@@ -35,9 +35,9 @@ def user_login(request):
                 # messages.error(request, 'Неверный логин или пароль!')
                 return render(request, 'login.html', {'form': LoginForm()})
     else:
-        if request.user.is_superuser:
-            login(request, request.user)
-            return redirect('/admin/')
+        # if request.user.is_superuser:
+        #     login(request, request.user)
+        #     return redirect('/admin/')
 
         if request.user.is_authenticated:
         #     return report_view(request)

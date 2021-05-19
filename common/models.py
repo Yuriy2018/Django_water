@@ -39,7 +39,7 @@ class Driver(models.Model):
 
     def save(self, *args, **kwargs):
 
-        if self.email and self.login and self.password:
+        if self.email or (self.login and self.password):
             old = Driver.objects.filter(pk=self.pk).first()
             if old:
                 if old.email != self.email or old.login != self.login or old.password != self.password:
