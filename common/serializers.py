@@ -40,17 +40,6 @@ class DriversListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# class GardensListSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Gardens
-#         fields = '__all__'
-
-
-# class StreetsListSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Streets
-#         fields = '__all__'
-
 
 class TabularOrdersListSerializer(serializers.ModelSerializer):
     position_data = serializers.SerializerMethodField('get_position_data')

@@ -74,6 +74,27 @@ class Autorization(APIView):
         print('api/procces_order')
         return Response(status=200)
 
+class OrdersForDriver(APIView):
+
+    def get(self, request, id):
+        driver = Driver.objects.get(id=id)
+        if not driver:
+            return Response({"info":"Driver not fount"},status=200)
+
+        orders = Order.objects.filter(client__driver=driver).order_by('-date')
+        if not orders:
+            return Response({"info":"Orders not fount"},status=200)
+
+        serializer = OrdersListSerializer(orders,many=True)
+        serializer = OrdersList1сSerializer(orders,many=True)
+        return Response(serializer.data)
+
+    # def post(self, request):
+    #     order = OrdersListSerializer(data=request.data)
+    #     if order.is_valid():
+    #         order.save()
+    #     return Response(status=201)
+
 class ProccesOrder(APIView):
 
     def post(self, request):
