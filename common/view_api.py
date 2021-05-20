@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 
 from rest_framework.response import Response
@@ -81,11 +82,11 @@ class OrdersForDriver(APIView):
         if not driver:
             return Response({"info":"Driver not fount"},status=200)
 
-        orders = Order.objects.filter(client__driver=driver).order_by('-date')
+        orders = Order.objects.filter(Q(client__driver=driver) | ~Q(status_order= Order.STATUS_TYPE_COMPLETED)).order_by('-date')
         if not orders:
             return Response({"info":"Orders not fount"},status=200)
 
-        serializer = OrdersListSerializer(orders,many=True)
+        # serializer = OrdersListSerializer(orders,many=True)
         serializer = OrdersList1сSerializer(orders,many=True)
         return Response(serializer.data)
 
