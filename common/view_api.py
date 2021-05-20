@@ -82,7 +82,7 @@ class OrdersForDriver(APIView):
         if not driver:
             return Response({"info":"Driver not fount"},status=200)
 
-        orders = Order.objects.filter(Q(client__driver=driver[0]) | ~Q(status_order= Order.STATUS_TYPE_COMPLETED)).order_by('-date')
+        orders = Order.objects.filter(Q(client__driver=driver[0]) & ~Q(status_order= Order.STATUS_TYPE_COMPLETED)).order_by('-date')
         if not orders:
             return Response({"info":"Orders not fount"},status=200)
 
