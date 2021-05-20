@@ -6,9 +6,9 @@ from rest_framework.views import APIView
 from .serializers import PositionsListSerializer, DriversListSerializer, \
     ClientsListSerializer, \
     OrdersListSerializer, TabularOrdersListSerializer, OrderCreateSerializer, TabluarOrdersCreateSerializer, \
-    OrdersList1сSerializer, DistrictListSerializer, ClientCreateSerializer
+    OrdersList1сSerializer, DistrictListSerializer, ClientCreateSerializer, AuthSerialization
 
-from common.models import Client, Positions, District
+from common.models import Client, Positions, District, Driver
 from documents.models import Order, TabluarOrders
 
 
@@ -53,6 +53,26 @@ class DistrictsView(APIView):
 #
 #         serializer = StreetsListSerializer(streets, many=True)
 #         return Response(serializer.data)
+
+class Autorization(APIView):
+
+    def post(self, request):
+        data = AuthSerialization(data=request.data)
+        data_auth = data.initial_data
+        login = data_auth['login']
+        password = data_auth['password']
+        driver = Driver.objects.filter(login=login,password=password).first()
+        if driver:
+            return Response(data={"id_driver":driver.id},status=200)
+        else:
+            return Response(data={"id_driver":"none"},status=200)
+
+
+
+        # if order.is_valid():
+        #     order.save()
+        print('api/procces_order')
+        return Response(status=200)
 
 class ProccesOrder(APIView):
 

@@ -4,6 +4,10 @@ from .models import Client, Driver, Positions, District
 from documents.models import Order, TabluarOrders
 
 
+class AuthSerialization(serializers.Serializer):
+    login = serializers.CharField()
+    password = serializers.CharField()
+
 class PositionsListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Positions
