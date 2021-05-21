@@ -12,32 +12,34 @@
 </head>
 <body>
 {% csrf_token %}
-<div align="right"><a href="/">выйти</a></div>
+<div align="left"><a href="/">выйти</a></div>
   <h4>Путевой лист для водителя : {{ driver }}</h4>
 <div class="table-wrap">
 <table class="table-1">
 <tr>
   <th class="hidden">Уид заявки</th>
+  <th>Номер</th>
   <th>Дата заявки</th>
   <th>Клиент</th>
   <th>Телефон</th>
   <th>Тип оплаты</th>
-  <th>Доставлен</th>
-  <th>Отложен</th>
-  <th>Подтвердить</th>
+{#  <th>Доставлен</th>#}
+{#  <th>Отложен</th>#}
+{#  <th>Подтвердить</th>#}
 {#  <td></td>#}
 </tr>
 {% for order in orders %}
 {#   <h5>{{ order }}</h5>#}
   <tr>
   <td class="hidden">{{ order.order_id }}</td>
-  <td>{{ order.date }}</td>
-  <td>{{ order.client }}</td>
-  <td>{{ order.client.phone_number }}</td>
-  <td>{{ order.type_pay }}</td>
-  <td><input type="checkbox" class="delivered" id={{ order.id_checkbox }}></td>
-  <td><input type="checkbox" class="postponed"></td>
-  <td><button class="button" id={{ order.id_button }}>Подтвердить</button></td>
+    <td><a href={{ order.ref }}>{{ order.number }}</a></td>
+  <td><a href={{ order.ref }}>{{ order.date }}</a></td>
+  <td><a href={{ order.ref }}>{{ order.client }}</a></td>
+  <td><a href={{ order.ref }}>{{ order.client.phone_number }}</a></td>
+  <td><a href={{ order.ref }}>{{ order.type_pay }}</a></td>
+{#  <td><input type="checkbox" class="delivered" id={{ order.id_checkbox }}></td>#}
+{#  <td><input type="checkbox" class="postponed"></td>#}
+{#  <td><button class="button" id={{ order.id_button }}>Подтвердить</button></td>#}
   </tr>
   {% endfor %}
 </table>

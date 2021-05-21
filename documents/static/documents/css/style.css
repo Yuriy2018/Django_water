@@ -4,7 +4,7 @@
 table.table-1 {
     border-collapse: collapse;
     border-spacing: 0;
-    width: 100%;
+    width: 70%;
 }
 table.table-1 tr {
 	background-color: #f8f8f8;
@@ -26,4 +26,14 @@ table.table-1 th{
 .right{
     margin-right: 5px;
 
+}
+
+.for-table{
+    width: 50%;
+    /*color: #4ac1f7;*/
+}
+
+.form-control{
+    height: 20px;
+    width: 500px;
 }

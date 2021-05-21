@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect, render
 from rest_framework.response import Response
 
+from documents.forms import OrderForm
+
 from common.forms import LoginForm
 from common.models import Client, Positions, Driver
 from documents.models import Order, TabluarOrders
@@ -83,7 +85,8 @@ def report_view(request):
     #               context={'random': random, 'branchs': branches, 'dates': dates, 'cities': cities})
 
 def get_data_for_report(driver):
-    orders = Order.objects.filter(Q(client__driver=driver) | ~Q(status_order= Order.STATUS_TYPE_COMPLETED))
+    # orders = Order.objects.filter(Q(client__driver=driver) | ~Q(status_order= Order.STATUS_TYPE_COMPLETED))
+    orders = Order.objects.filter(client__driver=driver).exclude(status_order= Order.STATUS_TYPE_COMPLETED)
     data = []
 
     for inx, order in enumerate(orders):
@@ -93,9 +96,60 @@ def get_data_for_report(driver):
          'type_pay': order.get_type_play_display(),
          'order': order,
          'order_id': order.id,
+         'ref': "/order_driver/" + str(order.id) + '/',
+         'number': order.number,
          'index': inx,
          'id_checkbox': 'id_checkbox_' + str(inx),
          'id_button': 'id_button_' + str(inx)
          }
         data.append(f)
     return data
+
+def order_driver_view(request, id):
+    order = Order.objects.filter(pk=id).first()
+    form = OrderForm(instance=order)
+
+    tabulars = TabluarOrders.objects.filter(order_id=id)
+    tab_ls = []
+    for row in tabulars:
+        tab_ls.append({'position' : row.position,
+                       'price' : row.price,
+                       'quantity' : row.quantity,
+                       'amount' : row.amount})
+
+
+    data = {
+        'form':form,
+        'order_title' : "Заказ номер такой-то",
+        'number': order.number,
+        'order_id': order.id,
+        'client': order.client,
+        'comment': order.comment,
+        'phone': order.client.phone_number,
+        'amount': order.amount,
+        'type_pay': order.get_type_play_display(),
+        'date':  order.date.strftime("%d.%m.%Y %H:%M"),
+        'tabulars': tab_ls,
+    }
+
+    return render(request,'order_driver.html',data)
+
+def procces_order(request):
+    if request.method == 'POST':
+        param = request.POST
+        order = Order.objects.filter(id=param['order_id']).first()
+        order.comment = param['order_id']
+        order.returned_container = param['returned_container']
+        if param['status'] == 'delivered':
+            order.status_order = Order.STATUS_TYPE_COMPLETED
+        elif  param['status'] == 'postponed':
+            order.status_order = Order.STATUS_TYPE_postponed
+
+        order.save()
+
+        driver = Driver.objects.filter(user=request.user).first()
+        if driver:
+            orders = get_data_for_report(driver)
+            data = {'driver': driver,
+                    'orders': orders}
+            return render(request, 'report_for_driver.html', data)

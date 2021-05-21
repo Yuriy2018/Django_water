@@ -34,6 +34,7 @@ class Order(models.Model):
                                  choices=STATUS_TYPE_CHOICES)
 
     comment = models.CharField(max_length=250, verbose_name='Комментарий', null=True, blank=True)
+    returned_container = models.CharField(max_length=3, verbose_name='Возвращено бутылей', default=0, blank=True)
 
 
 

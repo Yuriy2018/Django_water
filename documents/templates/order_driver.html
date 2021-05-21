@@ -1,0 +1,70 @@
+{% load static %}
+{% load i18n %}
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title> Путевой лист</title>
+  {% block extra_css %} {% endblock %}
+
+</head>
+<body>
+{% csrf_token %}
+<a href="/report/">К списку</a>
+<form action="/procces_order/" method="post">
+    {% csrf_token %}
+{#    {{ form }}#}
+  <div align="center" class="title">
+  <h2>Заказ №{{ number }} от {{ date }}</h2>
+    <h3>Клиент: {{ client }}</h3>
+    <h3>телефон: {{ phone }}<br></h3>
+    <h3>Сумма: {{ amount }}<br></h3>
+    <h3>Тип оплаты: {{ type_pay }}<br></h3>
+  {{ form.comment }}
+  <input type="hidden" name="order_id" value={{ order_id }} />
+    <br>
+    <br>
+{#    {{ form.amount }}<br><br>#}
+    <div class="for-table">
+    <table class="table-1">
+<tr>
+  <th>Позиция</th>
+  <th>Цена</th>
+  <th>Кол-во</th>
+  <th>Сумма</th>
+</tr>
+    {% for row in tabulars %}
+    <tr>
+  <td>{{ row.position }}</td>
+  <td>{{ row.price }}</td>
+  <td>{{ row.quantity }}</td>
+  <td>{{ row.amount }}</td>
+  </tr>
+    {% endfor %}
+    </table>
+{#      <br>#}
+
+{#      <br>#}
+      <br>
+      <label for="tara">Возвращено бутылей:  </label>{{ form.returned_container }}<br>
+      <br>
+      <div>
+    <input type="radio" id="status_delivered"
+     name="status" value="delivered">
+    <label for="status_delivered">Доставлен</label>
+
+    <input type="radio" id="status_postponed"
+     name="status" value="postponed">
+    <label for="status_postponed">Отложен</label>
+  </div>
+      <br>
+    <input type="submit" value="Подтвердить">
+
+    </div>
+  </div>
+</form>
+{#<script register.js?{random} src="{% static 'documents/js/report.js' %}"></script>#}
+<link rel="stylesheet" type="text/css" href="{% static 'documents/css/style.css' %}">
+</body>
+</html>
