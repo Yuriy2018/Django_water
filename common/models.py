@@ -21,6 +21,7 @@ from django.contrib.auth.models import User
 #
 #     def __str__(self):
 #         return self.name
+from documents.models import Order
 
 
 class Driver(models.Model):
@@ -60,6 +61,9 @@ class Driver(models.Model):
                 # send_mail('Доступ к системе отчётов', message=message, from_email='ari@auto-door.kz',
                 #           recipient_list=[self.email])
         super().save(*args, **kwargs)
+
+    def get_open_orders(self):
+        return Order.objects.filter(client__driver=self).exclude(status_order= Order.STATUS_TYPE_COMPLETED)
 
 class District(models.Model):
     name = models.CharField(max_length=50, verbose_name='Район', unique=True)

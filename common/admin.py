@@ -33,8 +33,13 @@ class PositionsAdmin(admin.ModelAdmin):
 #     list_filter = ('driver',)
 
 class DriverAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user', 'login', 'email')
-    list_display_links = ('name', 'user', 'login', 'email')
+    list_display = ('name', 'Open_Order', 'user', 'login', 'email')
+    list_display_links = ('name', 'Open_Order', 'user', 'login', 'email')
+
+    def Open_Order(self, obj):
+        return len(obj.get_open_orders())
+
+    Open_Order.short_description = 'Открытые ордера'
 
 
 admin.site.register(Positions, PositionsAdmin)

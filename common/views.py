@@ -86,7 +86,8 @@ def report_view(request):
 
 def get_data_for_report(driver):
     # orders = Order.objects.filter(Q(client__driver=driver) | ~Q(status_order= Order.STATUS_TYPE_COMPLETED))
-    orders = Order.objects.filter(client__driver=driver).exclude(status_order= Order.STATUS_TYPE_COMPLETED)
+    # orders = Order.objects.filter(client__driver=driver).exclude(status_order= Order.STATUS_TYPE_COMPLETED)
+    orders = driver.get_open_orders()
     data = []
 
     for inx, order in enumerate(orders):

@@ -1,5 +1,6 @@
 var posits;
 var positions_M;
+var task = null;
 function get_ajax(){
 
 // Создаём объект класса XMLHttpRequest
@@ -105,6 +106,7 @@ function add_event(index_row){
             var row_ind = $row.prevObject.get()[0].previousElementSibling.rowIndex
             add_event(row_ind-1)
             console.log('Добавлена строка номер: ' + row_ind)
+            //someWork();
         }
     });
 
@@ -166,12 +168,31 @@ function add_event_for_start(){
     });
 
     get_amount();
-}    } )};
+}    } )
 
+
+};
+
+// function someWork() {
+//     task = null;
+//     let client = document.querySelector("#select2-id_client-container")
+//     alert(client.innerText);
+//     client.addEventListener('change', function() {
+//         alert(client.innerText);
+//
+//     });
+// }
 
 document.addEventListener("DOMContentLoaded", function() {
 
 	positions_M = get_ajax()
     add_event_for_start()
     console.log("Загружена страница!")
+    // if (task !== null) {
+    //     clearTimeout(task);
+    //     task = null;
+    // }
+    // Запускаем новый таймер
+    // task = setTimeout(someWork, 5000);
+
 });
