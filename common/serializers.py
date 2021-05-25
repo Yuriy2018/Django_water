@@ -94,3 +94,7 @@ class ClientCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
         fields = '__all__'
+
+
+class Client_name_Serialization(serializers.Serializer):
+    name = serializers.CharField()

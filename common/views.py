@@ -154,3 +154,5 @@ def procces_order(request):
             data = {'driver': driver,
                     'orders': orders}
             return render(request, 'report_for_driver.html', data)
+
+

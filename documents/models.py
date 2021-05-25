@@ -35,6 +35,8 @@ class Order(models.Model):
 
     comment = models.CharField(max_length=250, verbose_name='Комментарий', null=True, blank=True)
     returned_container = models.CharField(max_length=3, verbose_name='Возвращено бутылей', default=0, blank=True)
+    new_client = models.BooleanField(verbose_name='Новый клиент', default=False, blank=True)
+    create_bot = models.BooleanField(verbose_name='Чат-бот', default=False, blank=True)
 
 
 

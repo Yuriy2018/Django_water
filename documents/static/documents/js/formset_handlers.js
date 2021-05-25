@@ -1,6 +1,7 @@
 var posits;
 var positions_M;
 var task = null;
+const $ = django.jQuery;
 function get_ajax(){
 
 // Создаём объект класса XMLHttpRequest
@@ -173,26 +174,56 @@ function add_event_for_start(){
 
 };
 
-// function someWork() {
-//     task = null;
-//     let client = document.querySelector("#select2-id_client-container")
-//     alert(client.innerText);
-//     client.addEventListener('change', function() {
-//         alert(client.innerText);
-//
-//     });
-// }
+function someWork() {
+    task = null;
+
+    $('.admin-autocomplete').on('change',function () {
+
+       // client_str = document.querySelector("#id_client").innerText
+              // создаем AJAX-вызов
+    //     $.ajax('/get_driver_client/', {text : client_str}).done(function (result) {
+    //      // alert('Сработал обработчик на jquery!');
+    // })
+    // var client_str = '';
+    $.ajax({
+		url: '/api/get_driver_client/',
+		type: 'POST',
+		dataType: 'json',
+		data: {id: document.querySelector("#id_client").value},
+		success: function(data){
+			// alert(data);
+			let parent = document.querySelector('.field-client');
+			if (document.querySelector(".field-client p") == null) {
+                let p = document.createElement('p');
+                p.innerHTML = "<div class='textdriver' style='margin-left: 500px; margin-top: 5px; color: #5b80b2; font-size: medium'>" + "   " + data.data.text + "</div>";
+                parent.appendChild(p)
+            } else {
+			    document.querySelector(".field-client p .textdriver").innerText = data.data.text ;
+            }
+		    // $('#message').html(data);
+		}
+	});
+    //     var formData = $( this ).serialize();
+    //     $.post( "/api/get_driver_client/", formData, function( data ) { //  передаем и загружаем данные с сервера с помощью HTTP запроса методом POST
+	//       // $( "div" ).html( data ); // вставляем в элемент <div> данные, полученные от сервера
+    //         alert(data);
+	//     })
+    //
+    });
+
+}
 
 document.addEventListener("DOMContentLoaded", function() {
 
 	positions_M = get_ajax()
     add_event_for_start()
+    // $('')
     console.log("Загружена страница!")
-    // if (task !== null) {
-    //     clearTimeout(task);
-    //     task = null;
-    // }
+    if (task !== null) {
+        clearTimeout(task);
+        task = null;
+    }
     // Запускаем новый таймер
-    // task = setTimeout(someWork, 5000);
+    task = setTimeout(someWork, 2000);
 
 });

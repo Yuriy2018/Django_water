@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 
@@ -7,8 +8,9 @@ from rest_framework.views import APIView
 from .serializers import PositionsListSerializer, DriversListSerializer, \
     ClientsListSerializer, \
     OrdersListSerializer, TabularOrdersListSerializer, OrderCreateSerializer, TabluarOrdersCreateSerializer, \
-    OrdersList1сSerializer, DistrictListSerializer, ClientCreateSerializer, AuthSerialization
+    OrdersList1сSerializer, DistrictListSerializer, ClientCreateSerializer, AuthSerialization, Client_name_Serialization
 
+from django.views.decorators.csrf import csrf_exempt
 from common.models import Client, Positions, District, Driver
 from documents.models import Order, TabluarOrders
 
@@ -103,6 +105,40 @@ class ProccesOrder(APIView):
         # if order.is_valid():
         #     order.save()
         print('api/procces_order')
+        return Response(status=201)
+
+
+class Get_driver_order(APIView):
+
+    # def get(self, request, name):
+    #     data = Client_name_Serialization(data=request.data)
+    #     client = Client.objects.filter(name=name)
+    #     if client:
+    #         client = client.first()
+    #         driver = client.driver
+    #         open_orders =  len(driver.get_open_orders())
+    #         data = {'driver': driver,
+    #                 'open_orders': open_orders,
+    #                 }
+    #         return JsonResponse({'data': data})
+    #     # if order.is_valid():
+    #     #     order.save()
+    #     print('api/Get_driver_order')
+    #     return Response(status=201)
+    def post(self, request):
+        data = Client_name_Serialization(data=request.data)
+        client = Client.objects.filter(name=data.initial_data['name'])
+        if client:
+            client = client.first()
+            driver = client.driver
+            open_orders =  len(driver.get_open_orders())
+            data = {'driver': driver,
+                    'open_orders': open_orders,
+                    }
+            return JsonResponse({'data': data})
+        # if order.is_valid():
+        #     order.save()
+        print('api/Get_driver_order')
         return Response(status=201)
 
 class OrderView(APIView):
@@ -206,3 +242,31 @@ class ClientCreateView(APIView):
             client.save()
         return Response(status=201, data=client.data)
 
+
+@csrf_exempt
+def get_driver(request):
+    # data = Client_name_Serialization(data=request.data)
+    client = Client.objects.get(pk=request.POST['id'])
+    # if client:
+    # client = client.first()
+    driver = client.driver
+    open_orders = len(driver.get_open_orders())
+
+    if open_orders == 0:
+        text = driver.name + ' ' + "нет активных ордеров"
+    elif open_orders == 1:
+        text = driver.name + ' ' + str(open_orders) + " активный ордер"
+    elif open_orders == 2:
+        text = driver.name + ' ' + str(open_orders) + " активных ордера"
+    else:
+        text = driver.name + ' ' + str(open_orders) + " активных ордеров"
+
+    data = {'driver': driver.name,
+            'open_orders': open_orders,
+            'text': text,
+            }
+    return JsonResponse({'data': data})
+    # if order.is_valid():
+    #     order.save()
+    # print('api/Get_driver_order')
+    # return Response(status=201)
