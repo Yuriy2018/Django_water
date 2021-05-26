@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@6&^sb@dq(08^=powxb1d-@_3+@is@yzsp-7%zjdo_y*eckco4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -92,17 +92,19 @@ WSGI_APPLICATION = 'water.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'water',
-        'USER': 'water_user',
-        'PASSWORD': 'water_pass',
-        'HOST': '127.0.0.1',
-        'PORT': '5432'
+try:
+    from water.settings_local import *
+except:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'database',
+            'USER': 'hostman',
+            'PASSWORD': 'b7240b14',
+            'HOST': 'postgres-b6db.hostman.site',
+            'PORT': '5432'
+        }
     }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
