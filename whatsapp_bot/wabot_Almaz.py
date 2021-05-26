@@ -1,24 +1,17 @@
 # -*- coding: utf-8 -*-
 import json
-# from db_queries import get_client_address, get_client_name, add_line, transform_number, makes_initial_tables, makes_initial_tables_Pay, add_line_Orders, get_client_orders, get_address_coordinates, add_line_coordinates,makes_initial_tables_coordinates
 import time
 from builtins import range
 
 import requests
 from urllib import request
-# import xlrd
-# import pickle
-import sqlite3
-# conn = sqlite3.connect("C:\\Users\\Администратор\\PycharmProjects\\water\\db.sqlite3") # или :memory: чтобы сохранить в RAM
-conn = sqlite3.connect("/home/yuriy/projects/water/db.sqlite3") # или :memory: чтобы сохранить в RAM
-cursor = conn.cursor()
 
 import datetime as DT
 import calendar
 
-# from interaction1C import  add_client_1c, get_last_zakaz_1c
 
-api_url = 'http://127.0.0.1:8000'
+# api_url = 'http://127.0.0.1:8000'
+api_url = 'https://water.hostman.site'
 # api_url = 'https://almaz-water.herokuapp.com'
 
 APIUrl = 'https://api.green-api.com/waInstance7402/'
@@ -49,14 +42,6 @@ def add_client(data):
 
     return client_data.get('id')
 
-    # print(response.text)
-    # # Вставляем данные в таблицу
-    # sql = '''INSERT INTO common_client ('name','phone_number','address') VALUES (?, ?, ?)'''
-    # cursor.execute(sql, (data.name, data.id, address))
-    # conn.commit()
-    # return 'успех'
-
-
 def get_info_by_driver(client_id):
 
     if not client_id:
@@ -72,9 +57,10 @@ def get_info_by_driver(client_id):
     # response = requests.request("POST", api_url + '/api/get_driver_client/', headers=headers, data=payload)
     response = requests.request("POST", api_url + '/api/get_driver_client/', headers=headers, data=json.dumps(payload))
 
-    client_data = json.loads(response.text)
+    if response.ok:
+        client_data = json.loads(response.text)
 
-    return client_data
+        return client_data
 
 
 def get_amount(client):
@@ -87,40 +73,16 @@ def get_client(number):
     client = requests.get(api_url + '/api/get_client/'+number+'/')
     if client.status_code == 200:
         return json.loads(client.text)
-    # sql = "SELECT * FROM common_client WHERE phone_number=?"
-    # cursor.execute(sql, [(number)])
-    # for row in cursor.fetchall():
-    #     return row
 
-def read_sql(sql):
-    path = 'DataAddress\settings.xls'
-    cursor.execute(sql)
-    l = []
-    for row in cursor.fetchall():
-        l.append(row)
-    return l
-
-# positions_alt = read_sql("select * from common_positions")
 positions = requests.get(api_url + '/api/positions/')
 if positions.text:
     positions = json.loads(positions.text)
 
-# gardens = read_sql("select * from common_gardens")
 gardens = requests.get(api_url + '/api/gardens/')
 
-# dist_coef = read_sql("select * from common_gardens")
-
-# districtsSP = read_sql(3)
-
-# districts_alt = read_sql("select del.name as district, dri.name as driver from common_delevirydistricts del left join common_driver dri ON del.driver_id = dri.id")
 districts = requests.get(api_url + '/api/districts/')
 if districts.text:
     districts = json.loads(districts.text)
-
-# streets_alt = read_sql("select * from common_streets")
-# streets = requests.get('https://almaz-water.herokuapp.com/api/streets/')
-# if streets.text:
-#     streets = json.loads(streets.text)
 
 def add_zakaz(client):
 
@@ -152,25 +114,6 @@ def add_zakaz(client):
 
     response = requests.request("POST", api_url +'/api/add_order/', headers=headers, data=json.dumps(payload))
 
-    # number = read_sql('select  id from documents_order order by  number DESC limit 1')
-    # if number[0]:
-    #     cur_number = number[0][0] + 1
-    # else:
-    #     cur_number = 1
-    # date = DT.datetime.now()
-    # client_id = client.id
-    # amount = get_amount(client)
-    # # Вставляем данные в заказ
-    # sql = '''INSERT INTO documents_order ('number','date','client_id', 'amount') VALUES (?, ?, ?, ?)'''
-    # result1 = cursor.execute(sql, (cur_number, date, client.pk, amount))
-    # conn.commit()
-    #
-    # for row in client.cart:
-    #     sql = '''INSERT INTO documents_tabluarorders ('order_id','position_id','quantity', 'price', 'amount') VALUES (?, ?, ?, ?, ?)'''
-    #     price = row.get('summa') / row.get('count')
-    #     cursor.execute(sql, (cur_number, row.get('position_id'), row.get('count'), price, row.get('summa')))
-    #     conn.commit()
-    #     time.sleep(1)
 
     return 'успех'
 
@@ -220,8 +163,6 @@ def back_menu(*args):
 
     elif client.steps[-1][0] == 'infoCart':
         return start(*args)
-    # elif client.steps[-1][0] == 'soon_delevery':
-    #     return delevery_time(*args)
 
 def specify_date(*args):
     self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
@@ -231,19 +172,6 @@ def specify_date(*args):
     string = 'Укажите удобную дату доставки \nформат: '+ str_date +'\n -----------------------------\n(0.Назад)'
     return self.send_message(id, string)
 
-
-# def specify_time(*args):
-#     self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
-#
-#     check =  check_date(client,text)
-#     if check != None:
-#         return self.send_message(id, check)
-#
-#     client.steps.append(['specify_time', '', soon_delevery])
-#     client.size_Menu = 0
-#     string = 'Укажите время в формате: 12:30'
-#     return self.send_message(id, string)
-#
 
 def check_date(client, DateTime):
 
@@ -807,12 +735,6 @@ class ClienOchag():
         return 'Заказ принят..'
 
     def last_cart(self):
-        # sql = "select position_id, (select name from common_positions where common_positions.id=position_id) position,(select code1C from common_positions where common_positions.id=position_id) code1C,quantity, price, amount from documents_tabluarorders where order_id = (SELECT id FROM documents_order where client_id=? order by date desc limit 1)"
-        # cursor.execute(sql, [(self.pk)])
-        # l = []
-        # for row in cursor.fetchall():
-        #     l.append(row)
-        # return l
         lastcart = requests.get(api_url+'/api/get_last_order/'+ self.id)
         if lastcart.text:
             lastcart = json.loads(lastcart.text)
