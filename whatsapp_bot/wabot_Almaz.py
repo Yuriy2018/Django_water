@@ -57,6 +57,25 @@ def add_client(data):
     # return 'успех'
 
 
+def get_info_by_driver(client_id):
+
+    if not client_id:
+        return None
+
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    payload = {
+        "id": client_id,
+    }
+    # response = requests.request("POST", api_url + '/api/get_driver_client/', headers=headers, data=payload)
+    response = requests.request("POST", api_url + '/api/get_driver_client/', headers=headers, data=json.dumps(payload))
+
+    client_data = json.loads(response.text)
+
+    return client_data
+
 
 def get_amount(client):
     sum = 0
@@ -123,6 +142,10 @@ def add_zakaz(client):
 
     payload = {
         "client": client.pk,
+        "create_bot": True,
+        # "type_play": type_pay,
+        "new_client": client.new,
+        "comment": client.date_of_delivery,
         "amount": summadoc,
         "tabulars": tabulars,
     }
@@ -204,7 +227,8 @@ def specify_date(*args):
     self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
     client.steps.append(['specify_date', '', soon_delevery])
     client.size_Menu = 0
-    string = 'Укажите удобную дату доставки \nформат: 20.01.21\n -----------------------------\n(0.Назад)'
+    str_date = DT.date.today().strftime('%d.%m.%y')
+    string = 'Укажите удобную дату доставки \nформат: '+ str_date +'\n -----------------------------\n(0.Назад)'
     return self.send_message(id, string)
 
 
@@ -268,6 +292,7 @@ def new_client(*args):
 def delevery_time(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
     client.steps.append(['delevery_time', '', delevery_timeM])
+    client.Info_by_driver = get_info_by_driver(client.pk)
     client.size_Menu = len(delevery_timeM)
     return self.send_message(id, 'Выберите удобное время доставки:\n' + self.convert_to_string(delevery_timeM))
 
@@ -307,6 +332,7 @@ def company(*args):
 def name_company(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
     client.company = text
+    client.new = True
     client.name = text
     client.size_Menu = 0
     client.steps.append(['name_company', '', name_contact_company])
@@ -328,6 +354,7 @@ def phone_contactPerson(*args):
 def get_name_client(*args): # HERE give address
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
     client.name = text
+    client.new = True
     return select_district(*args)
 
 def select_district(*args):
@@ -526,6 +553,7 @@ def soon_delevery(*args):
         if check != None:
             return self.send_message(id, check)
 
+    client.date_of_delivery = "Ближайщее время"
     client.steps.append(['soon_delevery', '', paymentM])
     client.size_Menu = 0
     return self.send_message(id, 'Выберите способ оплаты:\n' + self.convert_to_string(paymentM))
@@ -678,6 +706,7 @@ class ClienOchag():
         else:
             self.lastcart, self.name, self.pk, self.Code1C = None,'','',''
         # self.number = transform_number(id)
+        self.new = False
         self.type = ''
         self.company = ''
         self.contactPerson = ''

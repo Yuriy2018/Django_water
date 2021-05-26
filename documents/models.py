@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-
+from django.contrib.auth.models import User
 from django.db.models import Sum
 
 class Order(models.Model):
@@ -37,7 +37,7 @@ class Order(models.Model):
     returned_container = models.CharField(max_length=3, verbose_name='Возвращено бутылей', default=0, blank=True)
     new_client = models.BooleanField(verbose_name='Новый клиент', default=False, blank=True)
     create_bot = models.BooleanField(verbose_name='Чат-бот', default=False, blank=True)
-
+    user = models.OneToOneField(User, verbose_name="Пользователь", on_delete=models.PROTECT, null=True, blank=True)
 
 
     class Meta:
@@ -51,8 +51,8 @@ class Order(models.Model):
         if not self.number:
             self.number = self.get_next_number()
         super().save(*args, **kwargs)
-        self.amount = self.get_amount()
-        super().save(*args, **kwargs)
+        # self.amount = self.get_amount()
+        # super().save(*args, **kwargs)
 
     def get_next_number(self):
         order = Order.objects.filter(number__isnull=False).values('number').order_by('-number').first()

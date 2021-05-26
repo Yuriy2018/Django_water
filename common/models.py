@@ -30,6 +30,7 @@ class Driver(models.Model):
     email = models.CharField(max_length=50, verbose_name='Почта', null=True, blank=True)
     login = models.CharField(max_length=50, verbose_name='Логин', null=True, blank=True)
     password = models.CharField(max_length=50, verbose_name='Пароль', null=True, blank=True)
+    plane = models.PositiveSmallIntegerField(verbose_name='План заявок в день', default=80, blank=True)
 
     class Meta:
         verbose_name = 'Водитель'
@@ -134,3 +135,4 @@ class Client(models.Model):
 
     def save(self, *args, **kwargs):
         self.address = ' '.join([name for name in [self.district, self.street, self.number_home, self.number_apart] if name])
+        super().save(*args, **kwargs)

@@ -84,8 +84,10 @@ def primera():
     # send_text(token,'77071392125','Start')
     reset_calls(token)
     clients = {}
-    commands = ['ZAKAZ']#, '1', '2', 'Sonne', 'Ivan', '987456', '73', 'Вавилова', '7', '61']#, '1', '3']#, '3','Вавилова','1','25','0']
-    number_client = '77071392170'
+    # commands = ['ZAKAZ','1', '1',  '1', '32', 'Маресьева', '95']#, '1', '3']#, '3','Вавилова','1','25','0']
+    commands = ['ZAKAZ','1', '1',  '2', '1']#, '1', '1']#, '1', '3']#, '3','Вавилова','1','25','0']
+    # commands = ['ZAKAZ']
+    number_client = '77071392150'
     # cx_test = len(commands)
     for c in commands:
           print('Command:',c)

@@ -20,10 +20,10 @@ class OrderAdmin(admin.ModelAdmin):
     date_wiev.short_description = 'Дата документа'
 
     # list_display = ('id', 'time_seconds',)
-    list_display = ('number', 'date_wiev', 'client','client', 'show_driver','status_order', 'amount', 'number1С')
-    list_display_links = ('number', 'date_wiev', 'client', 'status_order', 'amount', 'number1С')
+    list_display = ('number', 'date_wiev', 'client', 'show_driver', 'amount', 'number1С', 'new_client', 'create_bot', 'user',)
+    list_display_links = ('number', 'date_wiev', 'client',)
     inlines = [TabluarOrdersInline, ]
-    fields = [('number', 'number1С'),'date', 'status_order','client', 'type_play', 'amount', 'comment', 'returned_container']
+    fields = [('number', 'number1С'),'date', 'status_order','client', 'type_play', 'amount', 'comment', 'returned_container','user']
     autocomplete_fields = ['client',]
 
     # change_form_template = ''
