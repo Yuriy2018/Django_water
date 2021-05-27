@@ -89,21 +89,21 @@ def primera():
     # commands = ['ZAKAZ']
     number_client = '77071392150'
     # cx_test = len(commands)
-    for c in commands:
-          print('Command:',c)
-          Body = {'typeWebhook': 'incomingMessageReceived',
-                  'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'},
-                  'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89',
-                  'senderData': {'chatId': number_client+'@c.us', 'sender': '77071392125@c.us', 'senderName': 'Юрич'},
-                  'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
-          bot = WABot(Body, clients, conn)
-          bot.processing(True)
-          time.sleep(1)
-    while True:
-        c = input()
-        Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
-        bot = WABot(Body, clients, conn)
-        bot.processing(True)
+    # for c in commands:
+    #       print('Command:',c)
+    #       Body = {'typeWebhook': 'incomingMessageReceived',
+    #               'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'},
+    #               'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89',
+    #               'senderData': {'chatId': number_client+'@c.us', 'sender': '77071392125@c.us', 'senderName': 'Юрич'},
+    #               'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
+    #       bot = WABot(Body, clients, conn)
+    #       bot.processing(True)
+    #       time.sleep(1)
+    # while True:
+    #     c = input()
+    #     Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
+    #     bot = WABot(Body, clients, conn)
+    #     bot.processing(True)
 
     while True:
 
@@ -121,52 +121,9 @@ def primera():
         except Exception as ex:
             print(ex)
 
-        # for ntfc in notifications['messageDate']:
-        #
-        #     if ntfc['messages'][0]['type'] != 'text':
-        #         continue
-        #
-        #     body = ntfc['messages'][0]['text']['body']
-        #     # time.time()
-        #     print("Команда: ",body)
-        #     bot = WABot(ntfc, clients, conn)
-        #     bot.processing()
-            # print(body)
 
         if receipt:
             del_notifications(token, receipt)
-
-
-# def get_zakaz_1c(pay):
-
-    # cartOb = ast.literal_eval(pay['cart'])
-    # data1C = {'name': pay['name'],
-    #           'phone': pay['phone'],
-    #           'address': pay['address'],
-    #           'time': pay['time_of_delivery'],
-    #           'note': pay['note'],
-    #           'payment': 'безналичная оплата',
-    #           'chatId': pay['phone'],
-    #           'cart': cartOb,
-    #           }
-    # myUrl = 'http://localhost:81/SS/hs/ftotest/555'
-    # headers = {'Content-Type': 'application/json', 'Accept-Encoding': None, 'Authorization': 'Basic'}
-    # auth = HTTPBasicAuth('admin', '777')
-    # res = requests.post(myUrl, headers=headers, auth=auth, data=json.dumps(data1C))
-    # return res
-
-def acces_pay(numberPay,number1C):
-    # q = """
-    #     UPDATE orders SET paid, number1C WHERE numberPay ={numberPay}
-    #     """.format(p=1, numberPay=numberPay, number1C=number1C)
-    # cursor.execute(q)
-    # cursor.execute('''UPDATE orders SET (paid=?,number1C=?) WHERE numberPay=?''',(1, number1C, numberPay))
-
-
-    sql_update_query = """Update orders set paid = ?, number1C=?  where numberPay = ?"""
-    data = (1, number1C, numberPay)
-    cursor.execute(sql_update_query, data)
-    conn.commit()
 
 
 if(__name__) == '__main__':
