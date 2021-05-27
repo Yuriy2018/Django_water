@@ -45,5 +45,5 @@ class TabluarOrderAdmin(admin.ModelAdmin):
     list_display_links = ('order', 'position', 'price', 'quantity', 'amount')
 
 admin.site.register(Order, OrderAdmin)
-admin.site.register(TabluarOrders, TabluarOrderAdmin)
+# admin.site.register(TabluarOrders, TabluarOrderAdmin)
 admin.site.site_header = 'Онлайн заказ воды'
