@@ -40,6 +40,7 @@ class OrderAdmin(admin.ModelAdmin):
     # fields = [('number', 'date'),('date_dev', 'date_end'),('status_order', 'type_play'),'client',  'amount', 'comment', 'returned_container',('user', 'load_1C', 'number1С')]
     fields = [('date_dev', 'date_end'),('status_order', 'type_play'),'client', 'comment', 'returned_container',('user', 'load_1C', 'number1С')]
     autocomplete_fields = ['client',]
+    readonly_fields = ['date_end',]
 
     # change_form_template = ''
 
@@ -51,7 +52,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         if obj:  # when editing an object
-            return ['amount', 'number1С', 'number']
+            return ['amount', 'number1С', 'number', 'date_end']
         return self.readonly_fields
 
 class TabluarOrderAdmin(admin.ModelAdmin):
