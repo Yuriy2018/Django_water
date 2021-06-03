@@ -134,7 +134,7 @@ class Client(models.Model):
         return self.address
 
     def save(self, *args, **kwargs):
-        self.address = ' '.join([name for name in [self.district, self.street, self.number_home, self.number_apart] if name])
+        self.address = ' '.join([name for name in [str(self.district) if self.district != None else "", self.street, self.number_home, self.number_apart] if name])
         if not self.address:
             self.address = self.name
         super().save(*args, **kwargs)
