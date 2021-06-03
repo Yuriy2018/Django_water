@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-from django.db.models import Sum
+
 
 class Order(models.Model):
 
@@ -25,7 +25,9 @@ class Order(models.Model):
 
     number = models.IntegerField(verbose_name='Номер', null=True, blank=True)
     number1С = models.CharField(max_length=11, verbose_name='Номер 1С', null=True, blank=True)
-    date = models.DateTimeField(verbose_name='Дата от', default=timezone.now)
+    date = models.DateField(verbose_name='Дата от', default=timezone.now)
+    date_dev = models.DateField(verbose_name='Дата клиента', null=True, blank=True)
+    date_end = models.DateField(verbose_name='Дата закрытия', null=True, blank=True)
     client = models.ForeignKey('common.Client',verbose_name='Контрагент', on_delete=models.PROTECT)
     amount = models.IntegerField(verbose_name='Сумма', default=0)
     type_play = models.CharField(max_length=15, verbose_name='Тип оплаты', default=PAY_TYPE_CASH, null=True,
@@ -46,7 +48,8 @@ class Order(models.Model):
         verbose_name_plural = 'Заказы'
 
     def __str__(self):
-        return f'Заказ №{self.number} от {self.date.strftime("%d.%m.%Y %H:%M:%S")}'
+        # return f'Заказ №{self.number} от {self.date.strftime("%d.%m.%Y %H:%M:%S")}'
+        return f'Заказ №{self.number} от {self.date.strftime("%d.%m.%Y")}'
 
     def save(self, *args, **kwargs):
         if not self.number:

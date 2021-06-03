@@ -14,16 +14,31 @@ class OrderAdmin(admin.ModelAdmin):
     change_form_template = 'admin.html'
 
     def date_wiev(self, obj):
-        return obj.date.strftime("%d.%m.%Y %H:%M:%S")
+        return obj.date.strftime("%d.%m.%Y")
 
     date_wiev.admin_order_field = 'date'
     date_wiev.short_description = 'Дата документа'
 
+    def date_dev_wiev(self, obj):
+        if obj.date_dev:
+            return obj.date_dev.strftime("%d.%m.%Y")
+
+    date_dev_wiev.admin_order_field = 'date_dev'
+    date_dev_wiev.short_description = 'Дата клиента'
+
+    def date_end_wiev(self, obj):
+        if obj.date_end:
+            return obj.date_end.strftime("%d.%m.%Y")
+
+    date_end_wiev.admin_order_field = 'date_end'
+    date_end_wiev.short_description = 'Дата закрытия'
+
     # list_display = ('id', 'time_seconds',)
-    list_display = ('number', 'date_wiev', 'client', 'show_driver', 'amount', 'number1С', 'new_client', 'create_bot', 'user', 'load_1C')
+    list_display = ('number', 'date_wiev', 'client', 'date_dev_wiev', 'date_end_wiev', 'show_driver', 'amount', 'number1С', 'new_client', 'create_bot', 'user', 'load_1C')
     list_display_links = ('number', 'date_wiev', 'client',)
     inlines = [TabluarOrdersInline, ]
-    fields = [('number', 'number1С'),'date', 'status_order','client', 'type_play', 'amount', 'comment', 'returned_container',('user', 'load_1C')]
+    # fields = [('number', 'date'),('date_dev', 'date_end'),('status_order', 'type_play'),'client',  'amount', 'comment', 'returned_container',('user', 'load_1C', 'number1С')]
+    fields = [('date_dev', 'date_end'),('status_order', 'type_play'),'client', 'comment', 'returned_container',('user', 'load_1C', 'number1С')]
     autocomplete_fields = ['client',]
 
     # change_form_template = ''
