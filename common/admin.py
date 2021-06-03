@@ -2,11 +2,20 @@ from django.contrib import admin
 
 from .models import Driver, Positions, Client, District
 
+def make_published(modeladmin, request, queryset):
+    for client in queryset:
+        if not client.address:
+            client.address = client.name
+            client.save()
+make_published.short_description = "Заполнить строку адрес"
+
 class ClientAdmin(admin.ModelAdmin):
+
 
     # list_display = ('id', 'time_seconds',)
     list_display = ('name', 'phone_number', 'driver','comment','code1C')
     list_display_links = ('name', 'phone_number', 'driver','comment','code1C')
+    actions = [make_published]
     # fields = [('name', 'object_name'),
     #           ('district', 'street', 'number_home', 'number_apart'),
     #           ('address','phone_number'),
@@ -40,6 +49,8 @@ class DriverAdmin(admin.ModelAdmin):
         return len(obj.get_open_orders())
 
     Open_Order.short_description = 'Открытые ордера'
+
+
 
 
 admin.site.register(Positions, PositionsAdmin)

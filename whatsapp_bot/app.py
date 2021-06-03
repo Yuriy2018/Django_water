@@ -85,9 +85,9 @@ def primera():
     reset_calls(token)
     clients = {}
     # commands = ['ZAKAZ','1', '1',  '1', '32', 'Маресьева', '95']#, '1', '3']#, '3','Вавилова','1','25','0']
-    commands = ['ZAKAZ','1', '1',  '2', '1']#, '1', '1']#, '1', '3']#, '3','Вавилова','1','25','0']
+    # commands = ['ZAKAZ','1', '1',  'Юрий тест', '56', 'Жубановых', '176']#, '1', '3']#, '3','Вавилова','1','25','0']
     # commands = ['ZAKAZ']
-    number_client = '77071392150'
+    # number_client = '79957745448'
     # cx_test = len(commands)
     # for c in commands:
     #       print('Command:',c)
@@ -99,7 +99,7 @@ def primera():
     #       bot = WABot(Body, clients, conn)
     #       bot.processing(True)
     #       time.sleep(1)
-    # while True:
+    # # while True:
     #     c = input()
     #     Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
     #     bot = WABot(Body, clients, conn)

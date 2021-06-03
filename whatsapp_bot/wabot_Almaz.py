@@ -14,8 +14,11 @@ import calendar
 api_url = 'https://water.hostman.site'
 # api_url = 'https://almaz-water.herokuapp.com'
 
-APIUrl = 'https://api.green-api.com/waInstance7402/'
-token = '0bbcb29ff60098202ffbb07df051131f21d2234d12c22c4ad4'
+# APIUrl = 'https://api.green-api.com/waInstance7402/'
+# token = '0bbcb29ff60098202ffbb07df051131f21d2234d12c22c4ad4'
+
+APIUrl = 'https://api.green-api.com/waInstance9159/'
+token = 'd089c99b960a312c819d2a8b67e2e6e81603d94c61bf095984'
 
 stringForImput = ['НАЧАТЬ', 'ЗАКАЗ', 'ЗАКАЗАТЬ', 'ORDER', 'ZAKAZ']
 
@@ -30,7 +33,7 @@ def add_client(data):
         "name": data.name,
         "phone_number": data.id,
         # "district": data.district['name'],
-        "district_id": data.district['id'],
+        "district_id": data.district['id'] if data.district != None else 'не установлено',
         "street": data.street,
         "number_home": data.number_home,
         "number_apart": data.number_apart,
@@ -333,7 +336,7 @@ def specify_street(*args):
         return action_yandex(dataStreet,client,self,text,id)
     else:
         self.send_message('77071392125', 'Внимание! Сервис яндекса по подбору улицы не отработал!')
-        self.send_message('77058370045', 'Внимание! Сервис яндекса по подбору улицы не отработал!')
+        # self.send_message('77058370045', 'Внимание! Сервис яндекса по подбору улицы не отработал!')
 
 def specify_number_home(*args):
     self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
@@ -385,7 +388,7 @@ def select_pos(*args):
     self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
     pos = client.steps[-1][1]
     if text == '2':
-        pos['Price'] = 1500
+        pos['price'] += 1000
     client.steps.append(['select_pos', pos, add_pos])
     client.size_Menu = 0
     string = 'Укажите количество для позиции: "' + pos['name'] + '"\n'

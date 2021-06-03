@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from .serializers import PositionsListSerializer, DriversListSerializer, \
     ClientsListSerializer, \
     OrdersListSerializer, TabularOrdersListSerializer, OrderCreateSerializer, TabluarOrdersCreateSerializer, \
-    OrdersList1сSerializer, DistrictListSerializer, ClientCreateSerializer, AuthSerialization, Client_name_Serialization
+    OrdersList1сSerializer, DistrictListSerializer, ClientCreateSerializer, AuthSerialization, Client_add_fix_Serialization
 
 from django.views.decorators.csrf import csrf_exempt
 from common.models import Client, Positions, District, Driver
@@ -252,3 +252,28 @@ class ClientCreateView(APIView):
             client.save()
         return Response(status=201, data=client.data)
 
+
+class Add_client(APIView):
+
+    def post(self, request):
+        data = Client_add_fix_Serialization(data=request.data)
+        for value in request.data:
+            name = value['name'].lstrip()
+            code1C = str(value['code'])
+            if len(code1C) == 4:
+                code = '00000' + code1C
+            elif len(code1C) == 3:
+                code = '000000' + code1C
+            else:
+                code = code1C
+            type = value['type']
+            type_client = Client.CLIENT_TYPE_COMPANY if type == 'Юр. лицо' else Client.CLIENT_TYPE_PERSON
+            client = Client.objects.filter(name=name).first()
+            if client:
+                client.code1C = code
+                client.save()
+            else:
+                newClient = Client.objects.create(name=name, code1C=code, address=name,type_client=type_client)
+                newClient.save()
+        return Response(status=201,data='success')
+            # ord = Order.objects.filter(id=value['order_id']).get()

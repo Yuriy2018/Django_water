@@ -98,3 +98,8 @@ class ClientCreateSerializer(serializers.ModelSerializer):
 
 class Client_name_Serialization(serializers.Serializer):
     name = serializers.CharField()
+
+class Client_add_fix_Serialization(serializers.Serializer):
+    name = serializers.CharField()
+    code = serializers.CharField()
+    type = serializers.CharField()
