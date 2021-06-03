@@ -131,10 +131,12 @@ class Client(models.Model):
         verbose_name_plural = 'Клиенты'
 
     def __str__(self):
-        return self.address
+        if self.address:
+            return self.address
+        return self.name
 
     def save(self, *args, **kwargs):
-        # self.address = ' '.join([name for name in [str(self.district) if self.district != None else "", self.street, self.number_home, self.number_apart] if name])
+        self.address = ' '.join([name for name in [str(self.district) if self.district != None else "", self.street, self.number_home, self.number_apart] if name])
         if not self.address:
             self.address = self.name
         super().save(*args, **kwargs)
