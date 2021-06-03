@@ -104,12 +104,12 @@ def primera():
     #     Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
     #     bot = WABot(Body, clients, conn)
     #     bot.processing(True)
-
+    print('запуск')
     while True:
 
         json = get_notifications(token)
         if json == None:
-            # print('нет ответа')
+            print('нет ответа')
             continue
 
         receipt = json['receiptId']
