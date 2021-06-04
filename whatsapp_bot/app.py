@@ -21,6 +21,19 @@ history = dict()
 carts = dict()
 clients = {}
 zz = []
+
+def send_telegram(text: str):
+    token = "1832470032:AAH-RVl2FE6PeVmoVo6iR0OFnbcArNWtLg8"
+    url = "https://api.telegram.org/bot"
+    channel_id = "498516666"
+    url += token
+    method = url + "/sendMessage"
+
+    r = requests.post(method, data={
+         "chat_id": channel_id,
+         "text": text
+          })
+
 # context = SSL.Context(SSL.SSLv23_METHOD)
 def send_text(phone,text):
     if len(phone) == 10:
@@ -104,7 +117,7 @@ def primera():
     #     Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
     #     bot = WABot(Body, clients, conn)
     #     bot.processing(True)
-    print('запуск')
+    send_telegram('Запуск')
     while True:
 
         json = get_notifications(token)
@@ -119,7 +132,9 @@ def primera():
                 bot = WABot(body, clients, conn)
                 bot.processing()
         except Exception as ex:
+            # errorText =  f" команда: {body['messageData']['textMessageData']['textMessage']} \n" + ex
             print(ex)
+            send_telegram(ex)
 
 
         if receipt:

@@ -9,18 +9,24 @@ from urllib import request
 import datetime as DT
 import calendar
 
-
-# api_url = 'http://127.0.0.1:8000'
+#1
+api_url = 'http://127.0.0.1:8000'
 api_url = 'https://water.hostman.site'
 # api_url = 'https://almaz-water.herokuapp.com'
-
+#2
 # APIUrl = 'https://api.green-api.com/waInstance7402/'
 # token = '0bbcb29ff60098202ffbb07df051131f21d2234d12c22c4ad4'
 
-APIUrl = 'https://api.green-api.com/waInstance9159/'
-token = 'd089c99b960a312c819d2a8b67e2e6e81603d94c61bf095984'
+# APIUrl = 'https://api.green-api.com/waInstance9159/'
+# token = 'd089c99b960a312c819d2a8b67e2e6e81603d94c61bf095984' # мой номер Тинькофф
+
+APIUrl = 'https://api.green-api.com/waInstance9434/'
+token = '58a9d6215dea637d8e75238c3db0e1b29cb0a8f91f08468517'
 
 stringForImput = ['НАЧАТЬ', 'ЗАКАЗ', 'ЗАКАЗАТЬ', 'ORDER', 'ZAKAZ']
+
+
+
 
 def add_client(data):
     headers = {
@@ -198,12 +204,11 @@ def check_date(client, DateTime):
 def control(*args):
     self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
     if len(text) == 0 or (
-            len(client.steps) != 0 or not str(text[0]).upper() in stringForImput) and client.size_Menu != 0 and not \
-    text[
-        0].isdigit():
+            len(client.steps) != 0 or not str(text).upper() in stringForImput) and client.size_Menu != 0 and not \
+    text.isdigit():
         return f'Некорректная команда! Укажите команду цифрами'
 
-    if client.size_Menu != 0 and client.size_Menu < int(text[0]):
+    if client.size_Menu != 0 and client.size_Menu < int(text):
         return f'Некорректная команда! Укажите команду от 1 до {client.size_Menu}'
 
     if len(client.steps) == 0 and not str(text).upper() in stringForImput:
@@ -443,6 +448,7 @@ def paymont_cash(*args):
     client.steps.append(['finish', '', finish])
     client.size_Menu = 0
     add_zakaz(client)
+    client.reset()
     return self.send_message(id, 'Ваш заказ принят. Ожидайте доставку.')
 
 def paymont_online(*args):
@@ -585,6 +591,7 @@ grandMenunoReplay   = {'1': {'name': 'Сделать заказ', 'method': make
 grandMenunoReplay2   = {'1': {'name': 'Дополнить заказ', 'method': make_an_order},  # меню выбора самого элемента
                '2': {'name': 'Информация для клиентов', 'method': info},
                '3': {'name': 'Корзина', 'method': show_cart},
+               '4': {'name': 'Завершить заказ', 'method': delevery_time},
                }
 
 registrM   = {'1': {'name': 'Частное лицо', 'method': privatePerson},  # меню выбора самого элемента
