@@ -1,7 +1,6 @@
 # from flask import Flask, request
 # from gunicorn import app
 import os
-
 import requests
 import json
 from wabot_Almaz import WABot, APIUrl, token
@@ -23,6 +22,8 @@ history = dict()
 carts = dict()
 clients = {}
 zz = []
+
+
 
 def send_telegram(text: str):
     token = "1832470032:AAH-RVl2FE6PeVmoVo6iR0OFnbcArNWtLg8"
@@ -120,7 +121,7 @@ def primera():
     #     bot = WABot(Body, clients, conn)
     #     bot.processing(True)
     key = os.getenv('key')
-    send_telegram('Запуск')
+    send_telegram(f'Запуск текущий PID: {os.getpid()}')
     # if key:
     send_telegram(key)
     while True:
