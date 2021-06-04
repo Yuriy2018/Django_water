@@ -119,10 +119,10 @@ def primera():
     #     Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
     #     bot = WABot(Body, clients, conn)
     #     bot.processing(True)
-    key = os.getenv('key',default=None)
+    key = os.getenv('key')
     send_telegram('Запуск')
-    if key:
-        send_telegram(key)
+    # if key:
+    send_telegram(key)
     while True:
 
         json = get_notifications(token)
