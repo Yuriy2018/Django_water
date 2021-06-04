@@ -1,5 +1,7 @@
 # from flask import Flask, request
 # from gunicorn import app
+import os
+
 import requests
 import json
 from wabot_Almaz import WABot, APIUrl, token
@@ -117,12 +119,15 @@ def primera():
     #     Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
     #     bot = WABot(Body, clients, conn)
     #     bot.processing(True)
+    key = os.getenv('key',default=None)
     send_telegram('Запуск')
+    if key:
+        send_telegram(key)
     while True:
 
         json = get_notifications(token)
         if json == None:
-            print('нет ответа')
+            # print('нет ответа')
             continue
 
         receipt = json['receiptId']
