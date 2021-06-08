@@ -64,7 +64,8 @@ class Driver(models.Model):
         super().save(*args, **kwargs)
 
     def get_open_orders(self):
-        return Order.objects.filter(client__driver=self).exclude(status_order= Order.STATUS_TYPE_COMPLETED)
+        data = Order.objects.filter(client__driver=self).exclude(status_order= Order.STATUS_TYPE_COMPLETED).values('date_dev')
+        return data
 
 class District(models.Model):
     name = models.CharField(max_length=50, verbose_name='Район', unique=True)

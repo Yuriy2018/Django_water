@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
-
+from collections import Counter
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -33,7 +33,44 @@ class ClientView(APIView):
         # else:
         #     return Response([])
 
+#todo 1 Данные по клиенту, его крайнему заказу и инфо про его водителя.
 
+class ClientFullData(APIView):
+    def get(self, request, number):
+        client = Client.objects.filter(phone_number=number).first()
+        if not client:
+            return Response(status=201,data={"client_id" :"None",})
+
+        driver = client.driver
+        if driver:
+            open_orders = list(driver.get_open_orders())
+            open_ord = [str(x['date_dev']) for x in open_orders]
+            c = Counter(open_ord)
+            dict_open_ord = dict(c)
+
+            driver_name = driver.name
+            driver_plane = driver.plane
+        else:
+            open_orders = 0
+            driver_name = ''
+            driver_plane = 0
+
+        orders = Order.objects.filter(client=client).order_by('-date').first()
+        last_order = {}
+        if orders:
+            serializer = OrdersListSerializer(orders)
+            last_order = serializer.data
+
+        data = {'driver': driver_name,
+                'plane': driver_plane,
+                'open_orders': dict_open_ord,
+                'client_id': client.id,
+                'client_name': client.name,
+                'client_code1C': client.code1C,
+                'last_order': last_order,
+                }
+        # return JsonResponse({'data': data})
+        return Response(status=201, data=data)
 
 
 class DistrictsView(APIView):

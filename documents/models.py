@@ -26,7 +26,7 @@ class Order(models.Model):
     number = models.IntegerField(verbose_name='Номер', null=True, blank=True)
     number1С = models.CharField(max_length=11, verbose_name='Номер 1С', null=True, blank=True)
     date = models.DateTimeField(verbose_name='Дата от', default=timezone.now)
-    date_dev = models.DateField(verbose_name='Дата клиента', null=True, blank=True)
+    date_dev = models.DateField(verbose_name='Дата клиента', null=True)
     date_end = models.DateField(verbose_name='Дата закрытия', null=True, blank=True)
     client = models.ForeignKey('common.Client',verbose_name='Контрагент', on_delete=models.PROTECT)
     amount = models.IntegerField(verbose_name='Сумма', default=0)
@@ -54,6 +54,8 @@ class Order(models.Model):
     def save(self, *args, **kwargs):
         if not self.number:
             self.number = self.get_next_number()
+        if not self.date_dev:
+            self.date_dev = self.date
         super().save(*args, **kwargs)
         # self.amount = self.get_amount()
         # super().save(*args, **kwargs)

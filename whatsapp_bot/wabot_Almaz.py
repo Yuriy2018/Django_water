@@ -17,11 +17,11 @@ api_url = 'https://water.hostman.site'
 # APIUrl = 'https://api.green-api.com/waInstance7402/'
 # token = '0bbcb29ff60098202ffbb07df051131f21d2234d12c22c4ad4'
 
-# APIUrl = 'https://api.green-api.com/waInstance9159/'
-# token = 'd089c99b960a312c819d2a8b67e2e6e81603d94c61bf095984' # мой номер Тинькофф
+APIUrl = 'https://api.green-api.com/waInstance9159/'
+token = 'd089c99b960a312c819d2a8b67e2e6e81603d94c61bf095984' # мой номер Тинькофф
 
-APIUrl = 'https://api.green-api.com/waInstance9434/'
-token = '58a9d6215dea637d8e75238c3db0e1b29cb0a8f91f08468517'
+# APIUrl = 'https://api.green-api.com/waInstance9434/'
+# token = '58a9d6215dea637d8e75238c3db0e1b29cb0a8f91f08468517'
 
 stringForImput = ['НАЧАТЬ', 'ЗАКАЗ', 'ЗАКАЗАТЬ', 'ORDER', 'ZAKAZ']
 

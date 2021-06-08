@@ -3,7 +3,8 @@
 import os
 import requests
 import json
-from wabot_Almaz import WABot, APIUrl, token
+# from wabot_Almaz import WABot, APIUrl, token
+from wabot_Almaz_mini import WABot, APIUrl, token
 # from flask_gunicorn import
 # import ast
 import time
@@ -101,29 +102,30 @@ def primera():
     reset_calls(token)
     clients = {}
     # commands = ['ZAKAZ','1', '1',  '1', '32', 'Маресьева', '95']#, '1', '3']#, '3','Вавилова','1','25','0']
-    # commands = ['ZAKAZ','1', '1',  'Юрий тест', '56', 'Жубановых', '176']#, '1', '3']#, '3','Вавилова','1','25','0']
+    commands = ['ZAKAZ','1', '1',  '2', '3', '1', '3']#, '1', '3']#, '3','Вавилова','1','25','0']
     # commands = ['ZAKAZ']
-    # number_client = '79957745448'
-    # cx_test = len(commands)
-    # for c in commands:
-    #       print('Command:',c)
-    #       Body = {'typeWebhook': 'incomingMessageReceived',
-    #               'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'},
-    #               'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89',
-    #               'senderData': {'chatId': number_client+'@c.us', 'sender': '77071392125@c.us', 'senderName': 'Юрич'},
-    #               'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
-    #       bot = WABot(Body, clients, conn)
-    #       bot.processing(True)
-    #       time.sleep(1)
-    # # while True:
-    #     c = input()
-    #     Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
-    #     bot = WABot(Body, clients, conn)
-    #     bot.processing(True)
-    key = os.getenv('key')
-    send_telegram(f'Запуск текущий PID: {os.getpid()}')
-    # if key:
-    send_telegram(key)
+    number_client = '79957745448'
+    number_client = '77071392125'
+    cx_test = len(commands)
+    for c in commands:
+          print('Command:',c)
+          Body = {'typeWebhook': 'incomingMessageReceived',
+                  'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'},
+                  'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89',
+                  'senderData': {'chatId': number_client+'@c.us', 'sender': '77071392125@c.us', 'senderName': 'Юрич'},
+                  'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
+          bot = WABot(Body, clients, conn)
+          bot.processing(True)
+          time.sleep(1)
+    while True:
+        c = input()
+        Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
+        bot = WABot(Body, clients, conn)
+        bot.processing(True)
+    # key = os.getenv('key')
+    # send_telegram(f'Запуск текущий PID: {os.getpid()}')
+    # # if key:
+    # send_telegram(key)
     while True:
 
         json = get_notifications(token)
