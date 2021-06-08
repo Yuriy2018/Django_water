@@ -37,7 +37,13 @@ class ClientView(APIView):
 
 class ClientFullData(APIView):
     def get(self, request, number):
-        client = Client.objects.filter(phone_number=number).first()
+        list_num = []
+        if len(number) > 10:
+            list_num.append('7'+number[1:10])
+            list_num.append('8'+number[1:10])
+        else:
+            list_num.append(number)
+        client = Client.objects.filter(phone_number__in=list_num).first()
         if not client:
             return Response(status=201,data={"client_id" :"None",})
 

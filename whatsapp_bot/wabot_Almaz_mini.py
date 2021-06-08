@@ -133,7 +133,8 @@ def new_client(*args):
     # client.steps.append(['make_an_order', '', lastMenu])
     client.size_Menu = 0
     message = 'Заяка на доставку от нового клиента:\n' + text
-    self.send_message('77071392125', message) # Указать номер менеджера для получения сообщений о новых клиентах.
+    # self.send_message('77071392125', message) # Указать номер менеджера для получения сообщений о новых клиентах.
+    self.send_message('77084713855', message) # Указать номер менеджера для получения сообщений о новых клиентах.
     return self.send_message(id, 'Спасибо! В ближайшее время с Вами свяжется наш менеджер.')
 
 def delevery_time(*args):
