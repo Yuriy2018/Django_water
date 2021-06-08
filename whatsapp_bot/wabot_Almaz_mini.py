@@ -14,6 +14,7 @@ import calendar
 # api_url = 'http://127.0.0.1:8000'
 api_url = 'https://water.hostman.site'
 # api_url = 'https://almaz-water.herokuapp.com'
+
 #2
 # APIUrl = 'https://api.green-api.com/waInstance7402/'
 # token = '0bbcb29ff60098202ffbb07df051131f21d2234d12c22c4ad4'

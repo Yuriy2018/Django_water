@@ -39,8 +39,8 @@ class ClientFullData(APIView):
     def get(self, request, number):
         list_num = []
         if len(number) > 10:
-            list_num.append('7'+number[1:10])
-            list_num.append('8'+number[1:10])
+            list_num.append('7'+number[1:11])
+            list_num.append('8'+number[1:11])
         else:
             list_num.append(number)
         client = Client.objects.filter(phone_number__in=list_num).first()
