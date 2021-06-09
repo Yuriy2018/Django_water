@@ -128,6 +128,9 @@ def primera():
     # send_telegram(key)
     while True:
 
+        key = os.getenv('key')
+        if key:
+            send_telegram('я мониторю..')
         json = get_notifications(token)
         if json == None:
             # print('нет ответа')
