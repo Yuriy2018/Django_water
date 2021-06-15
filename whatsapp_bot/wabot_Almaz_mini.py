@@ -137,8 +137,33 @@ def new_client(*args):
     client.size_Menu = 0
     message = 'Заяка на доставку от нового клиента:\n' + text
     # self.send_message('77071392125', message) # Указать номер менеджера для получения сообщений о новых клиентах.
-    self.send_message('77084713855', message) # Указать номер менеджера для получения сообщений о новых клиентах.
+    # self.send_message('77084713855', message) # Указать номер менеджера для получения сообщений о новых клиентах.
     return self.send_message(id, 'Спасибо! В ближайшее время с Вами свяжется наш менеджер.')
+
+def specify_address(*args):
+    self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
+    client.steps.append(['specify_address','',control_address])
+    client.size_Menu = 2
+    return self.send_message(id, 'Адрес доставки: ' + client.address + '/n 1.Да /n 2.Нет')
+
+def control_address(*args):
+    self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
+    if text == '1':
+        finish(*args)
+    elif text == '2':
+        client.size_Menu = 0
+        client.steps.append(['control_address', '', other_address])
+        return self.send_message(id, 'Укажите адрес доставки:')
+
+def other_address(*args):
+    self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
+    client.comment = text
+    return finish(*args)
+
+
+
+
+
 
 def delevery_time(*args):
 
@@ -292,7 +317,7 @@ def finish(*args):
 
 def paymont_cash(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
-    client.steps.append(['finish', '', finish])
+    client.steps.append(['finish', '', specify_address])
     client.size_Menu = 0
     add_zakaz(client)
     client.reset()
@@ -443,8 +468,8 @@ grandMenunoReplay2   = {'1': {'name': 'Дополнить заказ', 'method':
                '3': {'name': 'Завершить заказ', 'method': delevery_time},
                }
 
-paymentM = {'1': {'name': 'Наличные', 'method': paymont_cash},  # меню выбора самого элемента
-                  '2': {'name': 'Перечисление', 'method': paymont_cash},
+paymentM = {'1': {'name': 'Наличные', 'method': specify_address},  # меню выбора самого элемента
+                  '2': {'name': 'Перечисление', 'method': specify_address},
                   # '3': {'name': 'Онлайн оплата', 'method': paymont_online},
                   '0': {'name': 'Назад.', 'method': back_menu},
                     }
@@ -488,6 +513,7 @@ class ClienOchag():
             self.lastcart = dataclient['last_order']
             self.name = dataclient['client_name']
             self.Code1C =  dataclient['client_code1C']
+            self.address = dataclient['client_address']
 
         self.dataclient = dataclient
         self.steps = []

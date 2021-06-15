@@ -71,6 +71,7 @@ class ClientFullData(APIView):
                 'plane': driver_plane,
                 'open_orders': dict_open_ord,
                 'client_id': client.id,
+                'client_address': client.address,
                 'client_name': client.name,
                 'client_code1C': client.code1C,
                 'last_order': last_order,
