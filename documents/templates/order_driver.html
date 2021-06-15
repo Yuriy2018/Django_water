@@ -8,11 +8,11 @@
   <title> Путевой лист</title>
   {% block extra_css %} {% endblock %}
 
-</head>
+
 <body>
 {% csrf_token %}
 <a href="/report/">К списку</a>
-<form action="/procces_order/" method="post">
+<form action="/procces_order/" method="post" id="dev">
     {% csrf_token %}
 {#    {{ form }}#}
   <div align="center" class="title">
@@ -23,23 +23,31 @@
     <h3>Тип оплаты: {{ type_pay }}<br></h3>
   {{ form.comment }}
   <input type="hidden" name="order_id" value={{ order_id }} />
+  <input type="hidden" name="data_table_1" class="data_table_1" value="" />
+  <input type="hidden" name="data_table_2" class="data_table_2" value="" />
+  <input type="hidden" name="data_table_3" class="data_table_3" value="" />
     <br>
     <br>
 {#    {{ form.amount }}<br><br>#}
     <div class="for-table">
-    <table class="table-1">
+    <table class="table-1" name="table" form="dev">
 <tr>
+  <th>№</th>
   <th>Позиция</th>
   <th>Цена</th>
   <th>Кол-во</th>
   <th>Сумма</th>
+  <th hidden>id</th>
 </tr>
     {% for row in tabulars %}
-    <tr>
-  <td>{{ row.position }}</td>
-  <td>{{ row.price }}</td>
-  <td>{{ row.quantity }}</td>
-  <td>{{ row.amount }}</td>
+    <tr form="dev">
+  <td class="number" form="dev">{{ row.number }}</td>
+  <td form="dev">{{ row.position }}</td>
+  <td class="price">{{ row.price }}</td>
+{#  <td><input size="3px" form="dev" type="text" id={{ row.id_row }} class="rows" onchange=pereschet(this) value={{ row.quantity }}></td>#}
+  <td class="quantity">{{ row.quantity }}</td>
+      <td class="amount">{{ row.amount }}</td>
+  <td hidden class="position_id">{{ row.position_id }}</td>
   </tr>
     {% endfor %}
     </table>
@@ -64,7 +72,80 @@
     </div>
   </div>
 </form>
-{#<script register.js?{random} src="{% static 'documents/js/report.js' %}"></script>#}
+{#<button name="test" onclick='closeMsg()'>My test</button>#}
+<script register.js?{random} src="{% static 'documents/js/driver_list.js' %}"></script>
 <link rel="stylesheet" type="text/css" href="{% static 'documents/css/style.css' %}">
+<script>
+var map = new Map();
+
+      function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+
+function pereschet(msg) {
+    var row = document.querySelector('#' + msg.id).parentElement.parentElement
+    var price = row.querySelector('.price')
+    row.querySelector('.amount').innerText = parseInt(price.innerText) * parseInt(msg.value)
+
+    var current_number = row.querySelector('td.number').innerText
+    {#var current_data = document.querySelector('.data_table').innerText#}
+    var current_quantity = row.querySelector('input.rows').value
+    var position_id = row.querySelector('td.position_id').innerText
+
+    map.set(current_number, current_quantity)
+    document.querySelector('.data_table_'+position_id).value = current_quantity
+
+}
+function valid(){
+	  var valid = false;
+
+	  // Проверка выставить в valid результат валидации.
+    valid = document.querySelector('#status_delivered').checked
+    valid = document.querySelector('#status_postponed').checked
+
+	  !valid && alert("Укажите доставлен/отложен");
+	  return valid;
+    }
+
+   document.querySelector("form").onsubmit = valid;
+
+
+   function closeMsg() {
+   const csrftoken = getCookie('csrftoken');
+
+    var formData = JSON.stringify($("#myForm").serializeArray());
+
+    $.ajax({
+  type: "POST",
+  url: "/procces_order/",
+  data: formData,
+  success: function(){},
+  dataType: "json",
+  contentType : "application/json"
+});
+
+
+// перед отправкой формы, её нужно вставить в документ
+document.body.append(form);
+
+form.submit();  }
+
+
+
+  </script>
 </body>
 </html>

@@ -1,32 +1,20 @@
-# from flask import Flask, request
-# from gunicorn import app
+# -*- coding: utf-8 -*-
 import os
+import time
+from loguru import logger
 import requests
 import json
+import psutil
 # from wabot_Almaz import WABot, APIUrl, token
 from wabot_Almaz_mini import WABot, APIUrl, token
-# from flask_gunicorn import
-# import ast
-import time
-# from requests.auth import HTTPBasicAuth
-# import sqlite3
-# from multiprocessing import Process
-# from cloudpayments import CloudPayments
-# client = CloudPayments('pk_eec792a048a7d7b8c6b6e84022abf', '758a780e9689de0ffb0fd77749f23672')
-conn = None#sqlite3.connect('database.db')
-# cursor = conn.cursor()
-
-# app = wsgi.app
-
-# app = Flask(__name__)
 history = dict()
 carts = dict()
 clients = {}
 zz = []
 
+logger.add('debug.log', format='{time} {level} {message}', level='DEBUG')
 
-
-def send_telegram(text: str):
+def send_telegram(text):
     token = "1832470032:AAH-RVl2FE6PeVmoVo6iR0OFnbcArNWtLg8"
     url = "https://api.telegram.org/bot"
     channel_id = "498516666"
@@ -38,7 +26,6 @@ def send_telegram(text: str):
          "text": text
           })
 
-# context = SSL.Context(SSL.SSLv23_METHOD)
 def send_text(phone,text):
     if len(phone) == 10:
         phone = '7' + phone
@@ -123,27 +110,31 @@ def primera():
     #     bot = WABot(Body, clients, conn)
     #     bot.processing(True)
     # key = os.getenv('key')
-    send_telegram(f'Запуск текущий PID: {os.getpid()}')
+    logger.info('Start')
+    pid = os.getpid()
+    send_telegram(f'pid from app: {str(pid)}')
     # # if key:
     # send_telegram(key)
+    logger.info(f'pid from app: {str(pid)}')
     while True:
-
-        key = os.getenv('key')
-        if key:
-            send_telegram('я мониторю..')
+        logger.info('Step')
+        # key = os.getenv('key')
+        # if key:
+        #     send_telegram('я мониторю..')
         json = get_notifications(token)
         if json == None:
             # print('нет ответа')
             continue
-
         receipt = json['receiptId']
         body = json['body']
         try:
             if body['messageData']['typeMessage'] == 'textMessage':
-                bot = WABot(body, clients, conn)
+                logger.debug(body['messageData']['textMessageData']['textMessage'])
+                bot = WABot(body, clients, logger)
                 bot.processing()
         except Exception as ex:
             # errorText =  f" команда: {body['messageData']['textMessageData']['textMessage']} \n" + ex
+            logger.error(ex)
             print(ex)
             send_telegram(ex)
 
@@ -152,15 +143,12 @@ def primera():
             del_notifications(token, receipt)
 
 
+def write_pid(pid_file: str):
+    with open(pid_file, mode="w", encoding="utf8") as file:
+        file.write(f"{os.getpid()}")
+
+
+
 if(__name__) == '__main__':
+    write_pid('pid.pid')
     primera()
-    # segundo()
-    # lsOrders = get_client_orders('7071392125', self.database['conn'].cursor)
-    # p1 = Process(target=primera)
-    # p2 = Process(target=segundo)
-    #
-    # p1.start()
-    # p2.start()
-    #
-    # p1.join()
-    # p2.join()

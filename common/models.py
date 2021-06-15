@@ -67,6 +67,10 @@ class Driver(models.Model):
         data = Order.objects.filter(client__driver=self).exclude(status_order= Order.STATUS_TYPE_COMPLETED).values('date_dev')
         return data
 
+    def get_open_orders_full(self):
+        data = Order.objects.filter(client__driver=self).exclude(status_order= Order.STATUS_TYPE_COMPLETED)
+        return data
+
 class District(models.Model):
     name = models.CharField(max_length=50, verbose_name='Район', unique=True)
 

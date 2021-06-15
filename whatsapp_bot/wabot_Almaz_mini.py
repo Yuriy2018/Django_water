@@ -19,11 +19,13 @@ api_url = 'https://water.hostman.site'
 # APIUrl = 'https://api.green-api.com/waInstance7402/'
 # token = '0bbcb29ff60098202ffbb07df051131f21d2234d12c22c4ad4'
 
-APIUrl = 'https://api.green-api.com/waInstance9159/'
-token = 'd089c99b960a312c819d2a8b67e2e6e81603d94c61bf095984' # мой номер Тинькофф
+# APIUrl = 'https://api.green-api.com/waInstance9159/'
+# token = 'd089c99b960a312c819d2a8b67e2e6e81603d94c61bf095984' # мой номер Тинькофф
 
 # APIUrl = 'https://api.green-api.com/waInstance9434/'
 # token = '58a9d6215dea637d8e75238c3db0e1b29cb0a8f91f08468517'
+APIUrl = 'https://api.green-api.com/waInstance7948/'
+token = '7c6a91b25c8e0d1a14bce0b7118d76668bc5e2dddc06ac9783'
 
 stringForImput = ['НАЧАТЬ', 'ЗАКАЗ', 'ЗАКАЗАТЬ', 'ORDER', 'ZAKAZ']
 
@@ -571,7 +573,7 @@ class ClienOchag():
 
 
 class WABot():
-    def __init__(self, jsonM, clients, conn):
+    def __init__(self, jsonM, clients, logger):
         if jsonM.get('messageData') == None:
             jsonMes = []
         else:
@@ -583,8 +585,7 @@ class WABot():
         self.clients = clients
         self.Curr_clients = None
         self.curr_command = ''
-        self.database = {'conn': conn,
-                         }
+        self.logger = logger
 
     def send_requests(self, method, data):  # DEMODEMO demo
         print(data['body'])
@@ -601,6 +602,7 @@ class WABot():
         demo = self.debug
         if not demo:
             response = requests.request("POST", url, headers=headers, data=json.dumps(payload))
+            self.logger.debug(data['body'])
 
 
         return ''

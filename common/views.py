@@ -87,7 +87,7 @@ def report_view(request):
 def get_data_for_report(driver):
     # orders = Order.objects.filter(Q(client__driver=driver) | ~Q(status_order= Order.STATUS_TYPE_COMPLETED))
     # orders = Order.objects.filter(client__driver=driver).exclude(status_order= Order.STATUS_TYPE_COMPLETED)
-    orders = driver.get_open_orders()
+    orders = driver.get_open_orders_full()
     data = []
 
     for inx, order in enumerate(orders):
@@ -112,9 +112,14 @@ def order_driver_view(request, id):
 
     tabulars = TabluarOrders.objects.filter(order_id=id)
     tab_ls = []
+    cx = 0
     for row in tabulars:
+        cx += 1
         tab_ls.append({'position' : row.position,
+                       'number' : str(cx),
                        'price' : row.price,
+                       'position_id' : row.position.id,
+                       'id_row' : 'id_row'+ str(cx),
                        'quantity' : row.quantity,
                        'amount' : row.amount})
 
@@ -146,6 +151,9 @@ def procces_order(request):
         elif  param['status'] == 'postponed':
             order.status_order = Order.STATUS_TYPE_postponed
 
+        # if param['data_table_1'] != '':
+        #     row = TabluarOrders.objects.filter(order=order,id=1).first()
+        #     row
         order.save()
 
         driver = Driver.objects.filter(user=request.user).first()

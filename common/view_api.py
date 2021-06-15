@@ -33,7 +33,7 @@ class ClientView(APIView):
         # else:
         #     return Response([])
 
-#todo 1 Данные по клиенту, его крайнему заказу и инфо про его водителя.
+
 
 class ClientFullData(APIView):
     def get(self, request, number):
