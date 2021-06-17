@@ -7,7 +7,8 @@ import requests
 
 import datetime as DT
 import calendar
-
+import socket
+is_server = socket.gethostname() != 'yuriy-Aspire-5755G'
 # config = configparser.ConfigParser()
 # config.read('config.ini')
 #1
@@ -76,6 +77,7 @@ def add_zakaz(client):
         "new_client": client.new,
         "comment": client.comment,
         "amount": summadoc,
+        "attention": client.attention,
         "date_dev": client.date_of_delivery,
         "tabulars": tabulars,
     }
@@ -133,7 +135,7 @@ def control(*args):
 
 def new_client(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
-    # client.steps.append(['make_an_order', '', lastMenu])
+    client.steps.append(['finish', '', ''])
     client.size_Menu = 0
     message = 'Заяка на доставку от нового клиента:\n' + text
     # self.send_message('77071392125', message) # Указать номер менеджера для получения сообщений о новых клиентах.
@@ -157,6 +159,7 @@ def control_address(*args):
     if text == '1':
         paymont_cash(*args)
     elif text == '2':
+        client.attention = True
         client.size_Menu = 0
         client.steps.append(['control_address', '', other_address])
         self.read_chat = False
@@ -209,7 +212,11 @@ def get_list_dates(client):
     current_date = DT.date.today()
     # Проверка, если после 11 часов, то убираем сегодняшнюю дату
     current_time = DT.datetime.now()
-    if current_time.hour < 11 :
+    if is_server: # Если это сервер, то время проверки доставки на сегодня +5 часов
+        hour_x = 11 + 5
+    else:
+        hour_x = 11
+    if current_time.hour < hour_x :
         start = 0
     else:
         start = 1
@@ -528,6 +535,7 @@ class ClienOchag():
         self.id = id
         self.lastcart = None
         self.comment = ''
+        self.attention = False
         dataclient = get_client(id)
         if not dataclient or dataclient.get('client_id') == 'None':
             self.new = True
@@ -710,6 +718,9 @@ class WABot():
         #         return create_order(params)
         #     else:
         #         return start(params)
+
+        if client.steps[-1][0] == 'finish':
+            return ''
 
         if text == '0' and client.steps[-1][0] != 'finish' and client.steps[-1][0] != 'specify_number_home' and client.steps[-1][0] != 'editionCount':
             return back_menu(params)

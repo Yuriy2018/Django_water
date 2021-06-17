@@ -41,7 +41,7 @@ class Order(models.Model):
     create_bot = models.BooleanField(verbose_name='Чат-бот', default=False, blank=True)
     load_1C = models.BooleanField(verbose_name='Грузить в 1С', default=True, blank=True)
     user = models.OneToOneField(User, verbose_name="Пользователь", on_delete=models.PROTECT, null=True, blank=True)
-
+    attention = models.BooleanField(verbose_name='Внимание', default=False, blank=True)
 
     class Meta:
         verbose_name = 'Заказ'
