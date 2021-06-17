@@ -22,7 +22,7 @@ class ClientAdmin(admin.ModelAdmin):
     #           ('type_client','type_play'),
     #           ('driver','code1C'),
     #           ]
-    search_fields = ['name']
+    search_fields = ['name', 'phone_number']
 
 class DistrictAdmin(admin.ModelAdmin):
     class Meta:

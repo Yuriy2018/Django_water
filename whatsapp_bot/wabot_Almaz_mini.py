@@ -74,7 +74,7 @@ def add_zakaz(client):
         "create_bot": True,
         # "type_play": type_pay,
         "new_client": client.new,
-        "comment": '',
+        "comment": client.comment,
         "amount": summadoc,
         "date_dev": client.date_of_delivery,
         "tabulars": tabulars,
@@ -138,29 +138,49 @@ def new_client(*args):
     message = 'Заяка на доставку от нового клиента:\n' + text
     # self.send_message('77071392125', message) # Указать номер менеджера для получения сообщений о новых клиентах.
     # self.send_message('77084713855', message) # Указать номер менеджера для получения сообщений о новых клиентах.
+    self.redis.set(id,'sleep', ex=5000)
     return self.send_message(id, 'Спасибо! В ближайшее время с Вами свяжется наш менеджер.')
 
 def specify_address(*args):
     self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
     client.steps.append(['specify_address','',control_address])
     client.size_Menu = 2
-    return self.send_message(id, 'Адрес доставки: ' + client.address + '/n 1.Да /n 2.Нет')
+    if client.address:
+        address = client.address
+    else:
+        address = client.name
+    self.logger.info(f'тест адрес доставки {id} -- {address}')
+    return self.send_message(id, 'Адрес доставки: ' + address + '\n 1.Да \n 2.Нет')
 
 def control_address(*args):
     self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
     if text == '1':
-        finish(*args)
+        paymont_cash(*args)
     elif text == '2':
         client.size_Menu = 0
         client.steps.append(['control_address', '', other_address])
+        self.read_chat = False
         return self.send_message(id, 'Укажите адрес доставки:')
 
 def other_address(*args):
     self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
     client.comment = text
-    return finish(*args)
+    return paymont_cash(*args)
 
+def read_chat(chatID):
 
+    # url = "https://api.green-api.com/waInstance{{idInstance}}/readChat/{{apiTokenInstance}}"
+    url = APIUrl + 'readChat/' + token
+
+    payload = {"chatId": chatID + '@c.us',
+               }
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    print(response.text.encode('utf8'))
 
 
 
@@ -264,7 +284,7 @@ def get_count(*args):
     #     return self.send_message(id, string)
 
     client.steps.append(['get_count', pos, add_pos])
-    client.size_Menu = 0
+    client.size_Menu = 50
     string = 'Укажите количество для позиции: "' + pos['name'] +'"\n'
     return self.send_message(id, string)
 
@@ -313,6 +333,7 @@ def finish(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
     client.steps.append(['finish', '', finish])
     client.size_Menu = 0
+    self.redis.set(id, 'sleep', ex=5000)
     return self.send_message(id, 'Спасибо! Ваш заказ принят! Для выполнения нового заказа введите команду "Заказть"')
 
 def paymont_cash(*args):
@@ -321,6 +342,9 @@ def paymont_cash(*args):
     client.size_Menu = 0
     add_zakaz(client)
     client.reset()
+    if self.read_chat:
+        read_chat(id)
+    self.redis.set(id, 'sleep', ex=5000)
     return self.send_message(id, 'Ваш заказ принят. Ожидайте доставку.')
 
 # def paymont_online(*args):
@@ -503,11 +527,13 @@ class ClienOchag():
     def __init__(self, id):
         self.id = id
         self.lastcart = None
+        self.comment = ''
         dataclient = get_client(id)
         if not dataclient or dataclient.get('client_id') == 'None':
             self.new = True
         else:
             self.new = False
+            self.address = ''
 
             self.pk = dataclient['client_id']
             self.lastcart = dataclient['last_order']
@@ -599,7 +625,7 @@ class ClienOchag():
 
 
 class WABot():
-    def __init__(self, jsonM, clients, logger):
+    def __init__(self, jsonM, clients, logger, redis):
         if jsonM.get('messageData') == None:
             jsonMes = []
         else:
@@ -612,6 +638,8 @@ class WABot():
         self.Curr_clients = None
         self.curr_command = ''
         self.logger = logger
+        self.read_chat = True
+        self.redis = redis
 
     def send_requests(self, method, data):  # DEMODEMO demo
         print(data['body'])
@@ -628,7 +656,7 @@ class WABot():
         demo = self.debug
         if not demo:
             response = requests.request("POST", url, headers=headers, data=json.dumps(payload))
-            self.logger.debug(data['body'])
+            self.logger.debug(f"{data['chatId']} - {data['body']}")
 
 
         return ''
@@ -637,6 +665,7 @@ class WABot():
         data = {"chatId": chatID + '@c.us',
                 "body": text}
         answer = self.send_requests('sendMessage', data)
+        # self.logger.debug(f"{chatID} - {text}")
         return answer
 
     def convert_to_string(self, menu):

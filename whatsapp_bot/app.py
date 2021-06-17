@@ -4,7 +4,8 @@ import time
 from loguru import logger
 import requests
 import json
-import psutil
+import redis
+# import psutil
 # from wabot_Almaz import WABot, APIUrl, token
 from wabot_Almaz_mini import WABot, APIUrl, token
 history = dict()
@@ -12,7 +13,10 @@ carts = dict()
 clients = {}
 zz = []
 
-logger.add('debug.log', format='{time} {level} {message}', level='DEBUG')
+# r = redis.Redis(host='127.0.0.1', port=6379, db=0)
+r = redis.Redis(host='45.147.176.206', port=6379, db=0)
+
+logger.add('debug.log', format='{time:YYYY-MM-DD HH:mm:ss} {level} {message}', level='DEBUG')
 
 def send_telegram(text):
     token = "1832470032:AAH-RVl2FE6PeVmoVo6iR0OFnbcArNWtLg8"
@@ -76,13 +80,14 @@ def get_notificationsQR(token):
         return response.json()
 
 def reset_calls(token):
-    json_data = get_notifications(token)
-    if json_data == None:
-        return
+    while True:
+        json_data = get_notifications(token)
+        if json_data == None:
+             break
 
-    receipt = json_data.get('receiptId')
-    if receipt:
-        del_notifications(token, receipt)
+        receipt = json_data.get('receiptId')
+        if receipt:
+            del_notifications(token, receipt)
 
 def primera():
     # send_text(token,'77071392125','Start')
@@ -92,23 +97,23 @@ def primera():
     # commands = ['ZAKAZ','1', '1',  '2', '3', '1', '3']#, '1', '3']#, '3','Вавилова','1','25','0']
     # # commands = ['ZAKAZ']
     # number_client = '79957745448'
-    number_client = '77071392125'
-    cx_test = len(commands)
-    for c in commands:
-          print('Command:',c)
-          Body = {'typeWebhook': 'incomingMessageReceived',
-                  'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'},
-                  'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89',
-                  'senderData': {'chatId': number_client+'@c.us', 'sender': '77071392125@c.us', 'senderName': 'Юрич'},
-                  'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
-          bot = WABot(Body, clients, logger)
-          bot.processing(True)
-          time.sleep(1)
-    while True:
-        c = input()
-        Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
-        bot = WABot(Body, clients, logger)
-        bot.processing(True)
+    number_client = '77071392129'
+    # cx_test = len(commands)
+    # for c in commands:
+    #       print('Command:',c)
+    #       Body = {'typeWebhook': 'incomingMessageReceived',
+    #               'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'},
+    #               'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89',
+    #               'senderData': {'chatId': number_client+'@c.us', 'sender': '77071392125@c.us', 'senderName': 'Юрич'},
+    #               'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
+    #       bot = WABot(Body, clients, logger)
+    #       bot.processing(True)
+    #       time.sleep(1)
+    # while True:
+    #     c = input()
+    #     Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
+    #     bot = WABot(Body, clients, logger, r)
+    #     bot.processing(True)
     # key = os.getenv('key')
     logger.info('Start')
     pid = os.getpid()
@@ -117,7 +122,7 @@ def primera():
     # send_telegram(key)
     logger.info(f'pid from app: {str(pid)}')
     while True:
-        logger.info('Step')
+        # logger.info('Step')
         # key = os.getenv('key')
         # if key:
         #     send_telegram('я мониторю..')
@@ -129,9 +134,13 @@ def primera():
         body = json['body']
         try:
             if body['messageData']['typeMessage'] == 'textMessage':
-                logger.debug(body['messageData']['textMessageData']['textMessage'])
-                bot = WABot(body, clients, logger)
-                bot.processing()
+                text = body['messageData']['textMessageData']['textMessage']
+                id = body['senderData']['chatId']
+                number = id.replace('@c.us', '')
+                if r.get(number) == None:
+                    logger.debug(f"{number} - {text}")
+                    bot = WABot(body, clients, logger,r)
+                    bot.processing()
         except Exception as ex:
             # errorText =  f" команда: {body['messageData']['textMessageData']['textMessage']} \n" + ex
             logger.error(ex)
