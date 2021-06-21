@@ -97,7 +97,7 @@ def primera():
     # commands = ['ZAKAZ','1', '1',  '2', '3', '1', '3']#, '1', '3']#, '3','Вавилова','1','25','0']
     # # commands = ['ZAKAZ']
     # number_client = '79957745448'
-    number_client = '77071392129'
+    number_client = '77071392125'
     # cx_test = len(commands)
     # for c in commands:
     #       print('Command:',c)
@@ -138,6 +138,7 @@ def primera():
                 id = body['senderData']['chatId']
                 number = id.replace('@c.us', '')
                 if r.get(number) == None:
+                # if True:
                     logger.debug(f"{number} - {text}")
                     bot = WABot(body, clients, logger,r)
                     bot.processing()
@@ -145,7 +146,7 @@ def primera():
             # errorText =  f" команда: {body['messageData']['textMessageData']['textMessage']} \n" + ex
             logger.error(ex)
             print(ex)
-            send_telegram(ex)
+            send_telegram(f"{ex} --- \n{str(body)}")
 
 
         if receipt:

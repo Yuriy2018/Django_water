@@ -34,7 +34,7 @@ class OrderAdmin(admin.ModelAdmin):
     date_end_wiev.short_description = 'Дата закрытия'
 
     # list_display = ('id', 'time_seconds',)
-    list_display = ('attention','number', 'date_wiev', 'client', 'date_dev_wiev', 'date_end_wiev', 'show_driver', 'amount', 'number1С', 'create_bot')
+    list_display = ('attention','number', 'date_wiev', 'client', 'comment','date_dev_wiev', 'date_end_wiev', 'show_driver', 'amount', 'number1С', 'create_bot')
     list_display_links = ('number', 'date_wiev', 'client',)
     inlines = [TabluarOrdersInline, ]
     # fields = [('number', 'date'),('date_dev', 'date_end'),('status_order', 'type_play'),'client',  'amount', 'comment', 'returned_container',('user', 'load_1C', 'number1С')]
