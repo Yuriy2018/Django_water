@@ -60,6 +60,7 @@ class ClientFullData(APIView):
             open_orders = 0
             driver_name = ''
             driver_plane = 0
+            dict_open_ord = dict()
 
         orders = Order.objects.filter(client=client).order_by('-date').first()
         last_order = {}

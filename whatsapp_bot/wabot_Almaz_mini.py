@@ -88,6 +88,23 @@ def add_zakaz(client):
     return 'успех'
 
 
+def add_client(number_phone, address):
+
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    payload = {
+        "name": address,
+        "address": address,
+        "phone_number": number_phone,
+    }
+
+    response = requests.request("POST", api_url +'/api/add_client/', headers=headers, data=json.dumps(payload))
+
+
+    return json.loads(response.text)
+
 def back_menu(*args):
     self, client, text, id = args[0]['self'], args[0]['client'], args[0]['text'], args[0]['id'],
 
@@ -137,11 +154,19 @@ def new_client(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
     client.steps.append(['finish', '', ''])
     client.size_Menu = 0
-    message = 'Заяка на доставку от нового клиента:\n' + text
+    dataclient = add_client(number_phone=id,address=text)
+    client.pk = dataclient['id']
+    client.lastcart = None
+    client.name = dataclient['name']
+    client.Code1C = ''
+    client.address = dataclient['address']
+    # client.new = False
+    return create_order(*args)
+    # message = 'Заяка на доставку от нового клиента:\n' + text
     # self.send_message('77071392125', message) # Указать номер менеджера для получения сообщений о новых клиентах.
     # self.send_message('77084713855', message) # Указать номер менеджера для получения сообщений о новых клиентах.
-    self.redis.set(id,'sleep', ex=17800)
-    return self.send_message(id, 'Спасибо! В ближайшее время с Вами свяжется наш менеджер.')
+    # self.redis.set(id,'sleep', ex=17800)
+    # return self.send_message(id, 'Спасибо! В ближайшее время с Вами свяжется наш менеджер.')
 
 def specify_address(*args):
     self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
@@ -205,8 +230,8 @@ def get_list_dates(client):
     # todo тут нужно сделать проверку на возможность доставки на эту дату
     # До 11 можно не сегодня принять, после только на завтра(если завтра не воскресенье)
     # Так же, делаем проверку по загруженности водителя на конкретный день.
-    open_orders = client.dataclient['open_orders']
-    plane = client.dataclient['plane']
+    open_orders = client.dataclient['open_orders'] if client.dataclient != None else 0
+    plane = client.dataclient['plane'] if client.dataclient != None else 0
     list = []
     cx = 0
     current_date = DT.date.today()
@@ -217,7 +242,7 @@ def get_list_dates(client):
         hour_x = 4
     else:
         hour_x = 11
-    if current_time.hour < hour_x :
+    if current_time.hour < hour_x and not client.new:
     # if False :
         start = 0
     else:
@@ -226,8 +251,9 @@ def get_list_dates(client):
     for day in range(start, 10):
         row_date = current_date + DT.timedelta(days=day)
         # Проверка, если уже на этот день заказов выше нормы(plane)
-        if open_orders.get(str(row_date)) and open_orders[str(row_date)] >= plane:
-                continue
+        if not client.new:
+            if open_orders.get(str(row_date)) and open_orders[str(row_date)] >= plane:
+                    continue
         if row_date.isoweekday() != 7:  # exception sunday
             cx += 1
             date_view = f'{str(cx)}. ' + row_date.strftime('%d.%m.%y') + f' ({present_day(row_date)})\n'
@@ -256,10 +282,10 @@ def present_day(date):
 def create_order(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
 
-    if client.new:
+    if client.new and client.name == '':
         client.size_Menu = 0
         client.steps.append(['create_order', '', new_client])
-        return self.send_message(id, 'Напишите Ваше имя и номер телефона:')
+        return self.send_message(id, 'Напишите Ваш адрес:')
 
 
     string = 'Выберите позицию из списка:\n'
@@ -342,7 +368,7 @@ def finish(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
     client.steps.append(['finish', '', finish])
     client.size_Menu = 0
-    self.redis.set(id, 'sleep', ex=17800)
+    self.redis.set(id, 'sleep', ex=36000)
     return self.send_message(id, 'Спасибо! Ваш заказ принят! Для выполнения нового заказа введите команду "Заказть"')
 
 def paymont_cash(*args):
@@ -353,7 +379,7 @@ def paymont_cash(*args):
     client.reset()
     if self.read_chat:
         read_chat(id)
-    self.redis.set(id, 'sleep', ex=5000)
+    self.redis.set(id, 'sleep', ex=36000)
     return self.send_message(id, 'Ваш заказ принят. Ожидайте доставку.')
 
 # def paymont_online(*args):
@@ -411,7 +437,7 @@ def soon_delevery(*args):
     date_delevery = client.steps[-1][1][int(text)-1].get('date')
     client.date_of_delivery = str(date_delevery)
     client.steps.append(['soon_delevery', '', paymentM])
-    client.size_Menu = 0
+    client.size_Menu = len(paymentM) - 1
     return self.send_message(id, 'Выберите способ оплаты:\n' + self.convert_to_string(paymentM))
 
 def edit_pos(*args):
@@ -545,6 +571,7 @@ class ClienOchag():
         dataclient = get_client(id)
         if not dataclient or dataclient.get('client_id') == 'None':
             self.new = True
+            self.name = ''
         else:
             self.new = False
             self.address = ''

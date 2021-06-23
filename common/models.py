@@ -21,6 +21,8 @@ from django.contrib.auth.models import User
 #
 #     def __str__(self):
 #         return self.name
+from django.utils import timezone
+
 from documents.models import Order
 
 
@@ -128,6 +130,7 @@ class Client(models.Model):
                                  choices=PAY_TYPE_CHOICES)
     code1C = models.CharField(max_length=11, verbose_name='Код 1С', blank=True, null=True)
     comment = models.CharField(max_length=250, verbose_name='Комментарий', null=True, blank=True)
+    date_created = models.DateTimeField(verbose_name='Дата создания', default=timezone.now, null=True)
 
 
 

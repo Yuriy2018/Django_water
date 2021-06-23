@@ -85,6 +85,9 @@ def reset_calls(token):
         if json_data == None:
              break
 
+        num = json_data['body']['senderData']['chatId'].replace('@c.us', '')
+        r.set(num, 'sleep', ex=36000)
+
         receipt = json_data.get('receiptId')
         if receipt:
             del_notifications(token, receipt)
@@ -97,7 +100,7 @@ def primera():
     # commands = ['ZAKAZ','1', '1',  '2', '3', '1', '3']#, '1', '3']#, '3','Вавилова','1','25','0']
     # # commands = ['ZAKAZ']
     # number_client = '79957745448'
-    number_client = '77071392125'
+    number_client = '77071392999'
     # cx_test = len(commands)
     # for c in commands:
     #       print('Command:',c)
@@ -109,11 +112,11 @@ def primera():
     #       bot = WABot(Body, clients, logger)
     #       bot.processing(True)
     #       time.sleep(1)
-    # while True:
-    #     c = input()
-    #     Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
-    #     bot = WABot(Body, clients, logger, r)
-    #     bot.processing(True)
+    while True:
+        c = input()
+        Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
+        bot = WABot(Body, clients, logger, r)
+        bot.processing(True)
     # key = os.getenv('key')
     logger.info('Start')
     pid = os.getpid()
@@ -157,8 +160,22 @@ def write_pid(pid_file: str):
     with open(pid_file, mode="w", encoding="utf8") as file:
         file.write(f"{os.getpid()}")
 
+def get_out():
+    url = "https://api.green-api.com/waInstance7948/lastOutgoingMessages/7c6a91b25c8e0d1a14bce0b7118d76668bc5e2dddc06ac9783"
 
+    payload = {}
+    headers = {}
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+
+    dataJ = json.loads(response.text.encode('utf8'))
+    outgoing = set()
+    for dt in dataJ:
+        outgoing.add(dt['chatId'].replace('@c.us', ''))
+    for out in outgoing:
+        r.set(out,'sleep',ex=36000)
 
 if(__name__) == '__main__':
     write_pid('pid.pid')
+    get_out() # Добавляем в список редис все номера, кому сегодня писали из ватсап аккаунта.
     primera()

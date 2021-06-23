@@ -11,7 +11,7 @@
 # resp = requests.post('http://127.0.0.1:8000/login/', {'username': 'akshar', 'password': 'abc'})
 
 
-import requests
+import requests, json
 import datetime
 import time
 
@@ -30,9 +30,24 @@ def send_telegram(text: str):
     if r.status_code != 200:
         raise Exception("post_text error")
 
+def get_out():
+    url = "https://api.green-api.com/waInstance7948/lastOutgoingMessages/7c6a91b25c8e0d1a14bce0b7118d76668bc5e2dddc06ac9783"
+
+    payload = {}
+    headers = {}
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+
+    dataJ = json.loads(response.text.encode('utf8'))
+    outgoing = set()
+    for dt in dataJ:
+        outgoing.add(dt['chatId'].replace('@c.us', ''))
+    print(dataJ)
+
 if __name__ == '__main__':
 
-  while True:
-    currend_date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
-    send_telegram(currend_date)
-    time.sleep(600)
+  get_out()
+  # while True:
+  #   currend_date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
+  #   send_telegram(currend_date)
+  #   time.sleep(600)
