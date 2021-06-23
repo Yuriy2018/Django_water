@@ -85,8 +85,11 @@ def reset_calls(token):
         if json_data == None:
              break
 
-        num = json_data['body']['senderData']['chatId'].replace('@c.us', '')
-        r.set(num, 'sleep', ex=36000)
+        try:
+            num = json_data['body']['senderData']['chatId'].replace('@c.us', '')
+            r.set(num, 'sleep', ex=36000)
+        except Exception as ex:
+            logger.error(ex)
 
         receipt = json_data.get('receiptId')
         if receipt:
@@ -112,11 +115,11 @@ def primera():
     #       bot = WABot(Body, clients, logger)
     #       bot.processing(True)
     #       time.sleep(1)
-    while True:
-        c = input()
-        Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
-        bot = WABot(Body, clients, logger, r)
-        bot.processing(True)
+    # while True:
+    #     c = input()
+    #     Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
+    #     bot = WABot(Body, clients, logger, r)
+    #     bot.processing(True)
     # key = os.getenv('key')
     logger.info('Start')
     pid = os.getpid()

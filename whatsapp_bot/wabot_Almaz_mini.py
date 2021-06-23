@@ -230,8 +230,16 @@ def get_list_dates(client):
     # todo тут нужно сделать проверку на возможность доставки на эту дату
     # До 11 можно не сегодня принять, после только на завтра(если завтра не воскресенье)
     # Так же, делаем проверку по загруженности водителя на конкретный день.
-    open_orders = client.dataclient['open_orders'] if client.dataclient != None else 0
-    plane = client.dataclient['plane'] if client.dataclient != None else 0
+    if client.dataclient.get('open_orders'):
+        open_orders = client.dataclient['open_orders'] if client.dataclient != None else 0
+    else:
+        open_orders = 0
+
+    if client.dataclient.get('plane'):
+        plane = client.dataclient['plane'] if client.dataclient != None else 0
+    else:
+        plane = 0
+
     list = []
     cx = 0
     current_date = DT.date.today()
@@ -251,7 +259,7 @@ def get_list_dates(client):
     for day in range(start, 10):
         row_date = current_date + DT.timedelta(days=day)
         # Проверка, если уже на этот день заказов выше нормы(plane)
-        if not client.new:
+        if not client.new and open_orders != None:
             if open_orders.get(str(row_date)) and open_orders[str(row_date)] >= plane:
                     continue
         if row_date.isoweekday() != 7:  # exception sunday
