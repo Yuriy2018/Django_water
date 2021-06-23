@@ -6,6 +6,8 @@ from rest_framework.response import Response
 
 from documents.forms import OrderForm
 
+import datetime
+
 from common.forms import LoginForm
 from common.models import Client, Positions, Driver
 from documents.models import Order, TabluarOrders
@@ -91,6 +93,8 @@ def get_data_for_report(driver):
     data = []
 
     for inx, order in enumerate(orders):
+        if order.date_dev != datetime.date.today():
+            continue
         f = {'date':order.date,
          'client': order.client,
          'phone_number': order.client.phone_number,
