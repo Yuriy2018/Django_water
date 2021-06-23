@@ -1,6 +1,17 @@
 from django.contrib import admin
 from .models import Order, TabluarOrders
 
+def make_completed(modeladmin, request, queryset):
+    for order in queryset:
+        order.status_order = Order.STATUS_TYPE_COMPLETED
+        order.save()
+make_completed.short_description = "Заполнить статус - доставлен"
+
+def make_postponed(modeladmin, request, queryset):
+    for order in queryset:
+        order.status_order = Order.STATUS_TYPE_postponed
+        order.save()
+make_postponed.short_description = "Заполнить статус - отложен"
 
 class TabluarOrdersInline(admin.TabularInline):
     model = TabluarOrders
@@ -24,7 +35,7 @@ class OrderAdmin(admin.ModelAdmin):
             return obj.date_dev.strftime("%d.%m.%Y")
 
     date_dev_wiev.admin_order_field = 'date_dev'
-    date_dev_wiev.short_description = 'Дата клиента'
+    date_dev_wiev.short_description = 'Дата доставки'
 
     def date_end_wiev(self, obj):
         if obj.date_end:
@@ -34,15 +45,15 @@ class OrderAdmin(admin.ModelAdmin):
     date_end_wiev.short_description = 'Дата закрытия'
 
     # list_display = ('id', 'time_seconds',)
-    list_display = ('attention','new_client', 'number', 'date_wiev', 'client', 'comment','date_dev_wiev', 'date_end_wiev', 'show_driver', 'amount', 'number1С', 'create_bot')
+    list_display = ('attention','new_client', 'number', 'date_wiev', 'client', 'comment','date_dev_wiev', 'date_end_wiev', 'show_driver', 'status_order', 'number1С', 'create_bot')
     list_display_links = ('number', 'date_wiev', 'client',)
     inlines = [TabluarOrdersInline, ]
     # fields = [('number', 'date'),('date_dev', 'date_end'),('status_order', 'type_play'),'client',  'amount', 'comment', 'returned_container',('user', 'load_1C', 'number1С')]
     fields = [('date_dev', 'date_end'),('status_order', 'type_play'),'client', 'comment', 'returned_container',('user', 'attention', 'load_1C', 'number1С')]
     autocomplete_fields = ['client',]
     readonly_fields = ['date_end',]
-    list_filter = ['new_client',]
-
+    list_filter = ['new_client','status_order']
+    actions = [make_completed, make_postponed,]
     # change_form_template = ''
 
     def show_driver(self, obj):
