@@ -275,7 +275,7 @@ class TabuluarCreateView(APIView):
 class Orders1cListView(APIView):
 
     def get(self, request):
-        orders = Order.objects.filter(Q(number1С=None) & Q(load_1C=True))
+        orders = Order.objects.filter(Q(number1С=None) & Q(load_1C=True) & Q(status_order=Order.STATUS_TYPE_COMPLETED))
         if not orders:
             return Response([])
 
