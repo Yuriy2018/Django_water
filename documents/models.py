@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -56,6 +58,8 @@ class Order(models.Model):
             self.number = self.get_next_number()
         if not self.date_dev:
             self.date_dev = self.date
+        if not self.date_end and self.status_order == Order.STATUS_TYPE_COMPLETED:
+            self.date_end = datetime.date.today()
         super().save(*args, **kwargs)
         # self.amount = self.get_amount()
         # super().save(*args, **kwargs)

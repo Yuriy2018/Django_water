@@ -2,6 +2,8 @@ from django.contrib import admin
 
 from .models import Driver, Positions, Client, District
 
+
+
 def make_published(modeladmin, request, queryset):
     for client in queryset:
         if not client.address:
@@ -42,14 +44,29 @@ class PositionsAdmin(admin.ModelAdmin):
 #     list_filter = ('driver',)
 
 class DriverAdmin(admin.ModelAdmin):
-    list_display = ('name', 'Open_Order', 'user', 'login', 'email')
-    list_display_links = ('name', 'Open_Order', 'user', 'login', 'email')
+    list_display = ('name', 'Open_Order', 'Postponed_Order', 'Delivered_Order', 'Amount_Order',  'user',)
+    list_display_links = ('name', 'Open_Order',)
 
     def Open_Order(self, obj):
-        return len(obj.get_open_orders())
+        return obj.get_open_orders()
 
     Open_Order.short_description = 'Открытые ордера'
 
+    def Postponed_Order(self, obj):
+        return obj.get_posponed_orders()
+
+    Postponed_Order.short_description = 'Отложенные ордера'
+
+    def Delivered_Order(self, obj):
+        return obj.get_closed_orders()
+
+    Delivered_Order.short_description = 'Закрытые ордера'
+
+    def Amount_Order(self, obj):
+        data = obj.get_closed_orders_Amount()
+        return data['amount__sum']
+
+    Amount_Order.short_description = 'Сумма ордеров'
 
 
 
@@ -63,3 +80,4 @@ admin.site.register(District, DistrictAdmin)
 admin.site.register(Client, ClientAdmin)
 
 admin.site.site_header = 'Онлайн заказ воды'
+

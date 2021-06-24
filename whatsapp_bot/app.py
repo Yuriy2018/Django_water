@@ -16,7 +16,7 @@ zz = []
 # r = redis.Redis(host='127.0.0.1', port=6379, db=0)
 r = redis.Redis(host='45.147.176.206', port=6379, db=0)
 
-logger.add('debug.log', format='{time:YYYY-MM-DD HH:mm:ss} {level} {message}', level='DEBUG')
+logger.add('debug.log', format='{time:YYYY-MM-DD HH:mm:ss} {level} {message}', level='DEBUG', rotation="01:00", compression="zip")
 
 def send_telegram(text):
     token = "1832470032:AAH-RVl2FE6PeVmoVo6iR0OFnbcArNWtLg8"

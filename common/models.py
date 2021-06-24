@@ -68,11 +68,23 @@ class Driver(models.Model):
         super().save(*args, **kwargs)
 
     def get_open_orders(self):
-        data = Order.objects.filter(client__driver=self).exclude(status_order= Order.STATUS_TYPE_COMPLETED).values('date_dev')
+        data = Order.objects.filter(client__driver=self).exclude(status_order= Order.STATUS_TYPE_COMPLETED).count()
+        return data
+
+    def get_closed_orders(self):
+        data = Order.objects.filter(client__driver=self, status_order=Order.STATUS_TYPE_COMPLETED, date_end=datetime.date.today()).count()
+        return data
+
+    def get_closed_orders_Amount(self):
+        data = Order.objects.filter(client__driver=self, status_order=Order.STATUS_TYPE_COMPLETED, date_end=datetime.date.today()).aggregate(models.Sum('amount'))
+        return data
+
+    def get_posponed_orders(self):
+        data = Order.objects.filter(client__driver=self, status_order=Order.STATUS_TYPE_postponed).count()
         return data
 
     def get_open_orders_full(self):
-        data = Order.objects.filter(client__driver=self).exclude(status_order= Order.STATUS_TYPE_COMPLETED)
+        data = Order.objects.filter(client__driver=self).exclude(status_order= Order.STATUS_TYPE_COMPLETED).count()
         return data
 
 class District(models.Model):

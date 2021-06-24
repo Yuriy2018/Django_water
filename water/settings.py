@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'water',
     'documents',
     'rest_framework',
+    # 'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -138,7 +139,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-
+# CELERY_BEAT_SCHEDULER='django_celery_beat.schedulers:DatabaseScheduler'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
