@@ -44,9 +44,26 @@ def get_out():
         outgoing.add(dt['chatId'].replace('@c.us', ''))
     print(dataJ)
 
+def add_client(number_phone, address):
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    payload = {
+        "name": address,
+        "address": address,
+        "phone_number": number_phone,
+    }
+    api_url = 'http://127.0.0.1:8000'
+    response = requests.request("POST", api_url + '/api/add_client/', headers=headers, data=json.dumps(payload))
+
+    return json.loads(response.text)
 if __name__ == '__main__':
 
-  get_out()
+    text = '''Здравствуйте! Примите заявку на воду. Код на воротах 29; код на подъезде 34.
+    1 бутыль'''
+    res = add_client('77071397775',text)
+    get_out()
   # while True:
   #   currend_date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
   #   send_telegram(currend_date)
