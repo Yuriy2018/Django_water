@@ -115,8 +115,9 @@ function valid(){
 
 	  // Проверка выставить в valid результат валидации.
     valid = document.querySelector('#status_delivered').checked
-    valid = document.querySelector('#status_postponed').checked
-
+    if (valid == false) {
+        valid = document.querySelector('#status_postponed').checked
+    }
 	  !valid && alert("Укажите доставлен/отложен");
 	  return valid;
     }
