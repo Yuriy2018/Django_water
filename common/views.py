@@ -131,7 +131,7 @@ def report_view_today(request):
                  'position': row.position,
                  'quantity': row.quantity,
                  'amount': row.amount,
-                 'comment': row.order.comment,
+                 'comment': row.order.comment if row.order.comment != None else '' ,
                  }
             data.append(f)
         key = driver.name +' '+ datetime.date.today().strftime('%d.%m')
