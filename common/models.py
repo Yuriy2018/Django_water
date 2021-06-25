@@ -84,7 +84,7 @@ class Driver(models.Model):
         return data
 
     def get_open_orders_full(self):
-        data = Order.objects.filter(client__driver=self).exclude(status_order= Order.STATUS_TYPE_COMPLETED).count()
+        data = Order.objects.filter(client__driver=self).exclude(status_order= Order.STATUS_TYPE_COMPLETED)
         return data
 
 class District(models.Model):

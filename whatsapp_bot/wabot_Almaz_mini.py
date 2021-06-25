@@ -241,7 +241,7 @@ def get_list_dates(client):
     else:
         open_orders = 0
     print('до get_list_dates условие 2')
-    if client.dataclient.get('plane'):
+    if client.dataclient and client.dataclient.get('plane'):
         plane = client.dataclient['plane'] if client.dataclient != None else 0
     else:
         plane = 0
