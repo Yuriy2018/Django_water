@@ -7,14 +7,17 @@ import json
 import redis
 # import psutil
 # from wabot_Almaz import WABot, APIUrl, token
-from wabot_Almaz_mini import WABot, APIUrl, token
+from wabot_Almaz_mini import WABot, APIUrl, token, is_server
 history = dict()
 carts = dict()
 clients = {}
 zz = []
 
 # r = redis.Redis(host='127.0.0.1', port=6379, db=0)
-r = redis.Redis(host='45.147.176.206', port=6379, db=0)
+if is_server:
+    r = redis.Redis(host='45.147.176.206', port=6379, db=0)
+else:
+    r = redis.Redis(host='127.0.0.1', port=6379, db=0)
 
 logger.add('debug.log', format='{time:YYYY-MM-DD HH:mm:ss} {level} {message}', level='DEBUG', rotation="01:00", compression="zip")
 
@@ -143,6 +146,7 @@ def primera():
                 text = body['messageData']['textMessageData']['textMessage']
                 id = body['senderData']['chatId']
                 number = id.replace('@c.us', '')
+                # if r.get(number) == None and number == '77071392125':
                 if r.get(number) == None:
                 # if True:
                     logger.debug(f"{number} - {text}")
@@ -178,7 +182,9 @@ def get_out():
     for out in outgoing:
         r.set(out,'sleep',ex=36000)
 
+
+
 if(__name__) == '__main__':
-    write_pid('pid.pid')
-    get_out() # Добавляем в список редис все номера, кому сегодня писали из ватсап аккаунта.
+    # write_pid('pid.pid')
+    get_out()  # Добавляем в список редис все номера, кому сегодня писали из ватсап аккаунта.
     primera()

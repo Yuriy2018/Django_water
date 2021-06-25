@@ -218,9 +218,7 @@ def read_chat(chatID):
 
 def delevery_time(*args):
     self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
-    print('до get_list_dates')
     list_dates = get_list_dates(client)
-    print('после get_list_dates')
     # client.steps.append(['specify_date', list_dates, soon_delevery])
     client.steps.append(['specify_date', list_dates, specify_address])
     client.size_Menu = len(list_dates)
@@ -235,12 +233,10 @@ def get_list_dates(client):
     # todo тут нужно сделать проверку на возможность доставки на эту дату
     # До 11 можно не сегодня принять, после только на завтра(если завтра не воскресенье)
     # Так же, делаем проверку по загруженности водителя на конкретный день.
-    print('до get_list_dates условие 1')
     if client.dataclient and client.dataclient.get('open_orders'):
         open_orders = client.dataclient['open_orders'] if client.dataclient != None else 0
     else:
         open_orders = 0
-    print('до get_list_dates условие 2')
     if client.dataclient and client.dataclient.get('plane'):
         plane = client.dataclient['plane'] if client.dataclient != None else 0
     else:
@@ -392,11 +388,14 @@ def welcome(*args):
         ❗️❗️❗️Просим Вас Уважаемые клиенты отвечать Chat Botu по факту вопроса цифрами и Уведомляем о том что голосовые сообщения Bot не распознаёт!!!❗️❗️❗
         '''
     client.steps.append(['welcome', '', start])
+    self.redis.hset('buzzy',id,int(DT.datetime.now().timestamp()))
     return self.send_message(id, message)
 
 
 def start(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
+
+    self.redis.hdel('buzzy',id)
 
     if text == '1':
         return create_order(*args)

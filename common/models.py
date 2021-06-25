@@ -25,7 +25,7 @@ from django.contrib.auth.models import User
 #         return self.name
 from django.utils import timezone
 
-from documents.models import Order
+from documents.models import Order, TabluarOrders
 
 
 class Driver(models.Model):
@@ -85,6 +85,10 @@ class Driver(models.Model):
 
     def get_open_orders_full(self):
         data = Order.objects.filter(client__driver=self).exclude(status_order= Order.STATUS_TYPE_COMPLETED)
+        return data
+
+    def get_open_orders_detalis(self):
+        data = TabluarOrders.objects.filter(order__client__driver=self, order__date_dev=datetime.date.today()).order_by('order__client__district')
         return data
 
 class District(models.Model):

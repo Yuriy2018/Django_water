@@ -1,0 +1,53 @@
+{#{% extends 'base.html' %}#}
+{% load static %}
+{% load i18n %}
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title> Путевой лист</title>
+  {% block extra_css %} {% endblock %}
+
+</head>
+<body>
+{% csrf_token %}
+{#<div align="left"><a href="/">выйти</a></div>#}
+ {% for driver, rows in data.items %}
+
+  <h4>Путевой лист для водителя : {{ driver }}</h4>
+<div class="table-wrap">
+<table class="table-1">
+<tr>
+  <th>№</th>
+  <th>Район</th>
+  <th>Адрес</th>
+  <th>Телефон</th>
+  <th>Номенклатура</th>
+  <th>Кол-во</th>
+  <th>Сумма</th>
+  <th>Коммент</th>
+</tr>
+
+  {% for row in rows %}
+{#   <h5>{{ order }}</h5>#}
+  <tr>
+    <td>{{ row.num }}</td>
+    <td>{{ row.district }}</td>
+    <td>{{ row.address }}</td>
+    <td>{{ row.phone_number }}</td>
+    <td>{{ row.position }}</td>
+    <td>{{ row.quantity }}</td>
+    <td>{{ row.amount }}</td>
+    <td>{{ row.comment }}</td>
+  </tr>
+
+  {% endfor %}
+
+</table>
+  {% endfor %}
+</div>
+<script register.js?{random} src="{% static 'documents/js/report.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'documents/css/style.css' %}">
+</body>
+</html>

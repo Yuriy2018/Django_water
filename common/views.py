@@ -110,6 +110,34 @@ def get_data_for_report(driver):
         data.append(f)
     return data
 
+# @login_required()
+def report_view_today(request):
+
+    drivers = Driver.objects.all()
+    data_dr = {}
+    for driver in drivers:
+        orders = driver.get_open_orders_detalis()
+        if not orders:
+            continue
+        data = []
+
+        for inx, row in enumerate(orders):
+            # if order.date_dev != datetime.date.today():
+            #     continue
+            f = {'num': inx + 1,
+                 'district': row.order.client.district,
+                 'address': row.order.client,
+                 'phone_number': row.order.client.phone_number,
+                 'position': row.position,
+                 'quantity': row.quantity,
+                 'amount': row.amount,
+                 'comment': row.order.comment,
+                 }
+            data.append(f)
+        key = driver.name +' '+ datetime.date.today().strftime('%d.%m')
+        data_dr[key] = data
+    return render(request,'report_today.html',{'data' : data_dr})
+
 def order_driver_view(request, id):
     order = Order.objects.filter(pk=id).first()
     form = OrderForm(instance=order)
