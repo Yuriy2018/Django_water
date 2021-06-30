@@ -111,12 +111,19 @@ def get_data_for_report(driver):
     return data
 
 # @login_required()
-def report_view_today(request):
+def report_view_today(request,period):
+
+    if period == '1':
+        start = datetime.datetime(2021, 6, 29, 17, 30, 00)
+        finish = datetime.datetime(2021, 6, 30, 8, 30, 00)
+    elif period == '2':
+        start = datetime.datetime(2021, 6, 30, 8, 30)
+        finish = datetime.datetime(2021, 6, 30, 17, 30)
 
     drivers = Driver.objects.all()
     data_dr = {}
     for driver in drivers:
-        orders = driver.get_open_orders_detalis()
+        orders = driver.get_open_orders_detalis(start, finish)
         if not orders:
             continue
         data = []

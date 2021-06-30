@@ -87,8 +87,8 @@ class Driver(models.Model):
         data = Order.objects.filter(client__driver=self).exclude(status_order= Order.STATUS_TYPE_COMPLETED)
         return data
 
-    def get_open_orders_detalis(self):
-        data = TabluarOrders.objects.filter(order__client__driver=self, order__date_dev=datetime.date.today()).order_by('order__client__district')
+    def get_open_orders_detalis(self, start, finish):
+        data = TabluarOrders.objects.filter(order__client__driver=self, order__date_dev=datetime.date.today(), order__date__gte=start, order__date__lte=finish).order_by('order__client__district')
         return data
 
 class District(models.Model):

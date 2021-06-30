@@ -1,21 +1,28 @@
 {#{% extends 'base.html' %}#}
 {% load static %}
-{% load i18n %}
+{#{% load i18n %}#}
 
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <title> Путевой лист</title>
-  {% block extra_css %} {% endblock %}
+{#  {% block extra_css %} {% endblock %}#}
 
 </head>
 <body>
+{#<form>#}
+{# <p><label for="datetime">Начало: </label>#}
+{#   <input type="datetime-local" id="datetime" name="date"/>#}
+{#   <label for="localdate">Окончание: </label>#}
+{#   <input type="datetime-local" id="localdate" name="date"/>#}
+{#   <input type="submit" value="Cформировать" onclick="report_view()" >#}
+{# </p>#}
 {% csrf_token %}
 {#<div align="left"><a href="/">выйти</a></div>#}
  {% for driver, rows in data.items %}
 
-  <h4>Путевой лист для водителя : {{ driver }}</h4>
+  <h4>Путевой лист для водителя*: {{ driver }}</h4>
 <div class="table-wrap">
 <table class="table-1">
 <tr>
@@ -47,7 +54,16 @@
 </table>
   {% endfor %}
 </div>
-<script register.js?{random} src="{% static 'documents/js/report.js' %}"></script>
+{#</form>#}
+<script register.js?{random} src="{% static 'documents/js/report.js' %}">
+{#<script>#}
+{#  function report_view(){#}
+{#    var start = document.querySelector('#datetime').value#}
+{#    var finish = document.querySelector('#localdate').value#}
+{#    alert('dsa')#}
+{#      location.href += '?param1='+start+'&params2='+finish#}
+
+</script>
 <link rel="stylesheet" type="text/css" href="{% static 'documents/css/style.css' %}">
 </body>
 </html>
