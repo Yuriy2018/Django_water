@@ -128,7 +128,7 @@ class Autorization(APIView):
 
 class OrdersForDriver(APIView):
 
-    def get(self, request, id, date):
+    def get(self, request, id):
         driver = Driver.objects.filter(id=id)
         if not driver:
             return Response({"info":"Driver not fount"},status=200)
