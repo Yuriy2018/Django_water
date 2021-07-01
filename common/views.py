@@ -7,6 +7,9 @@ from rest_framework.response import Response
 from documents.forms import OrderForm
 
 import datetime
+from datetime import date
+from datetime import datetime, timedelta
+from datetime import time
 
 from common.forms import LoginForm
 from common.models import Client, Positions, Driver
@@ -111,14 +114,20 @@ def get_data_for_report(driver):
     return data
 
 # @login_required()
-def report_view_today(request,period):
+def report_view_today(request):
 
+    if request.GET.get('period'):
+        period = request.GET.get('period')
+    else:
+        period = '1'
     if period == '1':
-        start = datetime.datetime(2021, 6, 29, 17, 30, 00)
-        finish = datetime.datetime(2021, 6, 30, 8, 30, 00)
+        start = datetime.combine(date.today() - timedelta(days=1), time(17, 30, 00)) # Вчера вечер
+        finish = datetime.combine(date.today(), time(8, 30, 00)) # сегодня утро
+        period_str = '17:30 - 8:30'
     elif period == '2':
-        start = datetime.datetime(2021, 6, 30, 8, 30)
-        finish = datetime.datetime(2021, 6, 30, 17, 30)
+        start = datetime.combine(date.today(), time(8, 30, 00)) # Сегодня утро
+        finish = datetime.combine(date.today(), time(17, 30, 00)) # Сегодня вечер
+        period_str = '8:30 - 17:30'
 
     drivers = Driver.objects.all()
     data_dr = {}
@@ -139,6 +148,7 @@ def report_view_today(request,period):
                  'quantity': row.quantity,
                  'amount': row.amount,
                  'comment': row.order.comment if row.order.comment != None else '' ,
+                 'period_str': period_str ,
                  }
             data.append(f)
         key = driver.name +' '+ datetime.date.today().strftime('%d.%m')

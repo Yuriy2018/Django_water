@@ -1,6 +1,6 @@
 {#{% extends 'base.html' %}#}
 {% load static %}
-{#{% load i18n %}#}
+{% load i18n %}
 
 <!doctype html>
 <html lang="en">
@@ -11,7 +11,30 @@
 
 </head>
 <body>
-{#<form>#}
+{#<form action="2" method="post">#}
+{# {% csrf_token %}#}
+{#<select id="selectID">#}
+{##}
+{#<option name="period" id="1" value=”1”>17:30-08:30</option>#}
+{##}
+{#<option name="period2" id="2" value=”2”>08:30-17:30</option>#}
+{##}
+{#</select>#}
+{#  <input type="submit">#}
+{#</form>#}
+<form method="get">
+            <p>
+                <label for="period">Выберите период:</label>
+                <select id="period" name="period">
+                    <option value="1">17:30 - 08:30</option>
+                    <option value="2">08:30 - 17:30</option>
+                </select>
+            <input type="submit" value="Сформировать" />
+            </p>
+{#            <p>#}
+
+{#            </p>#}
+        </form>
 {# <p><label for="datetime">Начало: </label>#}
 {#   <input type="datetime-local" id="datetime" name="date"/>#}
 {#   <label for="localdate">Окончание: </label>#}
@@ -22,7 +45,7 @@
 {#<div align="left"><a href="/">выйти</a></div>#}
  {% for driver, rows in data.items %}
 
-  <h4>Путевой лист для водителя*: {{ driver }}</h4>
+  <h4>Путевой лист для водителя*: {{ driver }} {{ period_str }}</h4>
 <div class="table-wrap">
 <table class="table-1">
 <tr>

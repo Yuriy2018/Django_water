@@ -74,6 +74,7 @@ class OrdersList1сSerializer(serializers.ModelSerializer):
     def get_client_data(self,order):
         return {'name' : order.client.name,
                 'code1C': order.client.code1C,
+                'district': order.client.district.name if order.client.district != None else '',
                 'phone_number': order.client.phone_number,
                 'address': order.client.address,
                 'id': order.client.id,}

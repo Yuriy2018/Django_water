@@ -1,9 +1,13 @@
+import datetime
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from collections import Counter
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+import json
 
 from .serializers import PositionsListSerializer, DriversListSerializer, \
     ClientsListSerializer, \
@@ -129,13 +133,27 @@ class OrdersForDriver(APIView):
         if not driver:
             return Response({"info":"Driver not fount"},status=200)
 
-        orders = Order.objects.filter(Q(client__driver=driver[0]) & ~Q(status_order= Order.STATUS_TYPE_COMPLETED)).order_by('-date')
+        # orders = Order.objects.filter(Q(client__driver=driver[0]) & ~Q(status_order= Order.STATUS_TYPE_COMPLETED)).order_by('-date')
+        orders = Order.objects.filter(Q(client__driver=driver[0]) & ~Q(status_order= Order.STATUS_TYPE_COMPLETED) & Q(date_dev=datetime.date.today())).order_by('client__district')
         if not orders:
             return Response({"info":"Orders not fount"},status=200)
 
         # serializer = OrdersListSerializer(orders,many=True)
         serializer = OrdersList1сSerializer(orders,many=True)
+        # dictD = {}
+        # for serl in serializer.data:
+        #     distr = serl["client_data"]['district']
+        #     dist = distr if distr != '' else 'Не заполнен'
+        #     res = dictD.get(dist)
+        #     if res:
+        #         dictD[dist].append(serl)
+        #     else:
+        #         dictD[dist] = list()
+        #         dictD[dist].append(serl)
+        #     pass
+
         return Response(serializer.data)
+        # return Response(data=json.dumps(dictD))
 
     # def post(self, request):
     #     order = OrdersListSerializer(data=request.data)

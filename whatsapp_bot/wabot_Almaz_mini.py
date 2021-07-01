@@ -247,18 +247,19 @@ def get_list_dates(client):
     current_date = DT.date.today()
     # Проверка, если после 11 часов, то убираем сегодняшнюю дату
     current_time = DT.datetime.now()
+    # print('current time: ',str(current_time))
     if is_server:  # Если это сервер, то время проверки доставки на сегодня +5 часов
         # hour_x = 11 + 5
-        hour_x = 4
+        hour_x = 6
     else:
         hour_x = 11
-    if current_time.hour < hour_x and not client.new:
+    if current_time.hour < hour_x: # and not client.new:
         # if False :
         start = 0
     else:
         start = 1
 
-    print('до get_list_dates цикла периода')
+    # print('до get_list_dates цикла периода')
     for day in range(start, 10):
         row_date = current_date + DT.timedelta(days=day)
         # Проверка, если уже на этот день заказов выше нормы(plane)
@@ -368,11 +369,12 @@ def paymont_cash(*args):
     client.steps.append(['finish', '', specify_address])
     client.size_Menu = 0
     add_zakaz(client)
+    finish_text = client.infoOffers()
     client.reset()
     if self.read_chat:
         read_chat(id)
     self.redis.set(id, 'sleep', ex=36000)
-    return self.send_message(id, 'Ваш заказ принят. Ожидайте доставку.')
+    return self.send_message(id, finish_text)
 
 
 def welcome(*args):
@@ -383,14 +385,19 @@ def welcome(*args):
         message = 'Для продолжения нажмите 1'
     else:
         message = '''
-            Здравствуйте! Вас приветствует Компания по доставке питьевой бутилированной воды ALMAZ SU 💧\nЧтобы сделать заказ отправьте цифру 1
-            ————————————————-
+            Здравствуйте! Вас приветствует Компания по доставке питьевой бутилированной воды ALMAZ SU 💧\nВыберите действие:\n1. Сделать заказ.\n2. Связаться с менеджером.
+        \n————————————————-\n*(укажите команду цифрой 1 или 2)*\n
         ❗️❗️❗️Просим Вас Уважаемые клиенты отвечать Chat Botu по факту вопроса цифрами и Уведомляем о том что голосовые сообщения Bot не распознаёт!!!❗️❗️❗
         '''
     client.steps.append(['welcome', '', start])
     self.redis.hset('buzzy',id,int(DT.datetime.now().timestamp()))
     return self.send_message(id, message)
 
+def contacts_menagers(*args):
+    self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
+    text = 'Для связи с менеджером свяжитесь по номерам:\n +7 708 471 38 11,\n +7 708 471 38 55'
+    self.redis.set(id,'sleep', ex=36000)
+    return self.send_message(id, text)
 
 def start(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
@@ -399,18 +406,12 @@ def start(*args):
 
     if text == '1':
         return create_order(*args)
+    elif text == '2':
+        return contacts_menagers(*args)
     else:
-        return welcome(*args)
+        self.redis.set(id,'sleep',ex=36000)
+        # return welcome(*args)
 
-
-# def soon_delevery(*args):
-#     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
-#
-#     date_delevery = client.steps[-1][1][int(text)-1].get('date')
-#     client.date_of_delivery = str(date_delevery)
-#     client.steps.append(['soon_delevery', '', paymentM])
-#     client.size_Menu = len(paymentM) - 1
-#     return self.send_message(id, 'Выберите способ оплаты:\n' + self.convert_to_string(paymentM))
 
 def edit_pos(*args):
     self, client, id = args[0]['self'], args[0]['client'], args[0]['id']
@@ -576,6 +577,32 @@ class ClienOchag():
         self.steps.append(['infoCart', '', myCartsMenu])
         return info + '____________________________________ \n' + f'ИТОГО: {str(summ)} тенге. \n' + self.convert_to_string(
             myCartsMenu)
+
+    def infoOffers(self):
+
+        # if len(self.cart) == 0:
+        #     self.steps.append(['infoCart', 'empty', back_menu])
+        #     self.size_Menu = 1
+        #     return 'Ваша корзина пуста! \n 1. Вернуться в главное меню \n 0. Назад'
+
+        cx = 0
+        info = 'Ваш заказ принят: \n'
+        summ = 0
+        for pos in self.cart:
+            cx += 1
+            summ += pos['summa']
+            info += str(cx) + '. ' + pos['position'] + ' ' + str(pos['count']) + ' штук(и) ' + str(
+                pos['summa']) + ' тенге \n'
+
+        self.size_Menu = len(myCartsMenu)
+        self.steps.append(['infoCart', '', myCartsMenu])
+        address = self.address
+        dateV = self.date_of_delivery
+        dateDev = self.date_of_delivery[8:10] +'.'+ self.date_of_delivery[5:7] +'.'+ self.date_of_delivery[:4]
+        text = info + '____________________________________ \n' + f'ИТОГО: {str(summ)} тенге. \nАдрес доставки: {address}\nЖелаемая дата доставки: {dateDev}'
+        if self.comment:
+            text += f'\nКомментарий: {self.comment}'
+        return text
 
     def convert_to_string(self, menu):
         ss = ''

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os
+import os, sys
 import time
 from loguru import logger
 import requests
@@ -98,7 +98,7 @@ def reset_calls(token):
         if receipt:
             del_notifications(token, receipt)
 
-def primera():
+def primera(debug):
     # send_text(token,'77071392125','Start')
     reset_calls(token)
     clients = {}
@@ -146,9 +146,13 @@ def primera():
                 text = body['messageData']['textMessageData']['textMessage']
                 id = body['senderData']['chatId']
                 number = id.replace('@c.us', '')
+                if debug:
+                    result = r.get(number) == None and number == '77071392125'
+                else:
+                    result = r.get(number) == None
                 # if r.get(number) == None and number == '77071392125':
-                if r.get(number) == None:
-                # if True:
+                # if r.get(number) == None:
+                if result:
                     logger.debug(f"{number} - {text}")
                     bot = WABot(body, clients, logger,r)
                     bot.processing()
@@ -186,5 +190,11 @@ def get_out():
 
 if(__name__) == '__main__':
     # write_pid('pid.pid')
+    if len(sys.argv) > 1 and sys.argv[1] == 'test':
+        debug = True
+        print('режим Дебаг')
+    else:
+        debug = False
+        print('боевой режим')
     get_out()  # Добавляем в список редис все номера, кому сегодня писали из ватсап аккаунта.
-    primera()
+    primera(debug)
