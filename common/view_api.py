@@ -135,7 +135,7 @@ class OrdersForDriver(APIView):
 
         # TODO Добавить отбор заявок по дате передаваемой по get запросу
         # orders = Order.objects.filter(Q(client__driver=driver[0]) & ~Q(status_order= Order.STATUS_TYPE_COMPLETED)).order_by('-date')
-        orders = Order.objects.filter(Q(client__driver=driver[0]) & ~Q(status_order= Order.STATUS_TYPE_COMPLETED) & Q(date_dev=datetime.date.today())).order_by('client__district')
+        orders = Order.objects.filter(Q(client__driver=driver[0])  & Q(date_dev=datetime.date.today())).order_by('client__district')
         if not orders:
             return Response({"info":"Orders not fount"},status=200)
 
@@ -171,11 +171,14 @@ class ProccesOrder(APIView):
             return Response(status=201,data={'status':0})
 
         status = request.data['status']
+
         if status == 'postponed':
             order.status_order = Order.STATUS_TYPE_postponed
         elif status == 'delivered':
             order.status_order = Order.STATUS_TYPE_COMPLETED
 
+        returned_container = request.data['returned_container']
+        order.returned_container = returned_container
         order.save()
         # order = OrdersListSerializer(data=request.data)
         # if order.is_valid():
