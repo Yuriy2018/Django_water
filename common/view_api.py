@@ -128,14 +128,13 @@ class Autorization(APIView):
 
 class OrdersForDriver(APIView):
 
-    def get(self, request, id):
+    def get(self, request, id, date_driver):
         driver = Driver.objects.filter(id=id)
         if not driver:
             return Response({"info":"Driver not fount"},status=200)
 
-        # TODO Добавить отбор заявок по дате передаваемой по get запросу
-        # orders = Order.objects.filter(Q(client__driver=driver[0]) & ~Q(status_order= Order.STATUS_TYPE_COMPLETED)).order_by('-date')
-        orders = Order.objects.filter(Q(client__driver=driver[0])  & Q(date_dev=datetime.date.today())).order_by('client__district')
+        date_d = datetime.datetime.strptime(date_driver,'%d.%m.%Y').date()
+        orders = Order.objects.filter(Q(client__driver=driver[0]) & Q(date_dev=date_d)).order_by('client__district')
         if not orders:
             return Response({"info":"Orders not fount"},status=200)
 
@@ -164,7 +163,7 @@ class OrdersForDriver(APIView):
 
 class ProccesOrder(APIView):
 
-    def post(self, request):
+    def post(self, request, date_driver):
         order_id = request.data['id']
         order = Order.objects.get(id=order_id)
         if not order:
@@ -176,6 +175,10 @@ class ProccesOrder(APIView):
             order.status_order = Order.STATUS_TYPE_postponed
         elif status == 'delivered':
             order.status_order = Order.STATUS_TYPE_COMPLETED
+        elif status == 'new':
+            order.status_order = Order.STATUS_TYPE_NEW
+
+        # TODO Доработать контроль табличной части
 
         returned_container = request.data['returned_container']
         order.returned_container = returned_container

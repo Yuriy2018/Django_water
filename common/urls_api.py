@@ -15,7 +15,7 @@ urlpatterns = [
     path('get_orders1c/', views.Orders1cListView.as_view()),
     path('get_client/<str:number>/', views.ClientView.as_view()),
     path('get_client_full_data/<str:number>/', views.ClientFullData.as_view()),
-    path('orders_for_driver/<int:id>/', views.OrdersForDriver.as_view()),
+    path('orders_for_driver/<int:id>/<str:date_driver>/', views.OrdersForDriver.as_view()),
     path('add_client/', views.ClientCreateView.as_view()),
     path('add_order/', views.OrderCreateView.as_view()),
     path('procces_order/', views.ProccesOrder.as_view()),
