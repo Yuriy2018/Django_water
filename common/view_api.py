@@ -128,11 +128,12 @@ class Autorization(APIView):
 
 class OrdersForDriver(APIView):
 
-    def get(self, request, id):
+    def get(self, request, id, date):
         driver = Driver.objects.filter(id=id)
         if not driver:
             return Response({"info":"Driver not fount"},status=200)
 
+        # TODO Добавить отбор заявок по дате передаваемой по get запросу
         # orders = Order.objects.filter(Q(client__driver=driver[0]) & ~Q(status_order= Order.STATUS_TYPE_COMPLETED)).order_by('-date')
         orders = Order.objects.filter(Q(client__driver=driver[0]) & ~Q(status_order= Order.STATUS_TYPE_COMPLETED) & Q(date_dev=datetime.date.today())).order_by('client__district')
         if not orders:
@@ -164,11 +165,23 @@ class OrdersForDriver(APIView):
 class ProccesOrder(APIView):
 
     def post(self, request):
+        order_id = request.data['id']
+        order = Order.objects.get(id=order_id)
+        if not order:
+            return Response(status=201,data={'status':0})
+
+        status = request.data['status']
+        if status == 'postponed':
+            order.status_order = Order.STATUS_TYPE_postponed
+        elif status == 'delivered':
+            order.status_order = Order.STATUS_TYPE_COMPLETED
+
+        order.save()
         # order = OrdersListSerializer(data=request.data)
         # if order.is_valid():
         #     order.save()
-        print('api/procces_order')
-        return Response(status=201)
+        # print('api/procces_order')
+        return Response(status=201,data={'status':1})
 
 
 class Get_driver_order(APIView):

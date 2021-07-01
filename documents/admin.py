@@ -1,6 +1,8 @@
 from django.contrib import admin
 from .models import Order, TabluarOrders
 
+from datetime import datetime, timedelta, date
+
 def make_completed(modeladmin, request, queryset):
     for order in queryset:
         order.status_order = Order.STATUS_TYPE_COMPLETED
@@ -18,6 +20,25 @@ class TabluarOrdersInline(admin.TabularInline):
     verbose_name = 'строка табличная часть'
     verbose_name_plural = 'Табличная часть'
     extra = 0
+
+class DateDeliveriFilter(admin.SimpleListFilter):
+    title = 'Дата доставки'
+    parameter_name = 'delivery'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('yesterday', 'Вчера'),
+            ('today', 'Сегодня'),
+            ('tomorrow', 'Завтра'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yesterday':
+            return queryset.filter(date_dev=date.today() - timedelta(days=1))
+        elif self.value() == 'today':
+            return queryset.filter(date_dev=date.today())
+        elif self.value() == 'tomorrow':
+            return queryset.filter(date_dev=date.today() + timedelta(days=1))
 
 
 class OrderAdmin(admin.ModelAdmin):
@@ -53,6 +74,7 @@ class OrderAdmin(admin.ModelAdmin):
     autocomplete_fields = ['client',]
     readonly_fields = ['date_end',]
     list_filter = ['new_client','status_order', 'client__driver']
+    # list_filter = ('DateDeliveriFilter',)
     actions = [make_completed, make_postponed,]
     # change_form_template = ''
 

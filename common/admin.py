@@ -16,7 +16,8 @@ class ClientAdmin(admin.ModelAdmin):
 
     # list_display = ('id', 'time_seconds',)
     list_display = ('name', 'phone_number', 'driver','comment','code1C')
-    list_display_links = ('name', 'phone_number', 'driver','comment','code1C')
+    list_display_links = ('name', 'phone_number')
+    # list_editable = ('driver',)
     actions = [make_published]
     # fields = [('name', 'object_name'),
     #           ('district', 'street', 'number_home', 'number_apart'),
