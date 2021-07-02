@@ -155,6 +155,32 @@ def report_view_today(request):
         # key = driver.name +' '+ datetime.date.today().strftime('%d.%m')
         key = driver.name
         data_dr[key] = data
+
+    # Теперь для незаполненных водителей
+    orders = TabluarOrders.objects.filter(order__client__driver=None,  order__date__gte=start, order__date__lte=finish).order_by('order__client__district')
+    # orders = TabluarOrders.objects.filter(order__client__driver=None).order_by('order__client__district')
+    if not orders:
+        return render(request,'report_today.html',{'data' : data_dr})
+    data = []
+
+    for inx, row in enumerate(orders):
+        # if order.date_dev != datetime.date.today():
+        #     continue
+        f = {'num': inx + 1,
+             'data_dev': row.order.date_dev,
+             'district': row.order.client.district,
+             'address': row.order.client,
+             'phone_number': row.order.client.phone_number,
+             'position': row.position,
+             'quantity': row.quantity,
+             'amount': row.amount,
+             'comment': row.order.comment if row.order.comment != None else '',
+             'period_str': period_str,
+             }
+        data.append(f)
+    # key = driver.name +' '+ datetime.date.today().strftime('%d.%m')
+    key = "Не установлен"
+    data_dr[key] = data
     return render(request,'report_today.html',{'data' : data_dr})
 
 def order_driver_view(request, id):
