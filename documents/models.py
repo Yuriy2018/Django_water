@@ -86,5 +86,9 @@ class TabluarOrders(models.Model):
         verbose_name = 'Строка табличной части заказа'
         verbose_name_plural = 'Строки табличной части заказа'
 
+    def save(self, *args, **kwargs):
+        if self.quantity and self.price:
+            self.amount = self.quantity * self.price
+        super().save(*args, **kwargs)
     # def __str__(self):
     #     return f'{self.number} от {self.date}'

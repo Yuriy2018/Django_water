@@ -45,11 +45,12 @@
 {#<div align="left"><a href="/">выйти</a></div>#}
  {% for driver, rows in data.items %}
 
-  <h4>Путевой лист для водителя*: {{ driver }} {{ period_str }}</h4>
+  <h4>Путевой лист для водителя: {{ driver }} {{ period_str }}</h4>
 <div class="table-wrap">
 <table class="table-1">
 <tr>
   <th>№</th>
+  <th>Дата доставки</th>
   <th>Район</th>
   <th>Адрес</th>
   <th>Телефон</th>
@@ -63,6 +64,7 @@
 {#   <h5>{{ order }}</h5>#}
   <tr>
     <td>{{ row.num }}</td>
+    <td>{{ row.data_dev }}</td>
     <td>{{ row.district }}</td>
     <td>{{ row.address }}</td>
     <td>{{ row.phone_number }}</td>

@@ -141,6 +141,7 @@ def report_view_today(request):
             # if order.date_dev != datetime.date.today():
             #     continue
             f = {'num': inx + 1,
+                 'data_dev': row.order.date_dev,
                  'district': row.order.client.district,
                  'address': row.order.client,
                  'phone_number': row.order.client.phone_number,
@@ -151,7 +152,8 @@ def report_view_today(request):
                  'period_str': period_str ,
                  }
             data.append(f)
-        key = driver.name +' '+ datetime.date.today().strftime('%d.%m')
+        # key = driver.name +' '+ datetime.date.today().strftime('%d.%m')
+        key = driver.name
         data_dr[key] = data
     return render(request,'report_today.html',{'data' : data_dr})
 

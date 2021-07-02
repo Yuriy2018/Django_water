@@ -73,8 +73,8 @@ class OrderAdmin(admin.ModelAdmin):
     fields = [('date_dev', 'date_end'),('status_order', 'type_play'),'client', 'comment', 'returned_container',('user', 'attention', 'load_1C', 'number1С')]
     autocomplete_fields = ['client',]
     readonly_fields = ['date_end',]
-    list_filter = ['new_client','status_order', 'client__driver']
-    # list_filter = ('DateDeliveriFilter',)
+    # list_filter = ['new_client','status_order', 'client__driver',DateDeliveriFilter]
+    list_filter = ['status_order', 'client__driver',DateDeliveriFilter]
     actions = [make_completed, make_postponed,]
     # change_form_template = ''
 

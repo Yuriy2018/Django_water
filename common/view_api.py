@@ -163,7 +163,7 @@ class OrdersForDriver(APIView):
 
 class ProccesOrder(APIView):
 
-    def post(self, request, date_driver):
+    def post(self, request):
         order_id = request.data['id']
         order = Order.objects.get(id=order_id)
         if not order:
@@ -178,7 +178,14 @@ class ProccesOrder(APIView):
         elif status == 'new':
             order.status_order = Order.STATUS_TYPE_NEW
 
-        # TODO Доработать контроль табличной части
+        # TODO Возможно нужно больше вариаций по проверке и обработке различных вариантов от моб. приложения
+        tabulars = request.data['tabulars']
+        for row in tabulars:
+            row_ord = TabluarOrders.objects.get(id=row['id'])
+            if row_ord.position_id == row['position_data']['id']:
+                if row['quantity'] != row_ord.quantity:
+                    row_ord.quantity = row['quantity']
+                    row_ord.save()
 
         returned_container = request.data['returned_container']
         order.returned_container = returned_container
