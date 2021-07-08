@@ -252,8 +252,8 @@ def report_view_today_bs_api(request):
                                         quantity_=F('quantity'),
                                         amount_=F('amount'),
                                         comment=F('order__comment')
-                                        )#.filter(order__date__gte=start,
-                                        #order__date__lte=finish).order_by('driver')
+                                        ).filter(order__date__gte=start,
+                                        order__date__lte=finish).order_by('driver')
     dict_tabls = {}
     for val in data:
         val['date_dev'] = val['date_dev'].strftime('%d %B %Y')
@@ -275,20 +275,6 @@ def report_view_today_bs_api(request):
     for col in columns:
         str_thead += f'<th scope="col">{col}</th>'
     str_thead += '</tr></thead>'
-
-    thead = '''<thead>
-        <tr>
-      <th scope="col">№</th>
-      <th scope="col">Дата доставки</th>
-      <th scope="col">Район</th>
-      <th scope="col">Адрес</th>
-      <th scope="col">Телефон</th>
-      <th scope="col">Номенклатура</th>
-      <th scope="col">Кол-во</th>
-      <th scope="col">Сумма</th>
-      <th scope="col">Коммент</th>
-    </tr>
-  </thead>'''
 
     list_tabls = []
     for table in dict_tabls:
