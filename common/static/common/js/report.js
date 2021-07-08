@@ -18,8 +18,12 @@ function show_report() {
         success: function (result) {   /* функция которая будет выполнена после успешного запроса.  */
             // var data_spares = [] td - tr -
             const div_tag = document.getElementsByClassName('container-fluid myclasses')[0];
-            if (div_tag.querySelector('table') != null){
-                document.removeChild(div_tag);
+            // if (div_tag.querySelector('table') != null){
+            //     document.removeChild(div_tag);
+            // };
+
+            while (div_tag.firstChild) {
+                div_tag.removeChild(div_tag.firstChild)
             };
 
 
