@@ -6,7 +6,7 @@ token = '7c6a91b25c8e0d1a14bce0b7118d76668bc5e2dddc06ac9783'
 r = redis.Redis(host='45.147.176.206', port=6379, db=0)
 
 
-text_buzzy = "Для продолжения заказа нажмите 1 или Ваш заказ останется не принятым! \nЛибо свяжитесь с оператором по номеру:+7 708 471 3855(whatsapp)"
+text_buzzy = "Для продолжения заказа нажмите 1 или Ваш заказ останется не принятым! \nЛибо свяжитесь с оператором по номеру:+7 708 471 3855(whatsapp)\nЗвонки принимаются до 17:30"
 
 
 def send_text(phone,text):
@@ -39,7 +39,7 @@ def process_buzzy():
                if cur_unix - cur_time > 300:
                    number = i.decode('utf-8')
                    send_text(number,text_buzzy)
-                   print(number)
+                   print("Отправка сообщения!",number)
                    r.hdel('buzzy',i)
 
         else:

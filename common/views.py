@@ -4,6 +4,10 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect, render
 from rest_framework.response import Response
 
+import locale
+
+from django.db.models import F, QuerySet
+
 from documents.forms import OrderForm
 
 import datetime
@@ -16,6 +20,8 @@ from common.models import Client, Positions, Driver
 from documents.models import Order, TabluarOrders
 
 from django.db.models import Q
+
+locale.setlocale(locale.LC_ALL,'')
 
 def index(request):
     return HttpResponse("Hello, World!")
@@ -141,7 +147,7 @@ def report_view_today(request):
             # if order.date_dev != datetime.date.today():
             #     continue
             f = {'num': inx + 1,
-                 'data_dev': row.order.date_dev,
+                 'date_dev': row.order.date_dev,
                  'district': row.order.client.district,
                  'address': row.order.client,
                  'phone_number': row.order.client.phone_number,
@@ -167,7 +173,7 @@ def report_view_today(request):
         # if order.date_dev != datetime.date.today():
         #     continue
         f = {'num': inx + 1,
-             'data_dev': row.order.date_dev,
+             'date_dev': row.order.date_dev,
              'district': row.order.client.district,
              'address': row.order.client,
              'phone_number': row.order.client.phone_number,
@@ -182,6 +188,128 @@ def report_view_today(request):
     key = "Не установлен"
     data_dr[key] = data
     return render(request,'report_today.html',{'data' : data_dr})
+
+def report_view_today_bs(request):
+
+    if request.GET.get('period'):
+        period = request.GET.get('period')
+    else:
+        period = '1'
+    if period == '1':
+        start = datetime.combine(date.today() - timedelta(days=1), time(17, 30, 00))  # Вчера вечер
+        finish = datetime.combine(date.today(), time(8, 30, 00))  # сегодня утро
+        period_str = '17:30 - 8:30'
+    elif period == '2':
+        start = datetime.combine(date.today(), time(8, 30, 00))  # Сегодня утро
+        finish = datetime.combine(date.today(), time(17, 30, 00))  # Сегодня вечер
+        period_str = '8:30 - 17:30'
+    # data = TabluarOrders.objects.filter(order__date__gte=start,
+    #                                     order__date__lte=finish).order_by('order__client__district')
+    data = TabluarOrders.objects.values(date_dev=F('order__date_dev'),
+                                        driver=F('order__client__driver__name'),
+                                        district=F('order__client__district__name'),
+                                        address=F('order__client__name'),
+                                        phone_number=F('order__client__phone_number'),
+                                        position_=F('position__name'),
+                                        quantity_=F('quantity'),
+                                        amount_=F('amount'),
+                                        comment=F('order__comment')
+                                        )#.filter(order__date__gte=start,
+                                        #order__date__lte=finish).order_by('driver')
+
+    for val in data:
+        # val['date_dev'] = str(val['date_dev'])
+        if not val['district']:
+            val['district'] = "Не установлен"
+
+        if not val['driver']:
+            val['driver'] = "Не установлен"
+
+    return render(request, 'report_today_bs.html', {'data' : data, 'param': period})
+
+def report_view_today_bs_api(request):
+
+    if request.GET.get('period'):
+        period = request.GET.get('period')
+    else:
+        period = '1'
+    if period == '1':
+        start = datetime.combine(date.today() - timedelta(days=1), time(17, 30, 00))  # Вчера вечер
+        finish = datetime.combine(date.today(), time(8, 30, 00))  # сегодня утро
+        period_str = '17:30 - 8:30'
+    elif period == '2':
+        start = datetime.combine(date.today(), time(8, 30, 00))  # Сегодня утро
+        finish = datetime.combine(date.today(), time(17, 30, 00))  # Сегодня вечер
+        period_str = '8:30 - 17:30'
+    # data = TabluarOrders.objects.filter(order__date__gte=start,
+    #                                     order__date__lte=finish).order_by('order__client__district')
+    data = TabluarOrders.objects.values(date_dev=F('order__date_dev'),
+                                        driver=F('order__client__driver__name'),
+                                        district=F('order__client__district__name'),
+                                        address=F('order__client__name'),
+                                        phone_number=F('order__client__phone_number'),
+                                        position_=F('position__name'),
+                                        quantity_=F('quantity'),
+                                        amount_=F('amount'),
+                                        comment=F('order__comment')
+                                        )#.filter(order__date__gte=start,
+                                        #order__date__lte=finish).order_by('driver')
+    dict_tabls = {}
+    for val in data:
+        val['date_dev'] = val['date_dev'].strftime('%d %B %Y')
+        if not val['district']:
+            val['district'] = "Не установлен"
+
+        if not val['driver']:
+            val['driver'] = "Не установлен"
+
+        if dict_tabls.get(val['driver']):
+            dict_tabls[val['driver']].append(val)
+        else:
+            dict_tabls[val['driver']] = []
+            dict_tabls[val['driver']].append(val)
+
+    columns = ['№','Дата доставки','Район','Адрес','Телефон','Номенклатура','Кол-во','Сумма','Коммент']
+
+    str_thead = '<thead><tr>'
+    for col in columns:
+        str_thead += f'<th scope="col">{col}</th>'
+    str_thead += '</tr></thead>'
+
+    thead = '''<thead>
+        <tr>
+      <th scope="col">№</th>
+      <th scope="col">Дата доставки</th>
+      <th scope="col">Район</th>
+      <th scope="col">Адрес</th>
+      <th scope="col">Телефон</th>
+      <th scope="col">Номенклатура</th>
+      <th scope="col">Кол-во</th>
+      <th scope="col">Сумма</th>
+      <th scope="col">Коммент</th>
+    </tr>
+  </thead>'''
+
+    list_tabls = []
+    for table in dict_tabls:
+        str_tbody = '<tbody>'
+        cx = 0
+        for values in dict_tabls[table]:
+            str_tbody += '<tr>'
+            cx += 1
+            for ex, val in enumerate(values):
+                if val == 'driver':
+                    continue
+                if ex == 0: # Если колонка первая строки, то добавляем еще нумерацию строки
+                    str_tbody += f'<td scope="col">{str(cx)}</td>'
+                str_tbody += f'<td scope="col">{str(values[val])}</td>'
+    
+            str_tbody += '</tr>'
+        str_tbody += '</tbody>'
+        list_tabls.append({'driver':table, 'str_tbody': str_tbody})
+
+    # return render(request, 'report_today_bs.html', {'data' : data, 'driver' : Driver.objects.values_list('name').all()})
+    return JsonResponse({'thead': str_thead, 'list_tabls': list_tabls})
 
 def order_driver_view(request, id):
     order = Order.objects.filter(pk=id).first()

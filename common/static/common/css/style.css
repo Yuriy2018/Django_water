@@ -1,0 +1,15 @@
+.myclasses{
+     /*max-width: 1600px;*/
+     margin-left: 30px;
+     padding-right: 100px;
+     /*margin-top: 30px;*/
+}
+
+#button{
+     margin-left: 20px;
+}
+
+.table-bordered{
+     margin-bottom: 50px;
+     background-color: #ddffdd;
+}

@@ -45,7 +45,7 @@ def send_text(phone,text):
         'Content-Type': 'application/json'
     }
 
-    response = requests.request("POST", url, headers=headers, data=json.dumps(payload))
+    response = requests.request("POST", url, headers=headers, data=json.dumps(payload), timeout=120)
     return ""
 
 def get_notifications(token):
@@ -55,7 +55,7 @@ def get_notifications(token):
         'Authorization': 'Bearer ' + token
     }
 
-    response = requests.request("GET", url, headers=headers, data=payload)
+    response = requests.request("GET", url, headers=headers, data=payload, timeout=120)
 
     if response.text:
         return response.json()
@@ -66,7 +66,7 @@ def del_notifications(token,receipt):
     payload = {}
     headers = {}
 
-    response = requests.request("DELETE", url, headers=headers, data=payload)
+    response = requests.request("DELETE", url, headers=headers, data=payload, timeout=120)
 
     print(response.text)
 
@@ -77,7 +77,7 @@ def get_notificationsQR(token):
     payload = {}
     headers = {}
 
-    response = requests.request("GET", url, headers=headers, data=payload)
+    response = requests.request("GET", url, headers=headers, data=payload, timeout=120)
 
     if response.text:
         return response.json()
@@ -177,7 +177,7 @@ def get_out():
     payload = {}
     headers = {}
 
-    response = requests.request("GET", url, headers=headers, data=payload)
+    response = requests.request("GET", url, headers=headers, data=payload, timeout=120)
 
     dataJ = json.loads(response.text.encode('utf8'))
     outgoing = set()
