@@ -53,7 +53,7 @@ class ClientFullData(APIView):
 
         driver = client.driver
         if driver:
-            open_orders = list(driver.get_open_orders())
+            open_orders = driver.get_open_orders()
             open_ord = [str(x['date_dev']) for x in open_orders]
             c = Counter(open_ord)
             dict_open_ord = dict(c)

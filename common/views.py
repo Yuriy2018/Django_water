@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 import locale
 
-from django.db.models import F, QuerySet
+from django.db.models import F, QuerySet, Sum, Count
 
 from documents.forms import OrderForm
 
@@ -73,31 +73,8 @@ def report_view(request):
             # return HttpResponse("Тут должна быть информация для водителей!")
         else:
             return redirect('/admin/')
-    # send_email_task()
-    # dates = []
-    # contact_person = ContactPerson.objects.get(user=request.user)
-    # customer = contact_person.get_customer()
-    # task = Task.objects.filter(branch__customer=customer).order_by('register_date').first()
-    # if task:
-    #
-    #     date1 = task.register_date.date().replace(day=1)
-    #     if date1 < timezone.now().date().replace(day=1):
-    #         date2 = timezone.now().date().replace(day=1)
-    #         while date1 < date2:
-    #             dates.append(date1)
-    #             date1 = date1 + relativedelta(months=1)
-    #
-    # contact_person = ContactPerson.objects.get(user=request.user)
-    # # customer = Customer.objects.get(user=request.user)
-    # customer = contact_person.get_customer()
-    # cities = customer.get_cities()
-    # branches = customer.get_branches()
-    # return render(request, 'report.html',
-    #               context={'random': random, 'branchs': branches, 'dates': dates, 'cities': cities})
 
 def get_data_for_report(driver):
-    # orders = Order.objects.filter(Q(client__driver=driver) | ~Q(status_order= Order.STATUS_TYPE_COMPLETED))
-    # orders = Order.objects.filter(client__driver=driver).exclude(status_order= Order.STATUS_TYPE_COMPLETED)
     orders = driver.get_open_orders_full()
     data = []
 
@@ -158,7 +135,6 @@ def report_view_today(request):
                  'period_str': period_str ,
                  }
             data.append(f)
-        # key = driver.name +' '+ datetime.date.today().strftime('%d.%m')
         key = driver.name
         data_dr[key] = data
 
@@ -225,7 +201,8 @@ def report_view_today_bs(request):
         if not val['driver']:
             val['driver'] = "Не установлен"
 
-    return render(request, 'report_today_bs.html', {'data' : data, 'param': period})
+    positions = Positions.objects.values('pk','name')
+    return render(request, 'report_today_bs2.html', {'data' : data, 'param': period, 'positions': list(positions)})
 
 def report_view_today_bs_api(request):
 
@@ -296,6 +273,167 @@ def report_view_today_bs_api(request):
 
     # return render(request, 'report_today_bs.html', {'data' : data, 'driver' : Driver.objects.values_list('name').all()})
     return JsonResponse({'thead': str_thead, 'list_tabls': list_tabls})
+
+def get_periods(request):
+    if request.GET.get('start'):
+        start_str = request.GET.get('start')
+        if start_str == 'Начало периода':
+            start_str = '01/01/2021'
+    else:
+        start_str = '01/01/2021'
+
+    if request.GET.get('finish'):
+        finish_str = request.GET.get('finish')
+        if finish_str == 'Конец периода':
+            finish_str = '01/01/2050'
+    else:
+        finish_str = '01/01/2050'
+
+    start = datetime.strptime(start_str,"%d/%m/%Y")
+    finish = datetime.strptime(finish_str,"%d/%m/%Y")+timedelta(days=1)
+    return start, finish, start_str, finish_str
+
+def report_orders_bs_api(request):
+
+    start, finish, start_str, finish_str = get_periods(request)
+
+    data = Order.objects.filter(date__gte=start, date__lt=finish).values('date','number','client__name','status_order','amount').order_by('date')
+
+    amount_total = data.aggregate(total=Sum('amount'))
+    header_report = f'Заявки за период: {start_str} по {finish_str} на сумму: {amount_total["total"]} тенге.'
+
+    for val in data:
+        val['date'] = val['date'].strftime('%d %B %Y')
+
+        if not val['amount']:
+            ord = Order.objects.get(number=val['number'])
+            val['amount'] = ord.get_amount()
+            ord.save()
+
+    columns = ['№','Дата', 'Номер', 'Клиент', 'Статус', 'Сумма']
+
+    str_thead = '<thead><tr>'
+    for col in columns:
+        str_thead += f'<th scope="col">{col}</th>'
+    str_thead += '</tr></thead>'
+
+    str_tbody = '<tbody>'
+    cx = 0
+    for values in data:
+        str_tbody += '<tr>'
+        cx += 1
+        for ex, val in enumerate(values):
+            if ex == 0:  # Если колонка первая строки, то добавляем еще нумерацию строки
+                str_tbody += f'<td scope="col">{str(cx)}</td>'
+            str_tbody += f'<td scope="col">{str(values[val])}</td>'
+        str_tbody += '</tr>'
+    str_tbody += '</tbody>'
+
+    return JsonResponse({'thead': str_thead, 'str_tbody': str_tbody, 'header_report':header_report})
+
+def report_new_clients_bs_api(request):
+
+    start, finish, start_str, finish_str = get_periods(request)
+
+    # data = Order.objects.filter(date__gte=start, date__lt=finish, client__date_created__gte=start, client__date_created__lt=finish).values('date','number','client__name','status_order','amount').order_by('date')
+    # data = TabluarOrders.objects.filter(order__date__gte=start, order__date__lt=finish, order__client__date_created__gte=start, order__client__date_created__lt=finish).values('date','number','client__name','status_order','amount').order_by('date')
+    data = TabluarOrders.objects.values(address=F('order__client__name'),
+                                        phone_number=F('order__client__phone_number'),
+                                        position_=F('position__name'),
+                                        quantity_=F('quantity'),
+                                        amount_=F('amount')).filter(order__date__gte=start, order__date__lt=finish, order__client__date_created__gte=start, order__client__date_created__lt=finish)
+
+    amount_total = data.aggregate(total=Sum('amount'))
+    header_report = f'Новые клиенты за период: {start_str} по {finish_str} на сумму: {amount_total["total"]} тенге.'
+
+    columns = ['№','Наименование', 'Номер', 'Позиция', 'Количество', 'Сумма']
+
+    str_thead = '<thead><tr>'
+    for col in columns:
+        str_thead += f'<th scope="col">{col}</th>'
+    str_thead += '</tr></thead>'
+
+    str_tbody = '<tbody>'
+    cx = 0
+    for values in data:
+        str_tbody += '<tr>'
+        cx += 1
+        for ex, val in enumerate(values):
+            if ex == 0:  # Если колонка первая строки, то добавляем еще нумерацию строки
+                str_tbody += f'<td scope="col">{str(cx)}</td>'
+            str_tbody += f'<td scope="col">{str(values[val])}</td>'
+        str_tbody += '</tr>'
+    str_tbody += '</tbody>'
+
+    return JsonResponse({'thead': str_thead, 'str_tbody': str_tbody, 'header_report':header_report})
+
+def report_for_position_bs_api(request):
+
+    start, finish, start_str, finish_str = get_periods(request)
+
+    if request.GET.get('position'):
+        position = request.GET.get('position')
+
+    if position:
+        data = TabluarOrders.objects.values(address=F('order__client__name'),
+                                            phone_number=F('order__client__phone_number'),
+                                            position_=F('position__name'),
+                                            quantity_=F('quantity'),
+                                            amount_=F('amount')).filter(order__date__gte=start, order__date__lt=finish, position__pk = position)
+
+        amount_total = data.aggregate(total=Sum('amount'))
+        header_report = f'По позиции {Positions.objects.get(pk=position)} за период: {start_str} по {finish_str} на сумму: {amount_total["total"]} тенге.'
+
+        columns = ['№','Наименование', 'Номер', 'Позиция', 'Количество', 'Сумма']
+
+        str_thead = '<thead><tr>'
+        for col in columns:
+            str_thead += f'<th scope="col">{col}</th>'
+        str_thead += '</tr></thead>'
+
+        str_tbody = '<tbody>'
+        cx = 0
+        for values in data:
+            str_tbody += '<tr>'
+            cx += 1
+            for ex, val in enumerate(values):
+                if ex == 0:  # Если колонка первая строки, то добавляем еще нумерацию строки
+                    str_tbody += f'<td scope="col">{str(cx)}</td>'
+                str_tbody += f'<td scope="col">{str(values[val])}</td>'
+            str_tbody += '</tr>'
+        str_tbody += '</tbody>'
+
+        return JsonResponse({'thead': str_thead, 'str_tbody': str_tbody, 'header_report':header_report})
+
+def report_analysis_clients(request):
+
+    start, finish, start_str, finish_str = get_periods(request)
+
+    data = Order.objects.filter(date__gte=start, date__lt=finish).values('client__name').annotate(total=Count('id'), summ=Sum('amount')).order_by('-total')
+
+    # amount_total = data.aggregate(total=Sum('amount'))
+    header_report = f'Анализ активности клиентов за период: {start_str} по {finish_str}.'
+
+    columns = ['№','Наименование', 'Кол-во', 'Сумма']
+
+    str_thead = '<thead><tr>'
+    for col in columns:
+        str_thead += f'<th scope="col">{col}</th>'
+    str_thead += '</tr></thead>'
+
+    str_tbody = '<tbody>'
+    cx = 0
+    for values in data:
+        str_tbody += '<tr>'
+        cx += 1
+        for ex, val in enumerate(values):
+            if ex == 0:  # Если колонка первая строки, то добавляем еще нумерацию строки
+                str_tbody += f'<td scope="col">{str(cx)}</td>'
+            str_tbody += f'<td scope="col">{str(values[val])}</td>'
+        str_tbody += '</tr>'
+    str_tbody += '</tbody>'
+
+    return JsonResponse({'thead': str_thead, 'str_tbody': str_tbody, 'header_report':header_report})
 
 def order_driver_view(request, id):
     order = Order.objects.filter(pk=id).first()

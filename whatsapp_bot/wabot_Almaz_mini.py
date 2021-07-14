@@ -24,8 +24,8 @@ api_url = 'https://water.hostman.site'
 # APIUrl = 'https://api.green-api.com/waInstance9159/'
 # token = 'd089c99b960a312c819d2a8b67e2e6e81603d94c61bf095984'  # мой номер Тинькофф
 
-APIUrl = 'https://api.green-api.com/waInstance7948/'
-token = '7c6a91b25c8e0d1a14bce0b7118d76668bc5e2dddc06ac9783'
+APIUrl = 'https://api.green-api.com/waInstance8073/'
+token = 'd017242c0e8f35dbe23616ebcdfb6241cb4ac18a1411f8d49d'
 
 stringForImput = ['НАЧАТЬ', 'ЗАКАЗ', 'ЗАКАЗАТЬ', 'ORDER', 'ZAKAZ']
 
@@ -39,6 +39,7 @@ def get_amount(client):
 
 def get_client(number):
     client = requests.get(api_url + '/api/get_client_full_data/' + number + '/')
+    # client = requests.get(api_url + '/api/get_client/' + number + '/')
     if client.status_code == 201:
         return json.loads(client.text)
 

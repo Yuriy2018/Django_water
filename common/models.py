@@ -141,8 +141,6 @@ class Client(models.Model):
     object_name = models.CharField(max_length=100, verbose_name='Название объекта', blank=True, null=True)
     phone_number = models.CharField(max_length=30, verbose_name='Телефон', null=True)
     driver = models.ForeignKey(Driver, verbose_name='Водитель', on_delete=models.PROTECT, null=True, blank=True)
-    # first_name = models.CharField(max_length=50, verbose_name='Имя', blank=True, null=True)
-    # last_name = models.CharField(max_length=50, verbose_name='Фамилия', blank=True, null=True)
     type_client = models.CharField(max_length=15, verbose_name='Тип клиента', default=CLIENT_TYPE_PERSON, null=True,
                                    choices=CLIENT_TYPE_CHOICES)
     type_play = models.CharField(max_length=15, verbose_name='Тип оплаты', default=PAY_TYPE_CASH, null=True,
@@ -150,6 +148,9 @@ class Client(models.Model):
     code1C = models.CharField(max_length=11, verbose_name='Код 1С', blank=True, null=True)
     comment = models.CharField(max_length=250, verbose_name='Комментарий', null=True, blank=True)
     date_created = models.DateTimeField(verbose_name='Дата создания', default=timezone.now, null=True)
+    date_returned = models.DateField(verbose_name='Дата возврата', null=True)
+    gone = models.BooleanField(verbose_name='Ушёл', default=False, blank=True)
+
 
 
 

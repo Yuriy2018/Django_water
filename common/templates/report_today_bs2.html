@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block page %}
+
+  <nav class="navbar navbar-expand-lg">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Выбор отчета:</a>
+  <div class="dropdown">
+      <select class="form-select" id="type_report" onclick="for_open()" aria-label="Пример выбора по умолчанию">
+
+        <option class="mycolor" value="1" data-id="1">Путевой лист</option>
+        <option class="mycolor" value="2" data-id="2">Заявки</option>
+        <option class="mycolor" value="3" data-id="3">Новые клиенты</option>
+        <option class="mycolor" value="4" data-id="4">По позиции</option>
+        <option class="mycolor" value="5" data-id="5">Анализ по клиентам</option>
+{#        <option class="mycolor" value="6" data-id="6">Пассивные клиенты</option>#}
+{#        <option class="mycolor" value="7" data-id="7">Спящие клиенты</option>#}
+      </select></div>
+  <div class="dropdown"><select name="positions" id="positions" hidden="true">
+        {% for pos in positions %}
+        <option class="position" value={{ pos.pk }} data-id={{ pos.id }}>{{ pos.name }}</option>
+        {% endfor %}
+      </select></div>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <div class="col-sm">
+            <input type="text" class="form-control datapicker" name="datepicker" hidden="true" value="Начало периода" id="datepicker"/>
+        </div>
+        <div class="col-sm">
+            <input type="text" class="form-control datapicker" name="datepicker2" hidden="true" value="Конец периода" id="datepicker2"/>
+            </div>
+      </ul>
+      <div class="dropdown"><select name="period" id="period">
+        {% if param == '1' %}
+        <option class="mycolor" value="1" data-id="1">17:30-08:30</option>
+        <option class="mycolor" value="2" data-id="2">08:30-17:30</option>
+        {% else %}
+        <option class="mycolor" value="1" data-id="1">08:30-17:30</option>
+        <option class="mycolor" value="2" data-id="2">17:30-08:30</option>
+        {% endif %}
+      </select></div>
+
+
+      <button type="button" id="button" onclick="show_report()" class="btn btn-secondary">Сформировать</button>
+    </div>
+  </div>
+</nav>
+
+  <div class="container-fluid myclasses" >
+      </div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script register.js?{random} src="{% static 'common/js/report.js' %}"></script>
+{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'common/css/style.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+{% endblock %}
+
