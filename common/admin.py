@@ -40,10 +40,6 @@ class DistrictAdmin(admin.ModelAdmin):
 class PositionsAdmin(admin.ModelAdmin):
     list_display = ('name', 'price' , 'code1C')
 
-# class DeleviryDistrictsAdmin(admin.ModelAdmin):
-#     list_display = ('name', 'driver')
-#     list_filter = ('driver',)
-
 class DriverAdmin(admin.ModelAdmin):
     list_display = ('name', 'Open_Order', 'Postponed_Order', 'Delivered_Order', 'Amount_Order',  'user',)
     list_display_links = ('name', 'Open_Order',)
