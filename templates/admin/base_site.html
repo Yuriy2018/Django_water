@@ -3,7 +3,9 @@
 {% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
 {% block branding %}
-<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
-{% endblock %}
 
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+{#  <br>#}
+  <h3 style="color: cyan"><a href="{% url 'report_today_bs' %}">Отчеты</a></h3>
+{% endblock %}
 {% block nav-global %}{% endblock %}
