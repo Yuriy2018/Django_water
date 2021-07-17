@@ -148,7 +148,7 @@ class Client(models.Model):
     code1C = models.CharField(max_length=11, verbose_name='Код 1С', blank=True, null=True)
     comment = models.CharField(max_length=250, verbose_name='Комментарий', null=True, blank=True)
     date_created = models.DateTimeField(verbose_name='Дата создания', default=timezone.now, null=True)
-    date_returned = models.DateField(verbose_name='Дата возврата', null=True)
+    date_returned = models.DateField(verbose_name='Дата возврата', null=True, blank=True)
     gone = models.BooleanField(verbose_name='Ушёл', default=False, blank=True)
 
 

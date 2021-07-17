@@ -118,11 +118,11 @@ def primera(debug):
     #       bot = WABot(Body, clients, logger)
     #       bot.processing(True)
     #       time.sleep(1)
-    while True:
-        c = input()
-        Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
-        bot = WABot(Body, clients, logger, r)
-        bot.processing(True)
+    # while True:
+    #     c = input()
+    #     Body = {'typeWebhook': 'incomingMessageReceived', 'instanceData': {'idInstance': 9102, 'wid': '77717919485@c.us', 'typeInstance': 'whatsapp'}, 'timestamp': 1616138603, 'idMessage': '3EB00939A99DB774DE89', 'senderData': {'chatId': number_client+'@c.us', 'sender': number_client+'@c.us', 'senderName': 'Юрич'}, 'messageData': {'typeMessage': 'textMessage', 'textMessageData': {'textMessage': c}}}
+    #     bot = WABot(Body, clients, logger, r)
+    #     bot.processing(True)
     # key = os.getenv('key')
     logger.info('Start')
     pid = os.getpid()
@@ -160,7 +160,12 @@ def primera(debug):
             # errorText =  f" команда: {body['messageData']['textMessageData']['textMessage']} \n" + ex
             logger.error(ex)
             print(ex)
-            send_telegram(f"{ex} --- \n{str(body)}")
+            try:
+               send_telegram(f"{ex} --- \n{str(body)}")
+            except Exception as ex:
+                logger.error(ex)
+
+
 
 
         if receipt:
@@ -196,5 +201,5 @@ if(__name__) == '__main__':
     else:
         debug = False
         print('боевой режим')
-    # get_out()  # Добавляем в список редис все номера, кому сегодня писали из ватсап аккаунта.
+    get_out()  # Добавляем в список редис все номера, кому сегодня писали из ватсап аккаунта.
     primera(debug)

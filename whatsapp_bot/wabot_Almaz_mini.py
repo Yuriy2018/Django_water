@@ -136,6 +136,7 @@ def back_menu(*args):
 
 def control(*args):
     self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
+
     if len(text) == 0 or (
             len(client.steps) != 0 or not str(text).upper() in stringForImput) and client.size_Menu != 0 and not \
             text.isdigit():
@@ -254,7 +255,7 @@ def get_list_dates(client):
         hour_x = 6
     else:
         hour_x = 11
-    if current_time.hour < hour_x: # and not client.new:
+    if current_time.hour < hour_x:  # and not client.new:
         # if False :
         start = 0
     else:
@@ -391,26 +392,28 @@ def welcome(*args):
         ❗️❗️❗️Просим Вас Уважаемые клиенты отвечать Chat Botu по факту вопроса цифрами и Уведомляем о том что голосовые сообщения Bot не распознаёт!!!❗️❗️❗
         '''
     client.steps.append(['welcome', '', start])
-    self.redis.hset('buzzy',id,int(DT.datetime.now().timestamp()))
+    self.redis.hset('buzzy', id, int(DT.datetime.now().timestamp()))
     return self.send_message(id, message)
+
 
 def contacts_menagers(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
     text = 'Для связи с менеджером свяжитесь по номерам:\n +7 708 471 38 11,\n +7 708 471 38 55'
-    self.redis.set(id,'sleep', ex=36000)
+    self.redis.set(id, 'sleep', ex=36000)
     return self.send_message(id, text)
+
 
 def start(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
 
-    self.redis.hdel('buzzy',id)
+    self.redis.hdel('buzzy', id)
 
     if text == '1':
         return create_order(*args)
     elif text == '2':
         return contacts_menagers(*args)
     else:
-        self.redis.set(id,'sleep',ex=36000)
+        self.redis.set(id, 'sleep', ex=36000)
         # return welcome(*args)
 
 
@@ -511,7 +514,6 @@ grandMenunoReplay2 = {'1': {'name': 'Дополнить заказ', 'method': c
                       '3': {'name': 'Завершить заказ', 'method': delevery_time},
                       }
 
-
 successMenu = {'1': {'name': 'Завершить заказ', 'method': delevery_time},
                '2': {'name': 'Дополнить заказ', 'method': create_order},
                # После успешного добавление позиции в корзину
@@ -599,7 +601,7 @@ class ClienOchag():
         self.steps.append(['infoCart', '', myCartsMenu])
         address = self.address
         dateV = self.date_of_delivery
-        dateDev = self.date_of_delivery[8:10] +'.'+ self.date_of_delivery[5:7] +'.'+ self.date_of_delivery[:4]
+        dateDev = self.date_of_delivery[8:10] + '.' + self.date_of_delivery[5:7] + '.' + self.date_of_delivery[:4]
         text = info + '____________________________________ \n' + f'ИТОГО: {str(summ)} тенге. \nАдрес доставки: {address}\nЖелаемая дата доставки: {dateDev}'
         if self.comment:
             text += f'\nКомментарий: {self.comment}'
@@ -726,6 +728,11 @@ class WABot():
 
     def get_command(self, id, text):
         client = self.curr_client
+
+        # //*// Если это количество, то убираем все кроме цифр, потомучто клиенты любят писать 2 бут. 3 бутылки
+        if len(client.steps) != 0 and client.steps[-1][0] == 'get_count':
+            a = ''.join([i for i in text if i.isdigit()])
+            text = a
 
         params = {'self': self, 'client': client, 'id': id, 'text': text}
 
