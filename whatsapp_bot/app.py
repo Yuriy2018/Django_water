@@ -142,20 +142,29 @@ def primera(debug):
         receipt = json['receiptId']
         body = json['body']
         try:
-            if body['messageData']['typeMessage'] == 'textMessage':
-                text = body['messageData']['textMessageData']['textMessage']
-                id = body['senderData']['chatId']
-                number = id.replace('@c.us', '')
-                if debug:
-                    result = r.get(number) == None and number == '77071392125'
-                else:
-                    result = r.get(number) == None
-                # if r.get(number) == None and number == '77071392125':
-                # if r.get(number) == None:
-                if result:
-                    logger.debug(f"{number} - {text}")
-                    bot = WABot(body, clients, logger,r)
-                    bot.processing()
+            if body.get('messageData') and body['messageData'].get('typeMessage'):
+                if body['messageData']['typeMessage'] == 'textMessage':
+                    text = body['messageData']['textMessageData']['textMessage']
+                    id = body['senderData']['chatId']
+                    number = id.replace('@c.us', '')
+                    if debug:
+                        result = r.get(number) == None and number == '77071392125'
+                    else:
+                        result = r.get(number) == None
+                    # if r.get(number) == None and number == '77071392125':
+                    # if r.get(number) == None:
+                    if result:
+                        logger.debug(f"{number} - {text}")
+                        bot = WABot(body, clients, logger,r)
+                        bot.processing()
+                # elif body['typeWebhook'] == 'statusInstanceChanged':
+                #     send_telegram(f"Пропала связь с трубкой!")
+            elif body.get('typeWebhook') and body['typeWebhook'] == 'statusInstanceChanged':
+                send_telegram(f"Пропала связь с трубкой! Номер:{body['instanceData']['wid'][:11]}")
+            elif body.get('typeWebhook') and body['typeWebhook'] == 'incomingCall':
+                send_telegram(f"Поступил звонок от клиента: {body['from'][:11]}")
+            elif body.get('typeWebhook') and body['typeWebhook'] == 'outgoingMessageReceived':
+                pass # Менеджер с телефона написал клиенту body['senderData']['chatId'][:11]
         except Exception as ex:
             # errorText =  f" команда: {body['messageData']['textMessageData']['textMessage']} \n" + ex
             logger.error(ex)
@@ -201,5 +210,5 @@ if(__name__) == '__main__':
     else:
         debug = False
         print('боевой режим')
-    get_out()  # Добавляем в список редис все номера, кому сегодня писали из ватсап аккаунта.
+    # get_out()  # Добавляем в список редис все номера, кому сегодня писали из ватсап аккаунта.
     primera(debug)
