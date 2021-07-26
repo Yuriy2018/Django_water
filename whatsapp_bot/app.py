@@ -19,7 +19,7 @@ if is_server:
 else:
     r = redis.Redis(host='127.0.0.1', port=6379, db=0)
 
-logger.add('debug.log', format='{time:YYYY-MM-DD HH:mm:ss} {level} {message}', level='DEBUG', rotation="01:00", compression="zip")
+logger.add('log/debug.log', format='{time:YYYY-MM-DD HH:mm:ss} {level} {message}', level='DEBUG', rotation="01:00", compression="zip")
 
 def send_telegram(text):
     token = "1832470032:AAH-RVl2FE6PeVmoVo6iR0OFnbcArNWtLg8"
@@ -131,6 +131,8 @@ def primera(debug):
     # send_telegram(key)
     logger.info(f'pid from app: {str(pid)}')
     while True:
+        if r.get('active') == None:
+            r.set('active', 'True', ex=60)
         # logger.info('Step')
         # key = os.getenv('key')
         # if key:
@@ -160,11 +162,22 @@ def primera(debug):
                 # elif body['typeWebhook'] == 'statusInstanceChanged':
                 #     send_telegram(f"Пропала связь с трубкой!")
             elif body.get('typeWebhook') and body['typeWebhook'] == 'statusInstanceChanged':
-                send_telegram(f"Пропала связь с трубкой! Номер:{body['instanceData']['wid'][:11]}")
+                if body['statusInstance'] == 'offline':
+                    if r.get('offline') == None:
+                        send_telegram(f"Пропала связь с трубкой! Номер:{body['instanceData']['wid'][:11]}")
+                        r.set('offline','',ex=60)
+                else:
+                    send_telegram(f"Появилась связь с трубкой! Номер:{body['instanceData']['wid'][:11]}")
             elif body.get('typeWebhook') and body['typeWebhook'] == 'incomingCall':
                 send_telegram(f"Поступил звонок от клиента: {body['from'][:11]}")
             elif body.get('typeWebhook') and body['typeWebhook'] == 'outgoingMessageReceived':
-                pass # Менеджер с телефона написал клиенту body['senderData']['chatId'][:11]
+                pass  # Менеджер с телефона написал клиенту body['senderData']['chatId'][:11]
+            elif body.get('typeWebhook') and body['typeWebhook'] == 'deviceInfo':
+                bat_level = body['deviceData']['battery']
+                if bat_level < 30:
+                    send_telegram(f"На устройстве заряд равен: {str(bat_level)}%")
+
+
         except Exception as ex:
             # errorText =  f" команда: {body['messageData']['textMessageData']['textMessage']} \n" + ex
             logger.error(ex)
@@ -210,5 +223,5 @@ if(__name__) == '__main__':
     else:
         debug = False
         print('боевой режим')
-    # get_out()  # Добавляем в список редис все номера, кому сегодня писали из ватсап аккаунта.
+    get_out()  # Добавляем в список редис все номера, кому сегодня писали из ватсап аккаунта.
     primera(debug)

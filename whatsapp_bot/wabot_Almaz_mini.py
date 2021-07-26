@@ -13,19 +13,19 @@ is_server = socket.gethostname() != 'yuriy-Aspire-5755G'
 # config = configparser.ConfigParser()
 # config.read('config.ini')
 # 1
-api_url = 'http://127.0.0.1:8000'
-# api_url = 'https://water.hostman.site'
+# api_url = 'http://127.0.0.1:8000'
+api_url = 'https://water.hostman.site'
 # api_url = 'https://almaz-water.herokuapp.com'
 
 # 2
 # APIUrl = 'https://api.green-api.com/waInstance7402/'
 # token = '0bbcb29ff60098202ffbb07df051131f21d2234d12c22c4ad4'
 
-APIUrl = 'https://api.green-api.com/waInstance9159/'
-token = 'd089c99b960a312c819d2a8b67e2e6e81603d94c61bf095984'  # мой номер Тинькофф
+# APIUrl = 'https://api.green-api.com/waInstance9159/'
+# token = 'd089c99b960a312c819d2a8b67e2e6e81603d94c61bf095984'  # мой номер Тинькофф
 
-# APIUrl = 'https://api.green-api.com/waInstance8073/'
-# token = 'd017242c0e8f35dbe23616ebcdfb6241cb4ac18a1411f8d49d'
+APIUrl = 'https://api.green-api.com/waInstance8073/'
+token = 'd017242c0e8f35dbe23616ebcdfb6241cb4ac18a1411f8d49d'
 
 stringForImput = ['НАЧАТЬ', 'ЗАКАЗ', 'ЗАКАЗАТЬ', 'ORDER', 'ZAKAZ']
 
@@ -251,10 +251,10 @@ def get_list_dates(client):
     current_time = DT.datetime.now()
     # print('current time: ',str(current_time))
     if is_server:  # Если это сервер, то время проверки доставки на сегодня +5 часов
-        # hour_x = 11 + 5
-        hour_x = 6
+        # hour_x = 10 - 5
+        hour_x = 5
     else:
-        hour_x = 11
+        hour_x = 10
     if current_time.hour < hour_x:  # and not client.new:
         # if False :
         start = 0

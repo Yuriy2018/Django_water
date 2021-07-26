@@ -229,8 +229,9 @@ def report_view_today_bs_api(request):
                                         quantity_=F('quantity'),
                                         amount_=F('amount'),
                                         comment=F('order__comment')
-                                        ).filter(order__date__gte=start,
-                                        order__date__lte=finish).order_by('driver')
+                                        ).filter(order__date_dev__gte=start,
+                                        order__date_dev__lte=finish).order_by('driver','district')
+
     dict_tabls = {}
     for val in data:
         val['date_dev'] = val['date_dev'].strftime('%d %B %Y')
