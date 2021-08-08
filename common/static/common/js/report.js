@@ -7,7 +7,7 @@ var months = ['Январь', 'Февраль', 'Март', 'Апрель', 'М�
 $j("#datepicker").datepicker({
     dateFormat: 'dd/mm/yy',
     monthNames: months,
-    maxDate: '0',
+    maxDate: '7',
             });
 
 $j("#datepicker2").datepicker({
