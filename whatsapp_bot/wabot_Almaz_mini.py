@@ -227,7 +227,8 @@ def delevery_time(*args):
     string_list = ''
     for pos in list_dates:
         string_list += pos['date_view']
-    string = 'Укажите удобную дату доставки:\n' + string_list + '-----------------------------\n(0.Назад)'
+    string = '*(укажите только цифрой)*\n\n'
+    string += 'Укажите удобную дату доставки:\n' + string_list + '-----------------------------\n(0.Назад)'
     return self.send_message(id, string)
 
 
@@ -304,7 +305,8 @@ def create_order(*args):
         client.steps.append(['create_order', '', new_client])
         return self.send_message(id, 'Напишите Ваш адрес:')
 
-    string = 'Выберите позицию из списка:\n'
+    string = ' *(укажите только цифрой)*\n\n'
+    string += 'Выберите позицию из списка:\n'
     cx = 0
     for pos in positions:
         cx += 1
@@ -329,7 +331,8 @@ def get_count(*args):
 
     client.steps.append(['get_count', pos, add_pos])
     client.size_Menu = 50
-    string = 'Укажите количество для позиции: "' + pos['name'] + '"\n'
+    string = '*(укажите только цифрой)*\n\n'
+    string += 'Укажите количество для позиции: "' + pos['name']
     return self.send_message(id, string)
 
 
@@ -340,7 +343,8 @@ def select_pos(*args):
         pos['price'] += 1000
     client.steps.append(['select_pos', pos, add_pos])
     client.size_Menu = 0
-    string = 'Укажите количество для позиции: "' + pos['name'] + '"\n'
+    string = '*(укажите только цифрой)*\n\n'
+    string += 'Укажите количество для позиции: "' + pos['name']
     return self.send_message(id, string)
 
 
@@ -353,9 +357,10 @@ def add_pos(*args):
     client.add_pos(position_id, code1C, nomenklatura, count, summa)
     client.steps.append(['add_pos', client.steps[-1][1], successMenu])
     client.size_Menu = len(successMenu) - 1
-    return self.send_message(id,
-                             f'В корзину добавлен: {nomenklatura} цена: {price} в количестве: {count} штук на сумму: {summa} \n' + self.convert_to_string(
-                                 successMenu))
+    message = '*(укажите только цифрой)*\n\n'
+    message += f'В корзину добавлен: {nomenklatura} цена: {price} в количестве: {count} штук на сумму: {summa} \n' + self.convert_to_string(
+                                 successMenu)
+    return self.send_message(id,message)
 
 
 def finish(*args):
@@ -363,6 +368,7 @@ def finish(*args):
     client.steps.append(['finish', '', finish])
     client.size_Menu = 0
     self.redis.set(id, 'sleep', ex=36000)
+    self.logger.debug(f'{id} отправлен в сон на 6 часов(Завершил заказ)')
     return self.send_message(id, 'Спасибо! Ваш заказ принят! Для выполнения нового заказа введите команду "Заказть"')
 
 
@@ -376,6 +382,7 @@ def paymont_cash(*args):
     if self.read_chat:
         read_chat(id)
     self.redis.set(id, 'sleep', ex=36000)
+    self.logger.debug(f'{id} отправлен в сон на 6 часов(Сделал оплату)')
     return self.send_message(id, finish_text)
 
 
@@ -398,8 +405,11 @@ def welcome(*args):
 
 def contacts_menagers(*args):
     self, client, id, text = args[0]['self'], args[0]['client'], args[0]['id'], args[0]['text']
-    text = 'Для связи с менеджером свяжитесь по номерам:\n +7 708 471 38 11,\n +7 708 471 38 55'
+    # text = 'Для связи с менеджером свяжитесь по номерам:\n +7 708 471 38 11 https://wa.me/77084713811,\n +7 708 471 38 55 https://wa.me/77084713855'
+    # text = 'Для связи с менеджером свяжитесь по номерам:\n 1. Телефон: +7 708 471 38 11 \nWhatsApp: https://wa.me/77084713811,\n2. Телефон: +7 708 471 38 55 \nWhatsApp: https://wa.me/77084713855'
+    text = 'Для связи с менеджером свяжитесь по номерам:\n https://wa.me/77084713811,\n https://wa.me/77084713855'
     self.redis.set(id, 'sleep', ex=36000)
+    self.logger.debug(f'{id} отправлен в сон на 6 часов(Попросил связаться с менеджером)')
     return self.send_message(id, text)
 
 
@@ -412,8 +422,8 @@ def start(*args):
         return create_order(*args)
     elif text == '2':
         return contacts_menagers(*args)
-    else:
-        self.redis.set(id, 'sleep', ex=36000)
+    # else:
+    #     self.redis.set(id, 'sleep', ex=36000)
         # return welcome(*args)
 
 
@@ -518,7 +528,7 @@ successMenu = {'1': {'name': 'Завершить заказ', 'method': delevery
                '2': {'name': 'Дополнить заказ', 'method': create_order},
                # После успешного добавление позиции в корзину
                # '3': {'name': 'Главное меню', 'method': start},
-               '3': {'name': 'Корзина', 'method': show_cart},
+               '3': {'name': 'Корзина(редактировать)', 'method': show_cart},
                '0': {'name': 'Назад', 'method': back_menu},
                }
 
@@ -568,7 +578,8 @@ class ClienOchag():
             return 'Ваша корзина пуста! \n 1. Вернуться в главное меню \n 0. Назад'
 
         cx = 0
-        info = 'Ваша корзина: \n'
+        info = '*(укажите только цифрой)*\n'
+        info += 'Ваша корзина: \n'
         summ = 0
         for pos in self.cart:
             cx += 1

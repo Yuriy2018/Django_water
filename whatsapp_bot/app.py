@@ -21,7 +21,7 @@ else:
 
 logger.add('log/debug.log', format='{time:YYYY-MM-DD HH:mm:ss} {level} {message}', level='DEBUG', rotation="01:00", compression="zip")
 
-def send_telegram(text):
+def send_telegram(text,damira=False):
     token = "1832470032:AAH-RVl2FE6PeVmoVo6iR0OFnbcArNWtLg8"
     url = "https://api.telegram.org/bot"
     channel_id = "498516666"
@@ -32,6 +32,12 @@ def send_telegram(text):
          "chat_id": channel_id,
          "text": text
           })
+
+    if damira:
+        r = requests.post(method, data={
+            "chat_id": '701405130', # id Дамиры руководство Алмаз
+            "text": text
+        })
 
 def send_text(phone,text):
     if len(phone) == 10:
@@ -164,18 +170,18 @@ def primera(debug):
             elif body.get('typeWebhook') and body['typeWebhook'] == 'statusInstanceChanged':
                 if body['statusInstance'] == 'offline':
                     if r.get('offline') == None:
-                        send_telegram(f"Пропала связь с трубкой! Номер:{body['instanceData']['wid'][:11]}")
+                        send_telegram(f"Пропала связь с трубкой! Номер:{body['instanceData']['wid'][:11]}", damira=True)
                         r.set('offline','',ex=60)
                 else:
-                    send_telegram(f"Появилась связь с трубкой! Номер:{body['instanceData']['wid'][:11]}")
+                    send_telegram(f"Появилась связь с трубкой! Номер:{body['instanceData']['wid'][:11]}", damira=True)
             elif body.get('typeWebhook') and body['typeWebhook'] == 'incomingCall':
-                send_telegram(f"Поступил звонок от клиента: {body['from'][:11]}")
+                send_telegram(f"Поступил звонок от клиента: {body['from'][:11]}", damira=True)
             elif body.get('typeWebhook') and body['typeWebhook'] == 'outgoingMessageReceived':
                 pass  # Менеджер с телефона написал клиенту body['senderData']['chatId'][:11]
             elif body.get('typeWebhook') and body['typeWebhook'] == 'deviceInfo':
                 bat_level = body['deviceData']['battery']
                 if bat_level < 30:
-                    send_telegram(f"На устройстве заряд равен: {str(bat_level)}%")
+                    send_telegram(f"На устройстве заряд равен: {str(bat_level)}%", damira=True)
 
 
         except Exception as ex:
@@ -223,5 +229,5 @@ if(__name__) == '__main__':
     else:
         debug = False
         print('боевой режим')
-    get_out()  # Добавляем в список редис все номера, кому сегодня писали из ватсап аккаунта.
+    # get_out()  # Добавляем в список редис все номера, кому сегодня писали из ватсап аккаунта.
     primera(debug)

@@ -52,7 +52,8 @@ function show_waybill() {
     //
     // document.querySelector('div #orders').style.color = 'grey'
     // document.querySelector('div #waybill').style.color = 'black'
-     const period = document.querySelector('#period').value;
+    //  const period = document.querySelector('#period').value;
+     const period = document.querySelector('.datapicker').value;
      $j.ajax({
         url: '/report_today_bs_api/',         /* Куда пойдет запрос */
         method: 'get',             /* Метод передачи (post или get) */
@@ -143,16 +144,18 @@ function for_open(){
     var positions = document.getElementById('positions')
 
     if (reports.value == '1') {
-        datepicker.hidden = true;
+        datepicker.hidden = false;
         datepicker2.hidden = true;
         positions.hidden = true;
-        period.hidden = false;
+        period.hidden = true;
+        datepicker.value = 'Сегодня'
     }
     else {
         datepicker.hidden = false;
         datepicker2.hidden = false;
         period.hidden = true;
         positions.hidden = true;
+        datepicker.value = 'Дата начала'
     }
 
      if (reports.value == '4') {
