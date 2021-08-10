@@ -38,6 +38,7 @@
     width: 150px;
 }
 
+#status,
 #period,
 #positions,
 #type_report {
@@ -50,7 +51,8 @@
     border-top-width: 0px;
 }
 
-#period {
+#period,
+#status{
     margin-left: 10px;
 }
 

@@ -218,6 +218,18 @@ def report_view_today_bs_api(request):
     #     start = datetime.combine(date.today(), time(8, 30, 00))  # Сегодня утро
     #     finish = datetime.combine(date.today(), time(17, 30, 00))  # Сегодня вечер
     #     period_str = '8:30 - 17:30'
+    status = '1'
+    if request.GET.get('status'):
+        status = request.GET.get('status')
+        if status == '2':
+            status_order = Order.STATUS_TYPE_NEW
+        elif status == '3':
+            status_order = Order.STATUS_TYPE_postponed
+        elif status == '4':
+            status_order = Order.STATUS_TYPE_COMPLETED
+
+
+
     if request.GET.get('period'):
         period_str = request.GET.get('period')
         if period_str == 'Сегодня':
@@ -228,16 +240,28 @@ def report_view_today_bs_api(request):
     period = datetime.strptime(period_str, "%d/%m/%Y")
     # data = TabluarOrders.objects.filter(order__date__gte=start,
     #                                     order__date__lte=finish).order_by('order__client__district')
-    data = TabluarOrders.objects.values(date_dev=F('order__date_dev'),
-                                        driver=F('order__client__driver__name'),
-                                        district=F('order__client__district__name'),
-                                        address=F('order__client__name'),
-                                        phone_number=F('order__client__phone_number'),
-                                        position_=F('position__name'),
-                                        quantity_=F('quantity'),
-                                        amount_=F('amount'),
-                                        comment=F('order__comment')
-                                        ).filter(order__date_dev=period).order_by('driver','district')
+    if status == '1':
+        data = TabluarOrders.objects.values(date_dev=F('order__date_dev'),
+                                            driver=F('order__client__driver__name'),
+                                            district=F('order__client__district__name'),
+                                            address=F('order__client__name'),
+                                            phone_number=F('order__client__phone_number'),
+                                            position_=F('position__name'),
+                                            quantity_=F('quantity'),
+                                            amount_=F('amount'),
+                                            comment=F('order__comment')
+                                            ).filter(order__date_dev=period).order_by('driver','district')
+    else:
+        data = TabluarOrders.objects.values(date_dev=F('order__date_dev'),
+                                            driver=F('order__client__driver__name'),
+                                            district=F('order__client__district__name'),
+                                            address=F('order__client__name'),
+                                            phone_number=F('order__client__phone_number'),
+                                            position_=F('position__name'),
+                                            quantity_=F('quantity'),
+                                            amount_=F('amount'),
+                                            comment=F('order__comment')
+                                            ).filter(order__date_dev=period, status_order=status_order).order_by('driver', 'district')
 
     dict_tabls = {}
     for val in data:

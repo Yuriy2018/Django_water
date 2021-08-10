@@ -64,6 +64,10 @@ def get_notifications(token):
     response = requests.request("GET", url, headers=headers, data=payload, timeout=120)
 
     if response.text:
+        if response.text == 'Unauthorized':
+            send_telegram('нет авторизации green api, проверьте токен')
+            logger.warning('нет авторизации green api, проверьте токен')
+            return None
         return response.json()
 
 def del_notifications(token,receipt):

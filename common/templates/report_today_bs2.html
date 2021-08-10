@@ -19,6 +19,14 @@
 {#        <option class="mycolor" value="6" data-id="6">Пассивные клиенты</option>#}
 {#        <option class="mycolor" value="7" data-id="7">Спящие клиенты</option>#}
       </select></div>
+
+   <div class="dropdown"><select name="status" id="status">
+        <option class="mycolor" value="1" data-id="1">Все</option>
+        <option class="mycolor" value="2" data-id="2">Новые</option>
+        <option class="mycolor" value="3" data-id="3">Отложенные</option>
+        <option class="mycolor" value="4" data-id="4">Завершенные</option>
+      </select></div>
+
   <div class="dropdown"><select name="positions" id="positions" hidden="true">
         {% for pos in positions %}
         <option class="position" value={{ pos.pk }} data-id={{ pos.id }}>{{ pos.name }}</option>
@@ -42,7 +50,6 @@
         <option class="mycolor" value="2" data-id="2">17:30-08:30</option>
         {% endif %}
       </select></div>
-
 
       <button type="button" id="button" onclick="show_report()" class="btn btn-secondary">Сформировать</button>
     </div>

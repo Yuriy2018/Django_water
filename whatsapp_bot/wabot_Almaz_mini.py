@@ -9,7 +9,8 @@ import datetime as DT
 import calendar
 import socket
 
-is_server = socket.gethostname() != 'yuriy-Aspire-5755G'
+# is_server = socket.gethostname() != 'yuriy-Aspire-5755G'
+is_server = True
 # config = configparser.ConfigParser()
 # config.read('config.ini')
 # 1
@@ -25,7 +26,7 @@ api_url = 'https://water.hostman.site'
 # token = 'd089c99b960a312c819d2a8b67e2e6e81603d94c61bf095984'  # мой номер Тинькофф
 
 APIUrl = 'https://api.green-api.com/waInstance8073/'
-token = 'd017242c0e8f35dbe23616ebcdfb6241cb4ac18a1411f8d49d'
+token = '111caea50840ac389d446384c6481d6e74b3e0d4826f679033'
 
 stringForImput = ['НАЧАТЬ', 'ЗАКАЗ', 'ЗАКАЗАТЬ', 'ORDER', 'ZAKAZ']
 
