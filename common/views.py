@@ -261,7 +261,7 @@ def report_view_today_bs_api(request):
                                             quantity_=F('quantity'),
                                             amount_=F('amount'),
                                             comment=F('order__comment')
-                                            ).filter(order__date_dev=period, status_order=status_order).order_by('driver', 'district')
+                                            ).filter(order__date_dev=period, order__status_order=status_order).order_by('driver', 'district')
 
     dict_tabls = {}
     for val in data:
