@@ -220,12 +220,12 @@ def report_view_today_bs_api(request):
     else:
         period = '1'
     if period == '1':
-        start = datetime.combine(date_dev.date() - timedelta(days=1), time(17, 30, 00))  # Вчера вечер
+        start = datetime.combine(date_dev.date() - timedelta(days=1), time(17, 00, 00))  # Вчера вечер
         finish = datetime.combine(date_dev.date(), time(8, 30, 00))  # сегодня утро
         period_str = '17:30 - 8:30'
     elif period == '2':
         start = datetime.combine(date_dev.date(), time(8, 30, 00))  # Сегодня утро
-        finish = datetime.combine(date_dev.date(), time(17, 30, 00))  # Сегодня вечер
+        finish = datetime.combine(date_dev.date(), time(17, 00, 00))  # Сегодня вечер
         period_str = '8:30 - 17:30'
     status = '1'
     if request.GET.get('status'):
