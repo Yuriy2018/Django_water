@@ -52,14 +52,14 @@ function show_waybill() {
     //
     // document.querySelector('div #orders').style.color = 'grey'
     // document.querySelector('div #waybill').style.color = 'black'
-    //  const period = document.querySelector('#period').value;
-     const period = document.querySelector('.datapicker').value;
+     const period = document.querySelector('#period').value;
+     const date_dev = document.querySelector('.datapicker').value;
      const status = document.querySelector('#status').value;
      $j.ajax({
         url: '/report_today_bs_api/',         /* Куда пойдет запрос */
         method: 'get',             /* Метод передачи (post или get) */
         dataType: 'json',          /* Тип данных в ответе (xml, json, script, html). */
-        data: {period: period, status: status},     /* Параметры передаваемые в запросе. */
+        data: {period: period, status: status, date_dev: date_dev},     /* Параметры передаваемые в запросе. */
         success: function (result) {   /* функция которая будет выполнена после успешного запроса.  */
             // var data_spares = [] td - tr -
             const div_tag = document.getElementsByClassName('container-fluid myclasses')[0];
@@ -149,7 +149,7 @@ function for_open(){
         datepicker.hidden = false;
         datepicker2.hidden = true;
         positions.hidden = true;
-        period.hidden = true;
+        period.hidden = false;
         status.hidden = false;
         datepicker.value = 'Сегодня'
     }

@@ -206,18 +206,27 @@ def report_view_today_bs(request):
 
 def report_view_today_bs_api(request):
 
-    # if request.GET.get('period'):
-    #     period = request.GET.get('period')
-    # else:
-    #     period = '1'
-    # if period == '1':
-    #     start = datetime.combine(date.today() - timedelta(days=1), time(17, 30, 00))  # Вчера вечер
-    #     finish = datetime.combine(date.today(), time(8, 30, 00))  # сегодня утро
-    #     period_str = '17:30 - 8:30'
-    # elif period == '2':
-    #     start = datetime.combine(date.today(), time(8, 30, 00))  # Сегодня утро
-    #     finish = datetime.combine(date.today(), time(17, 30, 00))  # Сегодня вечер
-    #     period_str = '8:30 - 17:30'
+    if request.GET.get('date_dev'):
+        date_dev_str = request.GET.get('date_dev')
+        if date_dev_str == 'Сегодня':
+            date_dev_str = datetime.today().strftime('%d/%m/%Y')
+    else:
+        start_str = datetime.today().strftime('%d/%m/%Y')
+
+    date_dev = datetime.strptime(date_dev_str, "%d/%m/%Y")
+
+    if request.GET.get('period'):
+        period = request.GET.get('period')
+    else:
+        period = '1'
+    if period == '1':
+        start = datetime.combine(date_dev.date() - timedelta(days=1), time(17, 30, 00))  # Вчера вечер
+        finish = datetime.combine(date_dev.date(), time(8, 30, 00))  # сегодня утро
+        period_str = '17:30 - 8:30'
+    elif period == '2':
+        start = datetime.combine(date_dev.date(), time(8, 30, 00))  # Сегодня утро
+        finish = datetime.combine(date_dev.date(), time(17, 30, 00))  # Сегодня вечер
+        period_str = '8:30 - 17:30'
     status = '1'
     if request.GET.get('status'):
         status = request.GET.get('status')
@@ -230,14 +239,7 @@ def report_view_today_bs_api(request):
 
 
 
-    if request.GET.get('period'):
-        period_str = request.GET.get('period')
-        if period_str == 'Сегодня':
-            period_str = datetime.today().strftime('%d/%m/%Y')
-    else:
-        start_str = datetime.today().strftime('%d/%m/%Y')
 
-    period = datetime.strptime(period_str, "%d/%m/%Y")
     # data = TabluarOrders.objects.filter(order__date__gte=start,
     #                                     order__date__lte=finish).order_by('order__client__district')
     if status == '1':
@@ -250,7 +252,7 @@ def report_view_today_bs_api(request):
                                             quantity_=F('quantity'),
                                             amount_=F('amount'),
                                             comment=F('order__comment')
-                                            ).filter(order__date_dev=period).order_by('driver','district')
+                                            ).filter(order__date_dev=date_dev, order__date__gte=start,order__date__lte=finish).order_by('driver','district')
     else:
         data = TabluarOrders.objects.values(date_dev=F('order__date_dev'),
                                             driver=F('order__client__driver__name'),
@@ -261,7 +263,7 @@ def report_view_today_bs_api(request):
                                             quantity_=F('quantity'),
                                             amount_=F('amount'),
                                             comment=F('order__comment')
-                                            ).filter(order__date_dev=period, order__status_order=status_order).order_by('driver', 'district')
+                                            ).filter(order__date_dev=date_dev, order__status_order=status_order, order__date__gte=start,order__date__lte=finish).order_by('driver', 'district')
 
     dict_tabls = {}
     for val in data:
