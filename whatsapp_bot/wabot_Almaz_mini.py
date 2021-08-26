@@ -254,9 +254,9 @@ def get_list_dates(client):
     # print('current time: ',str(current_time))
     if is_server:  # Если это сервер, то время проверки доставки на сегодня +5 часов
         # hour_x = 10 - 5
-        hour_x = 5
+        hour_x = 3
     else:
-        hour_x = 10
+        hour_x = 8
     if current_time.hour < hour_x:  # and not client.new:
         # if False :
         start = 0
@@ -333,7 +333,10 @@ def get_count(*args):
     client.steps.append(['get_count', pos, add_pos])
     client.size_Menu = 50
     string = '*(укажите только цифрой)*\n\n'
+    # if pos['min_count'] != 0:
     string += 'Укажите количество для позиции: "' + pos['name']
+    # else:
+    #     string += 'Укажите количество для позиции: "' + pos['name']
     return self.send_message(id, string)
 
 
@@ -353,7 +356,9 @@ def add_pos(*args):
     self, id, client, text = args[0]['self'], args[0]['id'], args[0]['client'], args[0]['text']
     count = int(text)
     pos = client.steps[-1][1]
-    position_id, code1C, nomenklatura, price = pos['id'], pos['code1C'], pos['name'], pos['price']
+    position_id, code1C, nomenklatura, price, min_count = pos['id'], pos['code1C'], pos['name'], pos['price'], pos['min_count']
+    if int(count) < min_count:
+        count = min_count
     summa = int(price) * int(count)
     client.add_pos(position_id, code1C, nomenklatura, count, summa)
     client.steps.append(['add_pos', client.steps[-1][1], successMenu])

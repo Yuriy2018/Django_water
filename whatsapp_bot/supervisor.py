@@ -44,14 +44,19 @@ def supervisor(send_telegramM, sleep):
     """ Проверяем, активен ли основной скрипт бота, если нет, то шлем предупреждение в телеграмм"""
     print('запущен Supervisor')
     prim = False
+    segu = False
     while True:
         if r.get('active') is None:
             if prim:
-                send_telegramM(f"Внимание, бот молчит! Проверьте скрипт!")
+                if segu:
+                    send_telegramM(f"Внимание, бот молчит! Проверьте скрипт!")
+                else:
+                    segu = True
             else:
                 prim = True
         else:
             prim = False
+            segu = False
         sleep(10)
 
 

@@ -21,17 +21,18 @@ else:
 
 logger.add('log/debug.log', format='{time:YYYY-MM-DD HH:mm:ss} {level} {message}', level='DEBUG', rotation="01:00", compression="zip")
 
-def send_telegram(text,damira=False):
+def send_telegram(text,damira=False, yuriy=False):
     token = "1832470032:AAH-RVl2FE6PeVmoVo6iR0OFnbcArNWtLg8"
     url = "https://api.telegram.org/bot"
     channel_id = "498516666"
     url += token
     method = url + "/sendMessage"
 
-    r = requests.post(method, data={
-         "chat_id": channel_id,
-         "text": text
-          })
+    if yuriy:
+        r = requests.post(method, data={
+             "chat_id": '498516666',  # Юрий
+             "text": text
+              })
 
     if damira:
         r = requests.post(method, data={
@@ -65,7 +66,7 @@ def get_notifications(token):
 
     if response.text:
         if response.text == 'Unauthorized':
-            send_telegram('нет авторизации green api, проверьте токен')
+            send_telegram('нет авторизации green api, проверьте токен',yuriy=True)
             logger.warning('нет авторизации green api, проверьте токен')
             return None
         return response.json()
@@ -136,7 +137,7 @@ def primera(debug):
     # key = os.getenv('key')
     logger.info('Start')
     pid = os.getpid()
-    send_telegram(f'pid from app: {str(pid)}')
+    send_telegram(f'pid from app: {str(pid)}',yuriy=True)
     # # if key:
     # send_telegram(key)
     logger.info(f'pid from app: {str(pid)}')
@@ -193,7 +194,7 @@ def primera(debug):
             logger.error(ex)
             print(ex)
             try:
-               send_telegram(f"{ex} --- \n{str(body)}")
+               send_telegram(f"{ex} --- \n{str(body)}",yuriy=True)
             except Exception as ex:
                 logger.error(ex)
 

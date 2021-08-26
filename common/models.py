@@ -106,6 +106,7 @@ class Positions(models.Model):
     name = models.CharField(max_length=50, verbose_name='Наименование', unique=True)
     code1C = models.CharField(max_length=11, verbose_name='Код 1С')
     price = models.IntegerField(verbose_name='Цена', default=0)
+    min_count = models.IntegerField(verbose_name='минимальное количество', default=0)
 
     class Meta:
         verbose_name = 'Номенклатура'
