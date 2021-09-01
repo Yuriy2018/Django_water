@@ -35,6 +35,7 @@ class Driver(models.Model):
     login = models.CharField(max_length=50, verbose_name='Логин', null=True, blank=True)
     password = models.CharField(max_length=50, verbose_name='Пароль', null=True, blank=True)
     plane = models.PositiveSmallIntegerField(verbose_name='План заявок в день', default=80, blank=True)
+    phone_number = models.CharField(max_length=11, verbose_name='Телефон(WhatsApp)', null=True)
 
     class Meta:
         verbose_name = 'Водитель'

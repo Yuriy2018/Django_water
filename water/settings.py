@@ -170,3 +170,7 @@ INTERNAL_IPS = [
 
 # CELERY_BROKER_URL = 'redis://localhost:6379'
 CELERY_BROKER_URL = 'redis://redis:6379'
+
+# whatsApp_bot
+APIUrl = 'https://api.green-api.com/waInstance8073/'
+token = '111caea50840ac389d446384c6481d6e74b3e0d4826f679033'

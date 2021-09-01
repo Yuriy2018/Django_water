@@ -1,5 +1,10 @@
+import json
+
+import requests
 from django.contrib import admin
 from .models import Order, TabluarOrders
+
+from water.settings import APIUrl, token
 
 from datetime import datetime, timedelta, date
 
@@ -14,6 +19,45 @@ def make_postponed(modeladmin, request, queryset):
         order.status_order = Order.STATUS_TYPE_postponed
         order.save()
 make_postponed.short_description = "Заполнить статус - отложен"
+
+def send_to_driver(modeladmin, request, queryset):
+    letter_dict = dict()
+    for order in queryset:
+        driver = order.client.driver
+        name = order.client.name
+        phone = order.client.phone_number
+        str_pos = name + '\n' + phone + '\n'
+        for pos in TabluarOrders.objects.filter(order=order):
+            position = pos.position
+            quantity = pos.quantity
+            amount = pos.amount
+            str_pos += position.name + ' ' + str(quantity) + 'шт. ' + str(amount) + 'тенге.\n'
+        str_pos += '\n--------------------------\n'
+        if not letter_dict.get(driver):
+            letter_dict[driver] = ''
+        letter_dict[driver] += str_pos
+
+    for dr, letter in letter_dict.items():
+        send_text(dr.phone_number,letter)
+    pass
+send_to_driver.short_description = "Отправить водителю"
+
+def send_text(phone,text):
+    if len(phone) == 10:
+        phone = '7' + phone
+
+    if phone[0] == '8':
+        phone = '7' + phone[1:11]
+    url = APIUrl + 'sendMessage/' + token
+
+    payload = {"chatId": phone + '@c.us',
+               "message": text}
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=json.dumps(payload), timeout=120)
+    return ""
 
 class TabluarOrdersInline(admin.TabularInline):
     model = TabluarOrders
@@ -75,8 +119,11 @@ class OrderAdmin(admin.ModelAdmin):
     readonly_fields = ['date_end',]
     # list_filter = ['new_client','status_order', 'client__driver',DateDeliveriFilter]
     list_filter = ['status_order', 'client__driver',DateDeliveriFilter]
-    actions = [make_completed, make_postponed,]
+    actions = [make_completed, make_postponed, send_to_driver]
     # change_form_template = ''
+    search_fields = ['client__name', 'client__phone_number']
+
+
 
     def show_driver(self, obj):
         return obj.client.driver
