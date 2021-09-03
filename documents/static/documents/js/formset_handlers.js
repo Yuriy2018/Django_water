@@ -61,7 +61,11 @@ function add_event(index_row){
 
     elem.addEventListener('change', function() {
         number_pos = elem.value
-        price = posits[number_pos-1].price
+        posits.forEach(function(entry) {
+            if (entry == number_pos) {
+              price = entry['price'];
+            }
+        });
         quantity = document.querySelector("#id_tabulars-"+index_row+"-quantity").value
         if (quantity == '0') {
             quantity = 1;
