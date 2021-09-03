@@ -62,7 +62,7 @@ function add_event(index_row){
     elem.addEventListener('change', function() {
         number_pos = elem.value
         posits.forEach(function(entry) {
-            if (entry == number_pos) {
+            if (entry['id'].toString() == number_pos) {
               price = entry['price'];
             }
         });
@@ -138,7 +138,7 @@ function add_event_for_start(){
         number_pos = elem.value
 
         posits.forEach(function(entry) {
-            if (entry == number_pos) {
+            if (entry['id'].toString() == number_pos) {
               price = entry['price'];
             }
         });
