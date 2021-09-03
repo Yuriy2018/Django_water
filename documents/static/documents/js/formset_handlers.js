@@ -132,7 +132,13 @@ function add_event_for_start(){
 
     elem.addEventListener('change', function() {
         number_pos = elem.value
-        price = posits[number_pos-1].price
+
+        posits.forEach(function(entry) {
+            if (entry == number_pos) {
+              price = entry['price'];
+            }
+        });
+
         quantity = document.querySelector("#id_" + el.name.replace('position','quantity')).value
         if (quantity == '0') {
             quantity = 1;
@@ -179,12 +185,6 @@ function someWork() {
 
     $('.admin-autocomplete').on('change',function () {
 
-       // client_str = document.querySelector("#id_client").innerText
-              // создаем AJAX-вызов
-    //     $.ajax('/get_driver_client/', {text : client_str}).done(function (result) {
-    //      // alert('Сработал обработчик на jquery!');
-    // })
-    // var client_str = '';
     $.ajax({
 		url: '/api/get_driver_client/',
 		type: 'POST',
