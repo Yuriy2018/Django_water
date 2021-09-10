@@ -461,9 +461,13 @@ def edit_count(*args):
     if text[0] == '0':
         client.cart.remove(pos)
     else:
-        price = pos['summa'] / pos['count']
-        pos['count'] = int(text[0])
-        pos['summa'] = pos['count'] * price
+        min_count = get_position_by_name(pos['position'])['min_count']
+        count = int(text[0])
+        if count < min_count:
+            count = min_count
+        price = pos['summa'] / count
+        pos['count'] = count
+        pos['summa'] = count * price
     infoCart = client.infoCart()
     client.steps.append(['editionCount', pos, myCartsMenu])
     return self.send_message(id, infoCart)
@@ -482,6 +486,11 @@ def get_position_by_code1C(code1C):
             return pos
             break
 
+def get_position_by_name(name):
+    for pos in positions:
+        if pos['name'] == name:
+            return pos
+            break
 
 def replay_cart(*args):
     self, client, id = args[0]['self'], args[0]['client'], args[0]['id']

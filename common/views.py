@@ -206,6 +206,11 @@ def report_view_today_bs(request):
 
 def report_view_today_bs_api(request):
 
+    general = False
+    if request.GET.get('period') == 'general':
+        general = True
+
+
     if request.GET.get('date_dev'):
         date_dev_str = request.GET.get('date_dev')
         if date_dev_str == 'Сегодня':
@@ -215,18 +220,20 @@ def report_view_today_bs_api(request):
 
     date_dev = datetime.strptime(date_dev_str, "%d/%m/%Y")
 
-    if request.GET.get('period'):
-        period = request.GET.get('period')
-    else:
-        period = '1'
-    if period == '1':
-        start = datetime.combine(date_dev.date() - timedelta(days=1), time(17, 00, 00))  # Вчера вечер
-        finish = datetime.combine(date_dev.date(), time(8, 30, 00))  # сегодня утро
-        period_str = '17:30 - 8:30'
-    elif period == '2':
-        start = datetime.combine(date_dev.date(), time(8, 30, 00))  # Сегодня утро
-        finish = datetime.combine(date_dev.date(), time(17, 00, 00))  # Сегодня вечер
-        period_str = '8:30 - 17:30'
+    if not general:
+        if request.GET.get('period'):
+            period = request.GET.get('period')
+        else:
+            period = '1'
+        if period == '1':
+            start = datetime.combine(date_dev.date() - timedelta(days=1), time(17, 00, 00))  # Вчера вечер
+            finish = datetime.combine(date_dev.date(), time(8, 30, 00))  # сегодня утро
+            period_str = '17:30 - 8:30'
+        elif period == '2':
+            start = datetime.combine(date_dev.date(), time(8, 30, 00))  # Сегодня утро
+            finish = datetime.combine(date_dev.date(), time(17, 00, 00))  # Сегодня вечер
+            period_str = '8:30 - 17:30'
+
     status = '1'
     if request.GET.get('status'):
         status = request.GET.get('status')
@@ -242,7 +249,19 @@ def report_view_today_bs_api(request):
 
     # data = TabluarOrders.objects.filter(order__date__gte=start,
     #                                     order__date__lte=finish).order_by('order__client__district')
-    if status == '1':
+    if general:
+        data = TabluarOrders.objects.values(date_dev=F('order__date_dev'),
+                                            driver=F('order__client__driver__name'),
+                                            district=F('order__client__district__name'),
+                                            address=F('order__client__name'),
+                                            phone_number=F('order__client__phone_number'),
+                                            position_=F('position__name'),
+                                            quantity_=F('quantity'),
+                                            amount_=F('amount'),
+                                            comment=F('order__comment')
+                                            ).filter(order__date_dev=date_dev).order_by('driver', 'district')
+
+    elif status == '1':
         data = TabluarOrders.objects.values(date_dev=F('order__date_dev'),
                                             driver=F('order__client__driver__name'),
                                             district=F('order__client__district__name'),

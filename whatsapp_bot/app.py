@@ -13,11 +13,11 @@ carts = dict()
 clients = {}
 zz = []
 
-# r = redis.Redis(host='127.0.0.1', port=6379, db=0)
-if is_server:
-    r = redis.Redis(host='45.147.176.206', port=6379, db=0)
-else:
-    r = redis.Redis(host='127.0.0.1', port=6379, db=0)
+r = redis.Redis(host='127.0.0.1', port=6379, db=0)
+# if is_server:
+#     r = redis.Redis(host='45.147.176.206', port=6379, db=0)
+# else:
+#     r = redis.Redis(host='127.0.0.1', port=6379, db=0)
 
 logger.add('log/debug.log', format='{time:YYYY-MM-DD HH:mm:ss} {level} {message}', level='DEBUG', rotation="01:00", compression="zip")
 
@@ -164,14 +164,10 @@ def primera(debug):
                         result = r.get(number) == None and number == '77071392125'
                     else:
                         result = r.get(number) == None
-                    # if r.get(number) == None and number == '77071392125':
-                    # if r.get(number) == None:
                     if result:
                         logger.debug(f"{number} - {text}")
                         bot = WABot(body, clients, logger,r)
                         bot.processing()
-                # elif body['typeWebhook'] == 'statusInstanceChanged':
-                #     send_telegram(f"Пропала связь с трубкой!")
             elif body.get('typeWebhook') and body['typeWebhook'] == 'statusInstanceChanged':
                 if body['statusInstance'] == 'offline':
                     if r.get('offline') == None:

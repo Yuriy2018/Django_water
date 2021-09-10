@@ -19,6 +19,7 @@ $j("#datepicker2").datepicker({
 function show_report() {
 
     var reports = document.getElementById('type_report');
+
     if (reports.value == '1') {
         show_waybill()
     }
@@ -40,26 +41,30 @@ function show_report() {
         show_main('/report_analysis_clients/',null)
     }
 
+     else if (reports.value == '8') {
+        show_waybill()
+}
     // const period = document.querySelector('#period').value;
 
 }
 
 function show_waybill() {
 
-    // $('#period').find('option').remove();
-    // $('#period').append('<option value="1" selected="selected">17:30-08:30</option>');
-    // $('#period').append('<option value="2" selected="selected">08:30-17:30</option>');
-    //
-    // document.querySelector('div #orders').style.color = 'grey'
-    // document.querySelector('div #waybill').style.color = 'black'
-     const period = document.querySelector('#period').value;
+    var abc = '';
+    if (document.querySelector('#period').hidden){
+      abc = 'general';
+    }
+    else {
+      abc = document.querySelector('#period').value;
+    };
+
      const date_dev = document.querySelector('.datapicker').value;
      const status = document.querySelector('#status').value;
      $j.ajax({
         url: '/report_today_bs_api/',         /* Куда пойдет запрос */
         method: 'get',             /* Метод передачи (post или get) */
         dataType: 'json',          /* Тип данных в ответе (xml, json, script, html). */
-        data: {period: period, status: status, date_dev: date_dev},     /* Параметры передаваемые в запросе. */
+        data: {period: abc, status: status, date_dev: date_dev},     /* Параметры передаваемые в запросе. */
         success: function (result) {   /* функция которая будет выполнена после успешного запроса.  */
             // var data_spares = [] td - tr -
             const div_tag = document.getElementsByClassName('container-fluid myclasses')[0];
@@ -164,6 +169,12 @@ function for_open(){
 
      if (reports.value == '4') {
         positions.hidden = false;
+    }
+
+     if (reports.value == '8') {
+        period.hidden = true;
+        datepicker2.hidden = true;
+        datepicker.value = 'Сегодня';
     }
     console.log(reports)
 }
