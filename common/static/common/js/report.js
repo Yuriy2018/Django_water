@@ -175,6 +175,7 @@ function for_open(){
         period.hidden = true;
         datepicker2.hidden = true;
         datepicker.value = 'Сегодня';
+         status.hidden = false;
     }
     console.log(reports)
 }
