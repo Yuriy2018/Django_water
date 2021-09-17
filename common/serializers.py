@@ -65,6 +65,7 @@ class OrdersListSerializer(serializers.ModelSerializer):
 
 class OrdersList1сSerializer(serializers.ModelSerializer):
     client_data = serializers.SerializerMethodField('get_client_data')
+    driver_data = serializers.SerializerMethodField('get_driver_data')
     tabulars = TabularOrdersListSerializer(many=True)
 
     class Meta:
@@ -79,6 +80,11 @@ class OrdersList1сSerializer(serializers.ModelSerializer):
                 'address': order.client.address,
                 'id': order.client.id,}
 
+    def get_driver_data(self, order):
+        return {'name': order.client.driver.name,
+                'id': order.client.driver.id,
+                'phone_number': order.client.driver.phone_number,
+                }
 
 class OrderCreateSerializer(serializers.ModelSerializer):
     class Meta:

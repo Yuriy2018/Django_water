@@ -308,15 +308,6 @@ class TabuluarCreateView(APIView):
                     order.save()
         return Response(status=201, data=order.id)
 
-# class OrdersListView(APIView):
-#
-#     def get(self, request, number):
-#         orders = Order.objects.filter(client__phone_number=number).order_by('-date').first()
-#         if not orders:
-#             return Response([])
-#
-#         serializer = OrdersListSerializer(orders)
-#         return Response(serializer.data)
 
 class Orders1cListView(APIView):
 
