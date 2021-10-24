@@ -97,14 +97,24 @@ WSGI_APPLICATION = 'water.wsgi.application'
 try:
     from water.settings_local import *
 except:
+    # DATABASES = {
+    #     'default': {
+    #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #         'NAME': 'database',
+    #         'USER': 'hostman',
+    #         'PASSWORD': 'b7240b14',
+    #         'HOST': 'postgres-b6db.hostman.site',
+    #         'PORT': '5432'
+    #     }
+    # }
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'database',
-            'USER': 'hostman',
-            'PASSWORD': 'b7240b14',
-            'HOST': 'postgres-b6db.hostman.site',
-            'PORT': '5432'
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'almaz2021_01',
+            'USER': 'almaz2021_01',
+            'PASSWORD': 'up1BxbHL',
+            'HOST': 'localhost',
+            'PORT': '3306'
         }
     }
 
